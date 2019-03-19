@@ -29,3 +29,5 @@
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":8992,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:47:56.375Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":16668,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:48:48.362Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14384,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:49:27.209Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":9512,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:52:37.690Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:54:00.685Z","v":0}

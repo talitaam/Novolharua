@@ -3,7 +3,7 @@ const Doacao = require('../controllers/doacao');
 const var_dump = require('var_dump');
 
 // Busca as Doações
-router.get('/', function (req, res, next) {
+router.post('/', function (req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
 
 	var_dump(Doacao);

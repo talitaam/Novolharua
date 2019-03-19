@@ -83,3 +83,13 @@
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":16668,"level":10,"msg":"GET /doacao 200 5 ms","time":"2019-03-19T11:49:12.520Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14384,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:49:27.209Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14384,"level":10,"msg":"GET /doacao 200 681 ms","time":"2019-03-19T11:49:28.374Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":9512,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:52:37.690Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":9512,"level":10,"msg":"GET / 404 13 ms","time":"2019-03-19T11:52:54.729Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":30,"msg":"TIS listening at http://[::]:3000","time":"2019-03-19T11:54:00.685Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":10,"msg":"POST /doacao/ 200 446 ms","time":"2019-03-19T11:55:05.622Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":10,"msg":"POST /doacao/ 200 10 ms","time":"2019-03-19T11:55:15.607Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":10,"msg":"POST /doacao/ 200 7 ms","time":"2019-03-19T11:55:51.222Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":10,"msg":"POST /doacao/ 200 13 ms","time":"2019-03-19T11:56:30.045Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":10,"msg":"POST /doacao/ 200 37 ms","time":"2019-03-19T11:56:43.500Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":10,"msg":"POST /doacao/ 200 10 ms","time":"2019-03-19T11:58:19.205Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":14240,"level":10,"msg":"POST /doacao/ 200 5 ms","time":"2019-03-19T11:59:16.669Z","v":0}
