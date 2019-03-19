@@ -6,7 +6,7 @@ const server = restify.createServer({
 });
 
 const logger = require('./basic-logger');
-const doacao = require('./src/routes/index');
+const doacao = require('./src/routes/doacao');
 
 server.use(restify.plugins.throttle({
 	burst: 100,  	// Max 10 concurrent requests (if tokens)

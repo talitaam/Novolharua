@@ -1,15 +1,23 @@
 const router = new (require('restify-router')).Router();
 const Doacao = require('../controllers/doacao');
+const var_dump = require('var_dump');
 
 // Busca as Doações
-router.post('/', function (req, res, next) {
-	let result = Doacao.getDoacoes();
+router.get('/', function (req, res, next) {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+
+	var_dump(Doacao);
+	console.log(Object.keys(Doacao));
+
+	let result = Doacao();
 	
-	res.json({
-		doacoes: result.doacoes
+	result.then((response) => {
+		res.json({
+			doacoes: response
+		});
+		
+		next();
 	});
-	
-	next();
 });
 
 // Salva as Doações

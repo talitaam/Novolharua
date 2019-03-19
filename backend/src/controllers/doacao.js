@@ -1,10 +1,4 @@
-let Doacao = () =>  {
+module.exports = function () {
     let doacaoService = require('../services/doacao');
-    
-    let getDoacoes = () => {
-        return doacaoService.getAllDoacoes();
-    }
-
-}
-
-module.exports = Doacao;
+    return doacaoService();
+};
