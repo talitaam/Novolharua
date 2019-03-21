@@ -1,17 +1,16 @@
-let Doacao = () =>  {
+import dbService from "../util/db";
+
+class Doacao {
+	constructor() {
+		this.GET_ALL_DOACOES = "SELECT * FROM DOACAO ORDER BY 1";
+	}
     
-    let getDonationByUser = (userId) => {
-        // Not Implemented Yet
-    }   
-};
+	getAllDoacoes () { 
+		return dbService.runQuery(this.GET_ALL_DOACOES, false, result => {
+			console.log(result);
+			return result;
+		});
+	}
+}
 
-
-module.exports = function () {
-    let dbService = new (require('./db')) ();
-    const GET_ALL_DOACOES = "SELECT * FROM DOACAO ORDER BY 1";
-
-    return dbService.runQuery(GET_ALL_DOACOES).then(result => {
-        return result;
-    });
-};
-// module.exports = Doacao;
+export default new Doacao ();

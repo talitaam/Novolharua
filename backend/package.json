@@ -1,16 +1,10 @@
 {
-	"name": "TIS",
-	"version": "1.0.0",
-	"description": "My API Description",
-	"keywords": [
-		"restify",
-		"template",
-		"boilerplate"
-	],
+	"name": "Novoolharnarua",
+	"version": "0.0.1",
 	"scripts": {
-		"start": "babel src -d build && babel-node app.js",
-		"babel": "babel-node app.js",
-		"build": "babel src -d build"
+		"start": "node ./node_modules/babel-cli/bin/babel-node.js app.js",
+		"build": "node ./node_modules/babel-cli/bin/babel.js src -d build",
+		"lint": "./node_modules/.bin/eslint --fix --ignore-path .gitignore ."
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",

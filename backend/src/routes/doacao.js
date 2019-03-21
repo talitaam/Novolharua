@@ -1,37 +1,7 @@
-const router = new (require('restify-router')).Router();
-const Doacao = require('../controllers/doacao');
-const var_dump = require('var_dump');
+import doacaoCtl from "../controllers/doacao";
+const router = new (require("restify-router")).Router();
 
-// Busca as Doações
-router.post('/', function (req, res, next) {
-	res.setHeader('Access-Control-Allow-Origin', '*');
+router.post("/", doacaoCtl.getAllDoacoes);
+router.post("/add", doacaoCtl.addDoacao);
 
-	var_dump(Doacao);
-	console.log(Object.keys(Doacao));
-
-	let result = Doacao();
-	
-	result.then((response) => {
-		res.json({
-			doacoes: response
-		});
-		
-		next();
-	});
-});
-
-// Salva as Doações
-router.post('/save', function (req, res, next) {
-	let params = req.params;
-
-	let result = Doacao.saveDoacao(params);
-
-	res.json({
-		message: "Salvo com sucesso !",
-		query: result.doacao
-	});
-
-	next();
-});
-
-module.exports = router;
+export default router;
