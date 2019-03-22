@@ -25,7 +25,6 @@ server.on("after", restify.plugins.metrics({ server: server }, function onMetric
 }));
 
 server.listen(3000, function () {
-	console.log("%s listening at %s", server.name, server.url);
 	logger.info("%s listening at %s", server.name, server.url);
 });
 

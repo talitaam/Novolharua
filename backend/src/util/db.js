@@ -20,31 +20,38 @@ class db {
 
 	runQuery (query, params) {
 		return new Promise ((resolve, reject) => {
-			if(params)  
-				query = this.prepareQuery(query, params);
+			try {
+				if(params)  
+					query = this.prepareQuery(query, params);
 
-			pool.getConnection(function (err, conn) {
-				if (err) {
-					conn.release();
-					reject (err);
-					throw err;
-				}
-
-				conn.query(query, params, function (err, rows) {
-					conn.release();
-					if (!err) {
-						resolve(rows);
-					} else {
-						reject(err);
+				pool.getConnection(function (err, conn) {
+					if (err) {
+						conn.release();
+						reject (err);
+						throw err;
 					}
-				});
 
-				conn.on("error", function (err) {
-					conn.release();
-					reject (err);
-					throw err;
+					conn.query(query, params, function (err, rows) {
+						conn.release();
+						if (!err) {
+							resolve(rows);
+						} else {
+							reject(err);
+						}
+					});
+
+					conn.on("error", function (err) {
+						conn.release();
+						reject (err);
+						throw err;
+					});
 				});
-			});
+			} catch (e) {
+				reject(e);
+				throw e;
+			}
+		}).catch(e => {
+			throw e;
 		});
 	}
 }

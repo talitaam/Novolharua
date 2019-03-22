@@ -11,13 +11,11 @@ class Doacao {
 		try {
 			doacaoService.getAllDoacoes().then(response => {
 				respObj.doacoes = response;
-				console.log(respObj.doacoes);
 				res.json(respObj);
 				next();
 			});
 		} catch(e) {
 			respObj.message = "Um erro inesperado ocorreu !" + e;
-			console.error(respObj.message);
 			res.json(respObj);
 			next();
 		} 	
@@ -26,21 +24,20 @@ class Doacao {
 	addDoacao (req, res, next) {	
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
-		let params = req.params;
-
-		console.log();
-
+		let params = req.body.cadastroAgen;
 		let respObj = {
 			message: "Salvo com sucesso !",
-			doacoes: []
+			doacao: []
 		};
 
 		try {
-			respObj.doacao  = doacaoService.addDoacao(params);
+			doacaoService.addDoacao(params).then(result => {
+				respObj.doacao  = result;
+				res.json(respObj);
+				next();
+			});
 		} catch(e) {
 			respObj.message = "Um erro inesperado ocorreu !" + e;
-			console.error(respObj.message);
-		} finally {
 			res.json(respObj);
 			next();
 		}

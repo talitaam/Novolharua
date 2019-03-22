@@ -5,19 +5,17 @@ class Rota {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		
 		let respObj = {};
+
 		try {
 			let params = req.body;
-			let dtDoacao = params.dtdoacao;
-			
+			let dtDoacao = params.parent;
 			rotaService.getAvaiableRotas(dtDoacao).then((response) => {
 				respObj.rotas = response;
-				console.log(response);
 				res.json(respObj);
 				next();
 			});
 			
 		} catch (e) {
-			console.error(e);
 			respObj.error = e;
 			res.json(respObj);
 			next();
