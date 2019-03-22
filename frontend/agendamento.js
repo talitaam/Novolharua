@@ -45,7 +45,7 @@ function verificaRotas() {
     data: { parent },
     dataType: "json",
     success: function (response) {
-      let array = response.regioes;
+      let array = response.rotas;
       /*
       Exemplo de como deve ser a response.regioes:
         let array = [
