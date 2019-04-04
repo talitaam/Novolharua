@@ -4,11 +4,11 @@ import Person from "@material-ui/icons/Person";
 import Assignment from "@material-ui/icons/Assignment";
 import LocationOn from "@material-ui/icons/LocationOn";
 
-// core components/views for Admin layout
-import DashboardPage from "views/Dashboard/Dashboard.jsx";
-import UserProfile from "views/UserProfile/UserProfile.jsx";
-import CadDoacao from "views/Agendamento/CadDoacao.jsx";
-import Maps from "views/Maps/Maps.jsx";
+// core components/screens for Admin layout
+import DashboardPage from "screens/Dashboard/Dashboard.jsx";
+import UserProfile from "screens/UserProfile/UserProfile.jsx";
+import CadDoacao from "screens/Agendamento/CadDoacao.jsx";
+import Maps from "screens/Maps/Maps.jsx";
 
 const dashboardRoutes = [
   {

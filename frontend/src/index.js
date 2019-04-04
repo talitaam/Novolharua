@@ -16,7 +16,7 @@ ReactDOM.render(
     <Switch>
       <Route path="/doador" component={Doador} />
       <Route path="/test" component={Admin} />
-      <Redirect from="/" to="/doador" />
+      <Redirect from="/" to="/doador/user" />
     </Switch>
   </Router>,
   document.getElementById("root")
