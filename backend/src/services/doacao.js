@@ -1,4 +1,5 @@
 import dbService from "../util/db";
+import moment from "moment";
 
 class Doacao {
 	constructor() {
@@ -13,10 +14,21 @@ class Doacao {
 	}
 
 	addDoacao (doacao) {
+
+		console.log(doacao);
+
+		if(doacao.rota === "area_hospitalar") {
+			doacao.rota = '1';
+		} else if(doacao.rota === "praca_savassi") {
+			doacao.rota = '2';
+		} else if(doacao.rota === "praca_liberdade") {
+			doacao.rota = '3';
+		}
+
 		let queryParams = {
-			idRota : doacao.rota, 
+			idRota : doacao.rota , 
 			nomeDoador : doacao.doador, 
-			dtDoacao : doacao.data
+			dtDoacao : moment(doacao.data).format('YYYY-MM-DD')
 		};
 
 		return dbService.runQuery(this.INSERT_DOACAO, queryParams, result => {

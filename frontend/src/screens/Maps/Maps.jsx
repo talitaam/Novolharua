@@ -1,8 +1,6 @@
 import React from "react";
-
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import Select from "components/Inputs/Select.jsx";
 
 import {
   withScriptjs,
@@ -15,12 +13,9 @@ const CustomSkinMap = withScriptjs(
   withGoogleMap(props => (
     <GridContainer>
       <GridItem xs="12" md="3" sm="12">
-        <Select />
-      </GridItem>  
-      <GridItem xs="12" md="3" sm="12">
         <GoogleMap
           defaultZoom={13}
-          defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
+          defaultCenter={{ lat: -20.748817, lng: -50.985428 }}
           defaultOptions={{
             scrollwheel: false,
             zoomControl: true,
@@ -86,7 +81,7 @@ const CustomSkinMap = withScriptjs(
             ]
           }}
         >
-          <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
+          <Marker position={{ lat: 40.748817, lng: 120.985428 }} />
         </GoogleMap>
       </GridItem>
     </GridContainer>

@@ -24,6 +24,8 @@ class db {
 				if(params)  
 					query = this.prepareQuery(query, params);
 
+				console.log(query);
+
 				pool.getConnection(function (err, conn) {
 					if (err) {
 						conn.release();

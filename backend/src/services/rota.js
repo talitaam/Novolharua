@@ -1,5 +1,4 @@
 import dbService from "../util/db";
-import moment from "moment";
 
 class Rota {
 	constructor() {
@@ -8,7 +7,7 @@ class Rota {
 
 	getAvaiableRotas (dtDoacao) {
 		let queryParams = {
-			DTDOACAO : moment(dtDoacao).format("DD/MM/YYYY") 
+			DTDOACAO : dtDoacao 
 		};
 
 		return dbService.runQuery(this.GET_AVAIABLE_ROTAS, queryParams).then(result => {
@@ -17,7 +16,7 @@ class Rota {
 			result.forEach((ele) => {
 				newArray = newArray.concat({
 					id : ele.IDROTA, 
-					display : ele.NMROTA,
+					label : ele.NMROTA,
 					value : ele.SGROTA
 				});
 			});

@@ -24,7 +24,7 @@ server.on("after", restify.plugins.metrics({ server: server }, function onMetric
 	logger.trace(`${metrics.method} ${metrics.path} ${metrics.statusCode} ${metrics.latency} ms`);
 }));
 
-server.listen(3000, function () {
+server.listen(3001, function () {
 	logger.info("%s listening at %s", server.name, server.url);
 });
 

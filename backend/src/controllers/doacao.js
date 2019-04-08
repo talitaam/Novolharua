@@ -1,4 +1,5 @@
 import doacaoService from "../services/doacao"; 
+import moment from "moment";
 
 class Doacao {
 	getAllDoacoes (req, res, next) {
@@ -10,7 +11,12 @@ class Doacao {
 
 		try {
 			doacaoService.getAllDoacoes().then(response => {
+				response.forEach((row) => {
+					row['DTDOACAO'] = moment(row['DTDOACAO']).format('DD/MM/YYYY');
+				});
+
 				respObj.doacoes = response;
+
 				res.json(respObj);
 				next();
 			});
@@ -24,7 +30,7 @@ class Doacao {
 	addDoacao (req, res, next) {	
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
-		let params = req.body.cadastroAgen;
+		let params = req.body.doacao;
 		let respObj = {
 			message: "Salvo com sucesso !",
 			doacao: []
