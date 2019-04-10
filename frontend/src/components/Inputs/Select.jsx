@@ -16,7 +16,7 @@ class CustomSelect extends React.Component {
     componentDidMount() {
         fetch('http://localhost:3001/rota/', {
             method: "POST", 
-            body: JSON.stringify(new Date)
+            body: JSON.stringify(new Date() )
         })
         .then((res) => res.json())
         .then((response) => {

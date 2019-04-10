@@ -33,6 +33,11 @@ const styles = {
 };
 
 class ListarDoacoes extends React.Component {
+  tableColumns = [
+    "Nome do doador", 
+    "Data", 
+    "Região"
+  ];  
   
   constructor(props) {
     super(props);
@@ -75,7 +80,7 @@ class ListarDoacoes extends React.Component {
                 <CardBody>
                     <Table
                     tableHeaderColor="warning"
-                    tableHead={["Nome do doador", "Data", "Região"]}
+                    tableHead={this.tableColumns}
                     tableData={this.state.rows}
                     />
                 </CardBody>

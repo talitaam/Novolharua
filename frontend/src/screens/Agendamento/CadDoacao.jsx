@@ -14,6 +14,7 @@ import Select from "components/Inputs/Select";
 import Alert from "components/Alerts/Alert";
 import $ from "jquery";
 import moment from "moment";
+import Map from "components/Maps/Map.jsx";
 
 const styles = {
   cardCategoryWhite: {
@@ -34,6 +35,26 @@ const styles = {
   }
 };
 
+const mapsPlaces = {
+  "praca_liberdade": {
+    defaultBounds= {
+      north: -19.929512,
+      south: -19.933168, 
+      east: -43.933712,  
+      west: -43.940968
+    },
+    defaultUrl="https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg",
+    defaultZoom=17.3,
+    defaultCenter={lat: -19.93134, lng: -43.93734}
+  },
+  "praca_savassi": {
+
+  },
+  "area_hospitalar": {
+    
+  }
+}
+
 class CadDoacao extends React.Component {
   constructor() {
     super();
@@ -44,7 +65,8 @@ class CadDoacao extends React.Component {
       doador: {},
       rota: "",
       options: [],
-      image: ''
+      image: '',
+      map: this.initMapObject()
     };
 
     this.enviarDados = this.enviarDados.bind(this);
@@ -52,18 +74,32 @@ class CadDoacao extends React.Component {
     this.changeData =  this.changeData.bind(this);
   }
   
-  buscarRotas () {
-    fetch('http://localhost:3001/rotas/', {
+  initMapObject() {
+    return (
+      {
+        defaultBounds : "",  
+        defaultUrl : "",
+        defaultZoom : "",
+        defaultCenter : ""
+      }
+    );
+  }
+
+  fetchRotas () {
+    return fetch('http://localhost:3001/rotas/', {
       method: "POST", 
       body: JSON.stringify(moment().format('YYYY-MM-DD'))
-    })
-    .then((res) => res.json())
-    .then((json) => {
-      this.setState({
-        options: json.rotas,
-        image: window.selectedOption.image
-      });
-    }); 
+    }).then((res) => res.json());
+  }
+
+  buscarRotas () {
+    this.fetchRotas()
+      .then((json) => {
+        this.setState({
+          options: json.rotas,
+          image: window.selectedOption.image
+        });
+      }); 
   }
 
   enviarDados () {
@@ -92,10 +128,6 @@ class CadDoacao extends React.Component {
     }
   };
 
-  changeImage (image) {
-    this.setState({'image': image});
-  }
-
   changeData (data) {
     console.log(data);
     fetch('http://localhost:3001/rotas/', {
@@ -109,6 +141,31 @@ class CadDoacao extends React.Component {
         image: window.selectedOption.image    
       });
     }); 
+  }
+
+  changeMap () {
+    const mapObj = {
+
+    }
+
+    defaultBounds={props.defaultBounds}
+    defaultUrl={props.defaultUrl}
+      defaultZoom=17.3
+      defaultCenter={props.defaultCenter}
+
+    // zoom: 
+
+    // var imageBounds = {
+    //           north: -19.929512,
+    //           south: -19.933168, 
+    //           east: -43.933712,  
+    //           west: -43.940968
+    //         };
+
+    // center: {lat: -19.93134, lng: -43.93734}  //centro do mapa
+
+    // https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg
+
   }
 
   render () {
@@ -137,8 +194,13 @@ class CadDoacao extends React.Component {
             </GridContainer> 
           </GridItem>
           <GridItem xs={12} sm={12} md={12}>
-            <div id="map"> <img src={this.state.image} /></div>
             {/* <Maps /> */}
+            <Map 
+              defaultBounds={this.state.defaultBounds}
+              defaultUrl={this.state.defaultUrl}
+              defaultZoom={this.state.defaultZoom}
+              defaultCenter={this.state.defaultCenter}
+            />
           </GridItem>
           <GridItem xs={4} sm={4} md={4}></GridItem>
           <GridItem xs={4} sm={4} md={4}>
