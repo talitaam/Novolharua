@@ -1,13 +1,10 @@
 import React from 'react';
-const { compose } = require("recompose");
 const {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
   GroundOverlay,
 } = require("react-google-maps");
-
-const google = window.google;
 
 const MapWithGroundOverlay = withScriptjs(
     withGoogleMap(props =>
@@ -19,13 +16,9 @@ const MapWithGroundOverlay = withScriptjs(
                 defaultUrl={props.defaultUrl}
                 defaultBounds={
                     props.defaultBounds
-                    // new google.maps.LatLngBounds(
-                    //     new google.maps.LatLng(40.712216, -74.22655),
-                    //     new google.maps.LatLng(40.773941, -74.12544)
-                    // )
                 }
 
-            defaultOpacity={.5}
+            defaultOpacity={1}
             />
         </GoogleMap>
     )

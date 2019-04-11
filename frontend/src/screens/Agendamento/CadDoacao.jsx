@@ -8,10 +8,8 @@ import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import Maps from "screens/Maps/Maps.jsx";
 import DatePicker from "components/Date/DatePicker.jsx";
 import Select from "components/Inputs/Select";
-import Alert from "components/Alerts/Alert";
 import $ from "jquery";
 import moment from "moment";
 import Map from "components/Maps/Map.jsx";
@@ -37,21 +35,37 @@ const styles = {
 
 const mapsPlaces = {
   "praca_liberdade": {
-    defaultBounds= {
+    defaultBounds: {
       north: -19.929512,
       south: -19.933168, 
       east: -43.933712,  
       west: -43.940968
     },
-    defaultUrl="https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg",
-    defaultZoom=17.3,
-    defaultCenter={lat: -19.93134, lng: -43.93734}
+    defaultUrl:"https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg",
+    defaultZoom:17.3,
+    defaultCenter:{lat: -19.93134, lng: -43.93734}
   },
   "praca_savassi": {
-
+    defaultZoom: 17.3,
+    defaultBounds: {
+      north: -19.936686,
+      south: -19.939718,
+      east: -43.933951,
+      west: -43.939428
+    },
+    defaultCenter: {lat: -19.938202, lng: -43.9366895},
+    defaultUrl: "https://i.ibb.co/FgRtynK/Rota-Praca-Savassi.jpg" 
   },
   "area_hospitalar": {
-    
+    defaultZoom: 17.3,
+    defaultBounds: {
+      north: -19.922602,
+      south: -19.926201,
+      east: -43.923093,
+      west: -43.929062
+    },
+    defaultCenter: {lat: -19.9244015, lng: -43.9260775},
+    defaultUrl: "https://i.ibb.co/F4GzSn5/Rota-Area-Hospitalar.jpg"
   }
 }
 
@@ -59,45 +73,41 @@ class CadDoacao extends React.Component {
   constructor() {
     super();
     this.message = "Doação agendada com sucesso!";
+    
     this.state = { 
       nomeDoador: "",
-      dataDoacao: moment().format('YYYY-MM-DD'),
-      doador: {},
+      dataDoacao: new Date (),
       rota: "",
       options: [],
       image: '',
-      map: this.initMapObject()
+      map: [Object.values(mapsPlaces)[0]]
     };
+    
+    this.buscarRotas();
 
     this.enviarDados = this.enviarDados.bind(this);
     this.buscarRotas = this.buscarRotas.bind(this);
-    this.changeData =  this.changeData.bind(this);
-  }
-  
-  initMapObject() {
-    return (
-      {
-        defaultBounds : "",  
-        defaultUrl : "",
-        defaultZoom : "",
-        defaultCenter : ""
-      }
-    );
+    this.changeData  = this.changeData.bind(this);
+    this.changeRoute = this.changeRoute.bind(this);
+    this.renderMap   = this.renderMap.bind(this); 
   }
 
-  fetchRotas () {
-    return fetch('http://localhost:3001/rotas/', {
+  fetchRotas (date) {
+    date = date || moment();
+    
+    return fetch('http://localhost:3001/rota/', {
       method: "POST", 
-      body: JSON.stringify(moment().format('YYYY-MM-DD'))
+      body: JSON.stringify({ 'data' : moment(date).format('YYYY-MM-DD') })
     }).then((res) => res.json());
   }
 
   buscarRotas () {
     this.fetchRotas()
-      .then((json) => {
+      .then(json => {
+        const rotas = Object.values(json.rotas);
         this.setState({
           options: json.rotas,
-          image: window.selectedOption.image
+          rota : rotas.length > 0 ? rotas[0] : "" 
         });
       }); 
   }
@@ -106,7 +116,7 @@ class CadDoacao extends React.Component {
     let doacao = { 
       doador: $('#nmDoador').val(), 
       data: this.state.dataDoacao,
-      rota: window.selectedOption.value
+      rota: this.state.rota.id
     };
 
     if (!doacao.doador && !doacao.data && !doacao.rota) { 
@@ -128,50 +138,48 @@ class CadDoacao extends React.Component {
     }
   };
 
-  changeData (data) {
-    console.log(data);
-    fetch('http://localhost:3001/rotas/', {
-      method: "POST", 
-      body: moment(this.state.dataDoacao).format('YYYY-MM-DD')
-    })
-    .then((res) => res.json())
-    .then((json) => {
-      this.setState({
-        options: json.rotas,
-        image: window.selectedOption.image    
+  changeData (date) {
+    let actualDate = moment(date, 'DD/MM/YYYY');
+
+    if(!actualDate.isValid()) {
+      alert("Data inválida !");
+    } else if(actualDate.isBefore(moment(), 'day') ) {
+      alert("Favor selecionar apenas datas após a data de hoje !");
+    } else {
+      this.fetchRotas(date).then((json) => {
+        this.setState({
+          dataDoacao: new Date (actualDate),
+          options: json.rotas,
+          rota: ""
+        });
       });
-    }); 
+    }
   }
 
-  changeMap () {
-    const mapObj = {
+  changeRoute (route) {
+    const mapObject = mapsPlaces[route.value];
+    console.log(mapObject);
+    this.setState({
+        map: [mapObject],
+        rota: route
+    });
+  }
 
-    }
-
-    defaultBounds={props.defaultBounds}
-    defaultUrl={props.defaultUrl}
-      defaultZoom=17.3
-      defaultCenter={props.defaultCenter}
-
-    // zoom: 
-
-    // var imageBounds = {
-    //           north: -19.929512,
-    //           south: -19.933168, 
-    //           east: -43.933712,  
-    //           west: -43.940968
-    //         };
-
-    // center: {lat: -19.93134, lng: -43.93734}  //centro do mapa
-
-    // https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg
-
+  renderMap (mapData, index ) {
+    return (
+      <Map 
+        key= {index}
+        defaultBounds={mapData.defaultBounds}
+        defaultUrl={mapData.defaultUrl}
+        defaultZoom={mapData.defaultZoom}
+        defaultCenter={mapData.defaultCenter}
+      />
+    );
   }
 
   render () {
     return (
       <div>
-        <Alert message={this.state.message}/>
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <GridContainer>
@@ -179,28 +187,26 @@ class CadDoacao extends React.Component {
                 <CustomInput
                   labelText="Doador :"
                   id="nmDoador"
-                  inputProps = {this.state.doador}
                   formControlProps={{
                     fullWidth: true
                   }}
                 />
               </GridItem>
               <GridItem xs={12} sm={12} md={3}>
-                <DatePicker selected={this.state.dataDoacao} onChange={this.changeData} />
+                <DatePicker selected={this.state.dataDoacao} 
+                            onChange={this.changeData} />
               </GridItem>
               <GridItem xs={12} sm={12} md={3}>
-                <Select options={this.state.options} value={this.state.rota} />
+                <Select options={this.state.options} 
+                        value={this.state.rota} 
+                        onChange={this.changeRoute} 
+                        placeholder={"Selecione :"} 
+                        noOptionsMessage={() => "Não há rotas disponíveis !"}/>
               </GridItem>
             </GridContainer> 
           </GridItem>
           <GridItem xs={12} sm={12} md={12}>
-            {/* <Maps /> */}
-            <Map 
-              defaultBounds={this.state.defaultBounds}
-              defaultUrl={this.state.defaultUrl}
-              defaultZoom={this.state.defaultZoom}
-              defaultCenter={this.state.defaultCenter}
-            />
+            {this.state.map.map((mapObject, index) => this.renderMap(mapObject, index))}
           </GridItem>
           <GridItem xs={4} sm={4} md={4}></GridItem>
           <GridItem xs={4} sm={4} md={4}>

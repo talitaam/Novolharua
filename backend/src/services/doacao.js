@@ -14,17 +14,6 @@ class Doacao {
 	}
 
 	addDoacao (doacao) {
-
-		console.log(doacao);
-
-		if(doacao.rota === "area_hospitalar") {
-			doacao.rota = '1';
-		} else if(doacao.rota === "praca_savassi") {
-			doacao.rota = '2';
-		} else if(doacao.rota === "praca_liberdade") {
-			doacao.rota = '3';
-		}
-
 		let queryParams = {
 			idRota : doacao.rota , 
 			nomeDoador : doacao.doador, 
