@@ -30,7 +30,7 @@ class Doacao {
 	addDoacao (req, res, next) {	
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
-		let params = req.body.doacao;
+		let params = JSON.parse(req.body);
 		let respObj = {
 			message: "Salvo com sucesso !",
 			doacao: []

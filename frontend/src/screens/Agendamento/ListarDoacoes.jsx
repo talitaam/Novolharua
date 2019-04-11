@@ -89,7 +89,7 @@ class ListarDoacoes extends React.Component {
           <GridItem xs={4} sm={4} md={4}> 
           </GridItem>
           <GridItem xs={4} sm={4} md={4}>
-            <Button color="primary" position="center" a href = "/doador/agendamento">Cadastrar Doação</Button> 
+            <Button color="primary" position="center" href = "/doador/agendamento">Cadastrar Doação</Button> 
           </GridItem>
           <GridItem xs={4} sm={4} md={4}> 
           </GridItem>
