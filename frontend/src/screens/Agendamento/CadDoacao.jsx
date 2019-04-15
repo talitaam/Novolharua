@@ -127,7 +127,7 @@ class CadDoacao extends React.Component {
 		};
 		let canSave = true;
 
-		if(!doacao.doador || !(/^\w+$/.test(doacao.doador))) {
+		if(!doacao.doador.trim()) {
 			$('#nmDoador').val('');
 			alert("Nome do doador não é válido ! ");
 			canSave = false;
@@ -175,6 +175,7 @@ class CadDoacao extends React.Component {
 			} else {
 				rota = "";
 				maps = [];
+				alert("Não há rotas disponíveis para esta data !");	
 			}
 
 			this.setState({
