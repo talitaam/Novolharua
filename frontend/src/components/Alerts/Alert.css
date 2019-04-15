@@ -1,0 +1,10 @@
+.show {
+    display: block;
+    position: fixed !important;
+    width: 500px;
+    height: 200px;
+}
+
+.hidden {
+    display: none;
+}

@@ -1,0 +1,16 @@
+.divSpacing {
+    margin-top: 48px;
+    margin-bottom: 12px;
+}
+
+.select, .css-vj8t7z {
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid #d2d2d2;
+    background-color: none;
+}
+
+
+.select:focus {
+    border-bottom: 1px solid #9C27B0;
+}

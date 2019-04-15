@@ -1,4 +1,6 @@
 import rotaService from "../services/rota";
+import moment from "moment";
+import var_dump from "var_dump";
 
 class Rota {
 	getAvaiableRotas (req, res, next) {
@@ -7,8 +9,11 @@ class Rota {
 		let respObj = {};
 
 		try {
-			let params = req.body;
-			let dtDoacao = params.parent;
+			let params = JSON.parse(req.body);
+			let dtDoacao = moment(params.data, 'YYYY-MM-DD').format('DD/MM/YYYY');
+
+			var_dump(params);
+			var_dump(dtDoacao);
 			rotaService.getAvaiableRotas(dtDoacao).then((response) => {
 				respObj.rotas = response;
 				res.json(respObj);
@@ -16,6 +21,7 @@ class Rota {
 			});
 			
 		} catch (e) {
+			var_dump(e);
 			respObj.error = e;
 			res.json(respObj);
 			next();
