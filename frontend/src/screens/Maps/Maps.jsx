@@ -1,8 +1,8 @@
 import React from "react";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import Select from "components/Inputs/Select.jsx";
-import Map from "components/Maps/Map.jsx";
+import Select from "components/Select/Select.jsx";
+import Map from "components/Map/Map.jsx";
 
 import moment from "moment";
 

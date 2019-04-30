@@ -9,8 +9,8 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import DatePicker from "components/Date/DatePicker.jsx";
-import Select from "components/Inputs/Select";
-import Map from "components/Maps/Map.jsx";
+import Select from "components/Select/Select";
+import Map from "components/Map/Map.jsx";
 
 import $ from "jquery";
 import moment from "moment";

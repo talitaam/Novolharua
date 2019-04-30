@@ -75,13 +75,13 @@ class ListarDoacoes extends React.Component {
           <GridItem xs={12} sm={12} md={12}>
             <Card>
                 <CardHeader color="warning">
-                    <h4 className={this.classes.cardTitleWhite}>Lista de Agendamentos Realizados</h4>
+                    <h4 className={ this.classes.cardTitleWhite }>Lista de Agendamentos Realizados</h4>
                 </CardHeader>
                 <CardBody>
                     <Table
                     tableHeaderColor="warning"
-                    tableHead={this.tableColumns}
-                    tableData={this.state.rows}
+                    tableHead={ this.tableColumns }
+                    tableData={ this.state.rows }
                     />
                 </CardBody>
               </Card>
