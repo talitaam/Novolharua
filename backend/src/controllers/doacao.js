@@ -1,4 +1,4 @@
-import doacaoService from "../services/doacao"; 
+import doacaoService from "../services/doacao";
 import moment from "moment";
 
 class Doacao {
@@ -24,10 +24,10 @@ class Doacao {
 			respObj.message = "Um erro inesperado ocorreu !" + e;
 			res.json(respObj);
 			next();
-		} 	
+		}
 	}
 
-	addDoacao (req, res, next) {	
+	addDoacao (req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		let params = JSON.parse(req.body);
