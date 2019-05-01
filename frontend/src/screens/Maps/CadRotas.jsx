@@ -182,43 +182,41 @@ class CadRotas extends React.Component {
         
         return (
             <div>
-                <GridContainer>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <CustomInput
-                            labelText="Nome da rota:"
-                            id="float"
-                            formControlProps={{
-                                fullWidth: true
-                            }}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <CustomInput
-                            labelText="Número de pessoas atendidas:"
-                            id="float"
-                            formControlProps={{
-                                fullWidth: true
-                            }}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Select options={modesOfTraveling}
-                            value={modesOfTraveling[0]}
-                            onChange={() => { }}
-                            placeholder={"Selecione :"}
-                            noOptionsMessage={"Não há rotas disponíveis !"} />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Button color="danger">Limpar Marcadores</Button>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Button color="success" onClick={this.cadastrarRota}>Salvar</Button>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <Direction />
-                    </GridItem>
-                </GridContainer>
-            </div>
+    <GridContainer justify="center" alignItems="baseline">
+      <GridItem xs={12} sm={12} md={8}>
+        <CustomInput
+          labelText="Nome da rota:"
+          id="float"
+          formControlProps={{
+            fullWidth: true
+          }}
+        />
+        <CustomInput
+          labelText="Número de pessoas atendidas:"
+          id="float"
+          formControlProps={{
+            fullWidth: true
+          }}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={12} md={4}>
+        <Select
+          options={modesOfTraveling}
+          value={modesOfTraveling[0]}
+          onChange={() => {}}
+          placeholder={"Selecione :"}
+          noOptionsMessage={"Não há rotas disponíveis !"}
+        />
+        <Button color="danger">Limpar Marcadores</Button>
+        <Button color="success">Salvar</Button>
+      </GridItem>
+    </GridContainer>
+    <GridContainer>
+      <GridItem xs={12} sm={12} md={12}>
+        <Direction />
+      </GridItem>
+    </GridContainer>
+  </div>
         );
     }
 }
