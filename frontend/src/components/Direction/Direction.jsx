@@ -1,49 +1,89 @@
 import React from "react";
-import { compose, withProps, lifecycle } from "recompose";
+import { compose, withProps, withState, withHandlers, mapProps } from "recompose";
 import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  DirectionsRenderer,
+    withScriptjs,
+    withGoogleMap,
+    GoogleMap,
+    DirectionsRenderer,
+    Marker
 } from "react-google-maps";
 
+const MAX_ROUTE_POINTS = 10;
 
-const Direction = compose(
-  withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAXRoo8kh7I1XuGA_OjinkIoZ4mEJ0w4j4&v=3.exp&libraries=geometry,drawing,places",
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
-    mapElement: <div style={{ height: `100%` }} />,
-  }),
-  withScriptjs,
-  withGoogleMap,
-  lifecycle({
-    componentDidMount() {
-      const google = window.google;
-      const DirectionsService = new google.maps.DirectionsService();
+const enhance = compose(
+    withProps({
+        googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAXRoo8kh7I1XuGA_OjinkIoZ4mEJ0w4j4&v=3.exp&libraries=geometry,drawing,places",
+        loadingElement: <div style={{ height: `100%` }} />,
+        containerElement: <div style={{ height: `400px` }} />,
+        mapElement: <div style={{ height: `100%` }} />
+    }),
+    withState('waypoints', 'setWaypoints', []),
+    withState('directions', 'setDirection', []),
+    withHandlers({
+        clickHandler: props => event => {
+            const { waypoints, setWaypoints } = props;
+            if (waypoints.length > MAX_ROUTE_POINTS) {
+                alert('Limite de pontos máximo atigido ! Não é possível adicionar mais pontos !');
+            } else {
+                waypoints.push({
+                    location: event.latLng,
+                    stopover: true
+                });
+                setWaypoints(() => waypoints);
+            }
+        },
+        rightClickHandler: props => () => {
+            const { google } = window;
+            const { waypoints, setDirection, setWaypoints, travelMode } = props;
 
-      DirectionsService.route({
-        origin: new google.maps.LatLng(41.8507300, -87.6512600),
-        destination: new google.maps.LatLng(41.8525800, -87.6514100),
-        travelMode: google.maps.TravelMode.DRIVING,
-      }, (result, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
-          this.setState({
-            directions: result,
-          });
-        } else {
-          console.error(`error fetching directions ${result}`);
+            if (!waypoints.length || waypoints.length < 2) {
+                alert('Pontos insuficientes para calcular uma rota ! É preciso de no mínimo 3 !');
+            } else {
+                const waypointsAux = waypoints.slice(0); 
+                const origin = waypointsAux.shift().location;
+                const destination = waypointsAux.pop().location;
+
+                const DirectionsService = new google.maps.DirectionsService();
+
+                DirectionsService.route({
+                    origin: origin,
+                    destination: destination,
+                    waypoints: waypointsAux,
+                    travelMode: google.maps.TravelMode['DRIVING'],
+                }, (result, status) => {
+                    if (status === google.maps.DirectionsStatus.OK) {
+                        setDirection(() => result);
+                        setWaypoints(() => []);
+                    } else {
+                        console.error(`Erro ao buscar rota : ${result}`);
+                    }
+                });
+            }
         }
-      });
-    }
-  })
-)(props =>
-  <GoogleMap
-    defaultZoom={7}
-    defaultCenter={new window.google.maps.LatLng(41.8507300, -87.6512600)}
-  >
-    {props.directions && <DirectionsRenderer directions={props.directions} />}
-  </GoogleMap>
+    }),
+    mapProps(({ waypoints, ...rest }) => {
+        return (
+            {
+                markers: waypoints.map((point, index) => {
+                    return (<Marker position={point.location} key={ index } />);
+                }),
+                ...rest
+            }
+        )
+    }),
+    withScriptjs,
+    withGoogleMap
+);
+
+const Direction = enhance(({ clickHandler, rightClickHandler, markers, directions, defaultZoom, defaultCenter }) => (
+    <GoogleMap
+        defaultZoom={ 14 }
+        defaultCenter={ new window.google.maps.LatLng(-19.932654, -43.936020) }
+        onClick={ clickHandler }
+        onRightClick={ rightClickHandler } >
+        { markers }
+        { directions && <DirectionsRenderer directions={directions} /> }
+    </GoogleMap>)
 );
 
 export default Direction;

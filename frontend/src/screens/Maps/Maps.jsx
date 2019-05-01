@@ -129,8 +129,7 @@ class Maps extends React.Component {
 						<Select options={this.state.rotas}
 							value={this.state.rota}
 							onChange={this.changeRoute}
-							placeholder={"Selecione :"}
-							noOptionsMessage={() => "Não há rotas disponíveis !"} />
+							noOptionsMessage={ "Não há rotas disponíveis !" } />
 					</GridItem>
 					<GridItem xs={12} sm={12} md={4} />
 					<GridItem xs={12} sm={12} md={12}>

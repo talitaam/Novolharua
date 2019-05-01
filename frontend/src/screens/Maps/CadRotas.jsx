@@ -24,7 +24,7 @@ const modesOfTraveling = [
     }
 ];
 
-let CadRotas = () => (
+const CadRotas = () => (
     <div>
         <GridContainer>
             <GridItem xs={12} sm={12} md={4} />
@@ -33,7 +33,7 @@ let CadRotas = () => (
                     value={modesOfTraveling[0]}
                     onChange={() => { }}
                     placeholder={"Selecione :"}
-                    noOptionsMessage={() => "Não há rotas disponíveis !"} />
+                    noOptionsMessage={ "Não há rotas disponíveis !" } />
             </GridItem>
             <GridItem xs={12} sm={12} md={4} />
             <GridItem xs={12} sm={12} md={12}>
