@@ -36,7 +36,7 @@ class Rota {
 			let nomeRota = params.nomeRota;
 			let rotaMapsApi = params.rotaMaps;
 			let rotaUsuario = params.rotaUsuario;
-			ValidarPontos validarPontosMaps = new ValidarPontos();
+			let validarPontosMaps = new ValidarPontos();
 
 			var_dump(params);
 			var_dump(qtdPessoas);
