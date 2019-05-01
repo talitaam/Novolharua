@@ -2,6 +2,7 @@ import dbService from "../util/db";
 
 class Rota {
 	constructor() {
+		this.GET_AVAIABLE_ROTAS = "SELECT IDROTA, SGROTA, NMROTA FROM ROTA WHERE IDROTA NOT IN (SELECT IDROTA FROM DOACAO WHERE DTDOACAO = STR_TO_DATE(@DTDOACAO, '%d/%m/%Y')) ORDER BY 1";
 		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `QTDPESSOAS`, `DTINCLUSAO`) VALUES ( @nomRota, @qtdPessoas, now())";
 		this.INSERT_PONTO_MAPS = "INSERT INTO `PONTOMAPS`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.INSERT_PONTO_USUARIO = "INSERT INTO `PONTOUSUARIO`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
@@ -47,6 +48,26 @@ class Rota {
 			return result;
 		});
 	}
+
+	getAvaiableRotas (dtDoacao) {
+		let queryParams = {
+			DTDOACAO : dtDoacao
+		};
+
+		return dbService.runQuery(this.GET_AVAIABLE_ROTAS, queryParams).then(result => {
+			let newArray = [];
+
+			result.forEach((ele) => {
+				newArray = newArray.concat({
+					id : ele.IDROTA,
+					label : ele.NMROTA,
+					value : ele.SGROTA
+				});
+			});
+
+			return newArray;
+		});
+	}       
 
 	getRotaPorId(idRota){
 
