@@ -4,15 +4,17 @@ import './Select.css';
 
 class CustomSelect extends React.Component {
     render() {
+        const {value, onChange, options, placeholder, noOptionsMessage} = this.props;
+
         return (
             <div className="divSpacing">
                 <Select
                     className="select"
-                    value={this.props.value}
-                    onChange={this.props.onChange}
-                    options={this.props.options}
-                    placeholder={this.props.placeholder}
-                    noOptionsMessage={this.props.noOptionsMessage}
+                    value={ value }
+                    onChange={ onChange }
+                    options={ options }
+                    placeholder={ placeholder || "Selecione :" }
+                    noOptionsMessage={ () => noOptionsMessage }
                 />
             </div>
         );

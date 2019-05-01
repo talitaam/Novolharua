@@ -1,7 +1,7 @@
 {
-  "name": "material-dashboard-react",
-  "version": "1.6.0",
-  "description": "Material Dashboard React. Coded by Creative Tim",
+  "name": "Novolharua",
+  "version": "0.0.1",
+  "description": "Projeto destinado à disciplina de Trabalho Interdisciplinar de Software III do curso de bacharelado em Engenharia de Software - PUC Minas",
   "private": false,
   "main": "dist/index.js",
   "dependencies": {
@@ -21,11 +21,13 @@
     "react-datepicker": "^2.3.0",
     "react-dom": "16.8.1",
     "react-google-maps": "9.4.5",
+    "react-redux": "^7.0.3",
     "react-router-dom": "4.3.1",
     "react-scripts": "^2.1.8",
     "react-select": "^2.4.2",
     "react-swipeable-views": "0.13.1",
-    "recompose": "^0.30.0"
+    "recompose": "^0.30.0",
+    "redux": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,15 +42,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/creativetimofficial/material-dashboard-react.git"
+    "url": "git+https://github.com/Haddadson/Novoolharnarua.git"
   },
   "keywords": [],
-  "author": "Creative Tim <hello@creative-tim.com> (https://www.creative-tim.com/)",
+  "author": "thiguet",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/creativetimofficial/material-dashboard-react/issues"
-  },
-  "homepage": "https://creativetimofficial.github.io/material-dashboard-react/#/dashboard",
   "optionalDependencies": {
     "@types/googlemaps": "3.30.16",
     "@types/markerclustererplus": "2.1.33",

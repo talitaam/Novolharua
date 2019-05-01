@@ -1,8 +1,8 @@
 import React from "react";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import Select from "components/Inputs/Select.jsx";
-import Map from "components/Maps/Map.jsx";
+import Select from "components/Select/Select.jsx";
+import Map from "components/Map/Map.jsx";
 
 import moment from "moment";
 
@@ -129,8 +129,7 @@ class Maps extends React.Component {
 						<Select options={this.state.rotas}
 							value={this.state.rota}
 							onChange={this.changeRoute}
-							placeholder={"Selecione :"}
-							noOptionsMessage={() => "Não há rotas disponíveis !"} />
+							noOptionsMessage={ "Não há rotas disponíveis !" } />
 					</GridItem>
 					<GridItem xs={12} sm={12} md={4} />
 					<GridItem xs={12} sm={12} md={12}>

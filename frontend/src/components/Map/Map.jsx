@@ -1,9 +1,9 @@
 import React from 'react';
 const {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  GroundOverlay,
+    withScriptjs,
+    withGoogleMap,
+    GoogleMap,
+    GroundOverlay,
 } = require("react-google-maps");
 
 const MapWithGroundOverlay = withScriptjs(
@@ -18,7 +18,7 @@ const MapWithGroundOverlay = withScriptjs(
                     props.defaultBounds
                 }
 
-            defaultOpacity={1}
+                defaultOpacity={1}
             />
         </GoogleMap>
     )
