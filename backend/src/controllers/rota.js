@@ -36,6 +36,7 @@ class Rota {
 			let nomeRota = params.nomeRota;
 			let rotaMapsApi = params.rotaMaps;
 			let rotaUsuario = params.rotaUsuario;
+			ValidarPontos validarPontosMaps = new ValidarPontos();
 
 			var_dump(params);
 			var_dump(qtdPessoas);
@@ -49,30 +50,34 @@ class Rota {
 				idRota: 0
 			};
 
+			validarPontosMaps.getMostValuablePoints(rotaMapsApi.points);
+			rotaMapsApi.points = validarPontosMaps.points;
+
 			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
 				respObj.idRota = response.insertId;
 				console.log("Gravou rota com sucesso");
 				console.log(response.insertId);
 
 				rotaMapsApi.points.forEach(function (ponto, index) {
-					console.log("index: " + index);
 					var_dump(ponto.lat);
 					var_dump(ponto.lng);
 					console.log(respObj.idRota);
+
 					rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
 						console.log("Gravou pontoMaps com sucesso");
 						respObj.rotaMaps = response;
 						var_dump(response);
+					});
+				});
 
-						rotaUsuario.points.forEach(function (ponto, index) {
-							var_dump(ponto.lat);
-							var_dump(ponto.lng);
-							rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
-								console.log("Gravou pontoUsuario com sucesso");
-								respObj.rotaUsuario = response;
-								var_dump(response);
-							});
-						});
+				rotaUsuario.points.forEach(function (ponto, index) {
+					var_dump(ponto.lat);
+					var_dump(ponto.lng);
+
+					rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
+						console.log("Gravou pontoUsuario com sucesso");
+						respObj.rotaUsuario = response;
+						var_dump(response);
 					});
 				});
 			});
