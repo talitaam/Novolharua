@@ -52,6 +52,7 @@ const enhance = compose(
                     travelMode: google.maps.TravelMode['DRIVING'],
                 }, (result, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
+                        console.log(result);
                         setDirection(() => result);
                         setWaypoints(() => []);
                     } else {
