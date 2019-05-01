@@ -2,28 +2,21 @@ import dbService from "../util/db";
 
 class Rota {
 	constructor() {
-		this.GET_AVAIABLE_ROTAS = "SELECT IDROTA, SGROTA, NMROTA FROM ROTA WHERE IDROTA NOT IN (SELECT IDROTA FROM DOACAO WHERE DTDOACAO = STR_TO_DATE(@DTDOACAO, '%d/%m/%Y')) ORDER BY 1";
+		//TODO
+		this.INSERT_ROTA = "INSERT ";
 	}
 
-	getAvaiableRotas (dtDoacao) {
+	//TODO
+	setRota(nomeRota, qtdPessoas){
 		let queryParams = {
-			DTDOACAO : dtDoacao 
+			NOM_ROTA : nomeRota,
+			QTD_PESSOAS : qtdPessoas
 		};
 
-		return dbService.runQuery(this.GET_AVAIABLE_ROTAS, queryParams).then(result => {
-			let newArray = [];
-
-			result.forEach((ele) => {
-				newArray = newArray.concat({
-					id : ele.IDROTA, 
-					label : ele.NMROTA,
-					value : ele.SGROTA
-				});
-			});
-
-			return newArray;
+		return dbService.runQuery(this.INSERT_ROTA, queryParams, result => {
+			return result;
 		});
-	}       
+	}
 }
 
 export default new Rota ();
