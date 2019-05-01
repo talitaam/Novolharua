@@ -49,7 +49,7 @@ const enhance = compose(
                     origin: origin,
                     destination: destination,
                     waypoints: waypointsAux,
-                    travelMode: google.maps.TravelMode['WALKINGno'],
+                    travelMode: google.maps.TravelMode['WALKING'],
                 }, (result, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
                         setDirection(() => result);
