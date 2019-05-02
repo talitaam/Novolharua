@@ -8,7 +8,6 @@ import $ from "jquery";
 import Direction from "components/Direction/Direction.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import Select from "components/Select/Select.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import Map from "components/Map/Map.jsx";
@@ -85,35 +84,6 @@ class CadRotas extends React.Component {
         };
 
         this.cadastrarRota = this.cadastrarRota.bind(this);
-        this.buscarRotas = this.buscarRotas.bind(this);
-        this.changeRoute = this.changeRoute.bind(this);
-        this.renderMap = this.renderMap.bind(this);
-        window.canUpdate = true;
-    }
-
-    componentDidMount() {
-        // this.buscarRotas();
-    }
-
-    fetchRotas(date) {
-        date = date || moment();
-
-        return fetch('http://localhost:3001/rota/', {
-            method: "POST",
-            body: JSON.stringify({ 'data': moment(date).format('YYYY-MM-DD') })
-        }).then((res) => res.json());
-    }
-
-    buscarRotas() {
-        this.fetchRotas()
-            .then(json => {
-                const rotas = Object.values(json.rotas);
-                this.setState({
-                    rotas: rotas,
-                    rota: rotas.length > 0 ? rotas[0] : "",
-                    map: rotas.filter(map => map.id === rotas[0].id)
-                });
-            });
     }
 
     cadastrarRota() {
@@ -127,7 +97,7 @@ class CadRotas extends React.Component {
                 points: window.mapsRoute
             },
             rotaUsuario: {
-                points: window.waypoints
+                points: window.waypoints.map(({ location }) => ({ lat: location.lat(), lng: location.lng()}))
             }
         };
         let canSave = true;
