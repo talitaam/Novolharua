@@ -66,17 +66,6 @@ const enhance = compose(
             }
         }
     }),
-    lifecycle({
-        shouldComponentUpdate(nextProps, nextState) {
-            if (window.waypoints.length !== nextProps.waypoints.length || window.canUpdate) {
-                nextProps.setWaypoints(() => window.waypoints);
-                window.canUpdate = false;
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }),
     mapProps(({ waypoints, ...rest }) => {
         return (
             {
