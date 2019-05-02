@@ -12,6 +12,7 @@ import CustomInput from "../../components/CustomInput/CustomInput";
 import Map from "components/Map/Map.jsx";
 
 import moment from "moment";
+import CardBody from "../../components/Card/CardBody";
 
 const styles = {
   cardCategoryWhite: {
@@ -160,29 +161,17 @@ class CadRotas extends React.Component {
   }
 
   render() {
-    const modesOfTraveling = [
-      {
-        label: "Driving",
-        value: "DRIVING"
-      },
-      {
-        label: "Walking",
-        value: "WALKING"
-      },
-      {
-        label: "Bicycling",
-        value: "BICYCLING"
-      },
-      {
-        label: "Transit",
-        value: "TRANSIT"
-      }
-    ];
-
     return (
       <div>
-        <GridContainer justify="center" alignItems="baseline">
-          <GridItem xs={12} sm={12} md={8}>
+        <GridContainer justify="center" alignItems="center">
+          <GridItem xs={12} sm={12} md={5}>
+            <CardBody>
+              <h4>Instruções</h4>
+              <p>
+                Para traçar uma rota clique com o botão esquerdo do mouse em qualquer ponto. Para gerar uma rota clique com o botão direito em qualquer ponto no mapa. Serão aceitos no máximo 10 pontos.</p>
+            </CardBody>
+          </GridItem>
+          <GridItem xs={12} sm={12} md={7}>
             <CustomInput
               labelText="Nome da rota:"
               id="float"
@@ -198,14 +187,9 @@ class CadRotas extends React.Component {
               }}
             />
           </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
-            <Select
-              options={modesOfTraveling}
-              value={modesOfTraveling[0]}
-              onChange={() => {}}
-              placeholder={"Selecione :"}
-              noOptionsMessage={"Não há rotas disponíveis !"}
-            />
+        </GridContainer>
+        <GridContainer direction="row" justify="flex-end">
+          <GridItem xs={12} sm={12} md={12}>
             <Button color="danger">Limpar Marcadores</Button>
             <Button color="success">Salvar</Button>
           </GridItem>
