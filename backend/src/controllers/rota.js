@@ -1,4 +1,5 @@
 import rotaService from "../services/rota";
+import validarPontos from "../services/validarPontos";
 import moment from "moment";
 import var_dump from "var_dump";
 
@@ -36,7 +37,6 @@ class Rota {
 			let nomeRota = params.nomeRota;
 			let rotaMapsApi = params.rotaMaps;
 			let rotaUsuario = params.rotaUsuario;
-			let validarPontosMaps = new ValidarPontos();
 
 			var_dump(params);
 			var_dump(qtdPessoas);
@@ -50,8 +50,8 @@ class Rota {
 				idRota: 0
 			};
 
-			validarPontosMaps.getMostValuablePoints(rotaMapsApi.points);
-			rotaMapsApi.points = validarPontosMaps.points;
+			validarPontos.getMostValuablePoints(rotaMapsApi.points);
+			rotaMapsApi.points = validarPontos.points;
 
 			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
 				respObj.idRota = response.insertId;
@@ -59,8 +59,8 @@ class Rota {
 				console.log(response.insertId);
 
 				rotaMapsApi.points.forEach(function (ponto, index) {
-					var_dump(ponto.lat);
-					var_dump(ponto.lng);
+					console.log(ponto.lat);
+					console.log(ponto.lng);
 					console.log(respObj.idRota);
 
 					rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {

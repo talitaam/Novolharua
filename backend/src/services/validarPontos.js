@@ -5,15 +5,15 @@ class ValidarPontos {
 		this.points = [];
 	}
 
-	get points(){
+	getpoints(){
 		return this.points.slice(0);
 	}
 
-	addNaRotaVerdadeira (point) => {
+	addNaRotaVerdadeira (point) {
     this.points.push(point);
 	};
 
-	getMostValuablePoints (points) => {
+	getMostValuablePoints (points) {
 	    const MIN_DISTANCE_FOR_TWO_POINTS = 80,
 	          MAX_DISTANCE_FOR_TWO_POINTS = 200;
 	    let i = 0,
@@ -56,7 +56,7 @@ class ValidarPontos {
 	    }
 	};
 
-	getDistanceFromLatLonInKm(position1, position2) {
+	getDistanceFromLatLonInKm (position1, position2) {
 	    "use strict";
 	    var deg2rad = function (deg) { return deg * (Math.PI / 180); },
 	        R = 6371,
