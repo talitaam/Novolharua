@@ -50,8 +50,8 @@ class Rota {
 				idRota: 0
 			};
 
-			validarPontos.getMostValuablePoints(rotaMapsApi.points);
-			rotaMapsApi.points = validarPontos.points;
+			//validarPontos.getMostValuablePoints(rotaMapsApi.points);
+			//rotaMapsApi.points = validarPontos.points;
 
 			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
 				respObj.idRota = response.insertId;

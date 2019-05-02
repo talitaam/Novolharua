@@ -116,17 +116,17 @@ class CadRotas extends React.Component {
             });
     }
 
-    cadastrarRota() {    
+    cadastrarRota() {
         const doacao = {
             rota: this.state.rota.id
         };
         let data = {
-            routeName: $('#nmRota').val(),
+            nomeRota: $('#nmRota').val(),
             qtdPessoas: $('#nroPessoas').val(),
-            mapsRoute : {
+            rotaMaps : {
                 points: window.mapsRoute
             },
-            userRoute: {
+            rotaUsuario: {
                 points: window.waypoints
             }
         };
@@ -138,10 +138,10 @@ class CadRotas extends React.Component {
         }
 
         if (canSave) {
-            fetch('http://localhost:3001/doacao/add',
+            fetch('http://localhost:3001/rota/add',
                 {
                     method: "POST",
-                    body: JSON.stringify(doacao)
+                    body: JSON.stringify(data)
                 }
             ).then(res => res.json())
                 .then(json => {
