@@ -9,10 +9,10 @@ class Rota {
 		this.SELECT_ROTA_POR_ID = "SELECT RM.*, PM.* FROM ROTAMAPS RM JOIN PONTOMAPS PM ON RM.ID = PM.IDROTA WHERE RM.ID = @idRota";
 	}
 
-	addRota(nomeRota, qtdPessoas, rotaMapsApi, rotaUsuario){
+	addRota(nomeRota, qtdPessoas, rotaMapsApi, rotaUsuario) {
 		let queryParams = {
-			nomRota : nomeRota,
-			qtdPessoas : qtdPessoas
+			nomRota: nomeRota,
+			qtdPessoas: qtdPessoas
 		};
 
 		return dbService.runQuery(this.INSERT_ROTA, queryParams, result => {
@@ -20,14 +20,14 @@ class Rota {
 		});
 	}
 
-	addPontoUsuario(idOrdemPonto, idRota, latitude, longitude){
+	addPontoUsuario(idOrdemPonto, idRota, latitude, longitude) {
 		console.log(idRota);
 		console.log(latitude);
 		console.log(longitude);
 		let queryParams = {
 			idOrdemPonto: idOrdemPonto,
-			idRota : idRota,
-			lat : latitude,
+			idRota: idRota,
+			lat: latitude,
 			lng: longitude
 		};
 
@@ -36,11 +36,11 @@ class Rota {
 		});
 	}
 
-	addPontoMaps(idOrdemPonto, idRota, latitude, longitude){
+	addPontoMaps(idOrdemPonto, idRota, latitude, longitude) {
 		let queryParams = {
 			idOrdemPonto: idOrdemPonto,
-			idRota : idRota,
-			lat : latitude,
+			idRota: idRota,
+			lat: latitude,
 			lng: longitude
 		};
 
@@ -49,9 +49,9 @@ class Rota {
 		});
 	}
 
-	getAvaiableRotas (dtDoacao) {
+	getAvaiableRotas(dtDoacao) {
 		let queryParams = {
-			DTDOACAO : dtDoacao
+			DTDOACAO: dtDoacao
 		};
 
 		return dbService.runQuery(this.GET_AVAIABLE_ROTAS, queryParams).then(result => {
@@ -59,20 +59,19 @@ class Rota {
 
 			result.forEach((ele) => {
 				newArray = newArray.concat({
-					id : ele.IDROTA,
-					label : ele.NMROTA,
-					value : ele.SGROTA
+					id: ele.IDROTA,
+					label: ele.NMROTA,
+					value: ele.SGROTA
 				});
 			});
 
 			return newArray;
 		});
-	}       
-
-	getRotaPorId(idRota){
-
 	}
 
+	getRotaPorId(idRota) {
+
+	}
 }
 
-export default new Rota ();
+export default Rota;

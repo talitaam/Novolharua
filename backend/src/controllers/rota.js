@@ -1,5 +1,5 @@
 import rotaService from "../services/rota";
-import validarPontos from "../services/validarPontos";
+import { getMostValuablePoints } from "../services/points";
 import moment from "moment";
 import var_dump from "var_dump";
 
@@ -32,26 +32,20 @@ class Rota {
 	addRota(req, res, next){
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		try {
-			let params = JSON.parse(req.body);
-			let qtdPessoas = params.qtdPessoas;
-			let nomeRota = params.nomeRota;
-			let rotaMapsApi = params.rotaMaps;
-			let rotaUsuario = params.rotaUsuario;
+			const params = JSON.parse(req.body);
+			const qtdPessoas = params.qtdPessoas;
+			const nomeRota = params.nomeRota;
+			const rotaMapsApi = params.rotaMaps;
+			const rotaUsuario = params.rotaUsuario;
 
-			var_dump(params);
-			var_dump(qtdPessoas);
-			var_dump(nomeRota);
-
-			var_dump(rotaMapsApi);
-			var_dump(rotaUsuario);
-
-			let respObj = {
+			const respObj = {
 				message : "Salvo com sucesso !",
 				idRota: 0
 			};
 
-			//validarPontos.getMostValuablePoints(rotaMapsApi.points);
-			//rotaMapsApi.points = validarPontos.points;
+			const newPointsMapsAPI = getMostValuablePoints(rotaMapsApi.points);
+
+			var_dump( newPointsMapsAPI );
 
 			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
 				respObj.idRota = response.insertId;
