@@ -98,16 +98,28 @@ class CadRotas extends React.Component {
                 points: window.mapsRoute
             },
             rotaUsuario: {
-                points: window.waypoints.map(({ location }) => ({ lat: location.lat(), lng: location.lng()}))
+                points: window.waypoints
             }
         };
         let canSave = true;
+
+        if($('#nmRota').val() == ''){
+          alert("O campo nome da rota deve ser preenchido!");
+          canSave = false;
+        }
+
+        if($('#nroPessoas').val() == ''){
+          alert("O campo número de pessoas atendidas deve ser preenchido!");
+          canSave = false;
+        }
 
         if (!window.mapsRoute) {
             alert("É preciso que uma rota seja selecionada!");
             canSave = false;
         }
 
+console.log(canSave);
+console.log(data);
         if (canSave) {
             fetch('http://localhost:3001/rota/add',
                 {
