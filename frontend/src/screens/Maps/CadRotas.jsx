@@ -3,6 +3,8 @@ import React from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 
+import $ from "jquery";
+
 import Direction from "components/Direction/Direction.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -14,61 +16,61 @@ import Map from "components/Map/Map.jsx";
 import moment from "moment";
 
 const styles = {
-	cardCategoryWhite: {
-		color: "rgba(255,255,255,.62)",
-		margin: "0",
-		fontSize: "14px",
-		marginTop: "0",
-		marginBottom: "0"
-	},
-	cardTitleWhite: {
-		color: "#FFFFFF",
-		marginTop: "0px",
-		minHeight: "auto",
-		fontWeight: "300",
-		fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-		marginBottom: "3px",
-		textDecoration: "none"
-	}
+    cardCategoryWhite: {
+        color: "rgba(255,255,255,.62)",
+        margin: "0",
+        fontSize: "14px",
+        marginTop: "0",
+        marginBottom: "0"
+    },
+    cardTitleWhite: {
+        color: "#FFFFFF",
+        marginTop: "0px",
+        minHeight: "auto",
+        fontWeight: "300",
+        fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+        marginBottom: "3px",
+        textDecoration: "none"
+    }
 };
 
 const mapsPlaces = [
-	{
-		id: 'praca_liberdade',
-		defaultBounds: {
-			north: -19.929512,
-			south: -19.933168,
-			east: -43.933712,
-			west: -43.940968
-		},
-		defaultUrl: "https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg",
-		defaultZoom: 17.3,
-		defaultCenter: { lat: -19.93134, lng: -43.93734 }
-	},
-	{
-		id: "praca_savassi",
-		defaultZoom: 17.3,
-		defaultBounds: {
-			north: -19.936686,
-			south: -19.939718,
-			east: -43.933951,
-			west: -43.939428
-		},
-		defaultCenter: { lat: -19.938202, lng: -43.9366895 },
-		defaultUrl: "https://i.ibb.co/FgRtynK/Rota-Praca-Savassi.jpg"
-	},
-	{
-		id: "area_hospitalar",
-		defaultZoom: 17.3,
-		defaultBounds: {
-			north: -19.922602,
-			south: -19.926201,
-			east: -43.923093,
-			west: -43.929062
-		},
-		defaultCenter: { lat: -19.9244015, lng: -43.9260775 },
-		defaultUrl: "https://i.ibb.co/F4GzSn5/Rota-Area-Hospitalar.jpg"
-	}
+    {
+        id: 'praca_liberdade',
+        defaultBounds: {
+            north: -19.929512,
+            south: -19.933168,
+            east: -43.933712,
+            west: -43.940968
+        },
+        defaultUrl: "https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg",
+        defaultZoom: 17.3,
+        defaultCenter: { lat: -19.93134, lng: -43.93734 }
+    },
+    {
+        id: "praca_savassi",
+        defaultZoom: 17.3,
+        defaultBounds: {
+            north: -19.936686,
+            south: -19.939718,
+            east: -43.933951,
+            west: -43.939428
+        },
+        defaultCenter: { lat: -19.938202, lng: -43.9366895 },
+        defaultUrl: "https://i.ibb.co/FgRtynK/Rota-Praca-Savassi.jpg"
+    },
+    {
+        id: "area_hospitalar",
+        defaultZoom: 17.3,
+        defaultBounds: {
+            north: -19.922602,
+            south: -19.926201,
+            east: -43.923093,
+            west: -43.929062
+        },
+        defaultCenter: { lat: -19.9244015, lng: -43.9260775 },
+        defaultUrl: "https://i.ibb.co/F4GzSn5/Rota-Area-Hospitalar.jpg"
+    }
 ];
 
 class CadRotas extends React.Component {
@@ -86,6 +88,7 @@ class CadRotas extends React.Component {
         this.buscarRotas = this.buscarRotas.bind(this);
         this.changeRoute = this.changeRoute.bind(this);
         this.renderMap = this.renderMap.bind(this);
+        window.canUpdate = true;
     }
 
     componentDidMount() {
@@ -113,13 +116,23 @@ class CadRotas extends React.Component {
             });
     }
 
-    cadastrarRota() {
+    cadastrarRota() {    
         const doacao = {
             rota: this.state.rota.id
         };
+        let data = {
+            routeName: $('#nmRota').val(),
+            qtdPessoas: $('#nroPessoas').val(),
+            mapsRoute : {
+                points: window.mapsRoute
+            },
+            userRoute: {
+                points: window.waypoints
+            }
+        };
         let canSave = true;
 
-        if (!doacao.rota) {
+        if (!window.mapsRoute) {
             alert("É preciso que uma rota seja selecionada!");
             canSave = false;
         }
@@ -149,15 +162,23 @@ class CadRotas extends React.Component {
     }
 
     renderMap(mapData) {
+        const { id, defaultBounds, defaultUrl, defaultZoom, defaultCenter } = mapData;
+
         return (
             <Map
-                key={mapData.id}
-                defaultBounds={mapData.defaultBounds}
-                defaultUrl={mapData.defaultUrl}
-                defaultZoom={mapData.defaultZoom}
-                defaultCenter={mapData.defaultCenter}
+                key={id}
+                defaultBounds={defaultBounds}
+                defaultUrl={defaultUrl}
+                defaultZoom={defaultZoom}
+                defaultCenter={defaultCenter}
             />
         );
+    }
+
+    limparCampos () {
+        $('#nmRota').val('');
+        $('#nroPessoas').val('');
+        window.waypoints = [];
     }
 
     render() {
@@ -179,44 +200,37 @@ class CadRotas extends React.Component {
                 value: "TRANSIT"
             }
         ];
-        
+
         return (
             <div>
-    <GridContainer justify="center" alignItems="baseline">
-      <GridItem xs={12} sm={12} md={8}>
-        <CustomInput
-          labelText="Nome da rota:"
-          id="float"
-          formControlProps={{
-            fullWidth: true
-          }}
-        />
-        <CustomInput
-          labelText="Número de pessoas atendidas:"
-          id="float"
-          formControlProps={{
-            fullWidth: true
-          }}
-        />
-      </GridItem>
-      <GridItem xs={12} sm={12} md={4}>
-        <Select
-          options={modesOfTraveling}
-          value={modesOfTraveling[0]}
-          onChange={() => {}}
-          placeholder={"Selecione :"}
-          noOptionsMessage={"Não há rotas disponíveis !"}
-        />
-        <Button color="danger">Limpar Marcadores</Button>
-        <Button color="success">Salvar</Button>
-      </GridItem>
-    </GridContainer>
-    <GridContainer>
-      <GridItem xs={12} sm={12} md={12}>
-        <Direction />
-      </GridItem>
-    </GridContainer>
-  </div>
+                <GridContainer justify="center" alignItems="baseline">
+                    <GridItem xs={12} sm={12} md={8}>
+                        <CustomInput
+                            labelText="Nome da rota:"
+                            id="nmRota"
+                            formControlProps={{
+                                fullWidth: true
+                            }}
+                        />
+                        <CustomInput
+                            labelText="Número de pessoas atendidas:"
+                            id="nroPessoas"
+                            formControlProps={{
+                                fullWidth: true
+                            }}
+                        />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
+                        <Button color="danger" onClick={this.limparCampos}>Limpar Marcadores</Button>
+                        <Button color="success" onClick={this.cadastrarRota} children={{}}>Salvar</Button>
+                    </GridItem>
+                </GridContainer>
+                <GridContainer>
+                    <GridItem xs={12} sm={12} md={12}>
+                        <Direction />
+                    </GridItem>
+                </GridContainer>
+            </div>
         );
     }
 }
