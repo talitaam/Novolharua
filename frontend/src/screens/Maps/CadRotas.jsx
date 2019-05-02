@@ -9,6 +9,7 @@ import Direction from "components/Direction/Direction.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import Button from "components/CustomButtons/Button.jsx";
+import CardBody from "../../components/Card/CardBody";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import Map from "components/Map/Map.jsx";
 
@@ -149,6 +150,7 @@ class CadRotas extends React.Component {
         $('#nmRota').val('');
         $('#nroPessoas').val('');
         window.waypoints = [];
+        window.location.reload();
     }
 
     render() {
@@ -174,32 +176,41 @@ class CadRotas extends React.Component {
         return (
             <div>
                 <GridContainer justify="center" alignItems="baseline">
-                    <GridItem xs={12} sm={12} md={8}>
-                        <CustomInput
-                            labelText="Nome da rota:"
-                            id="nmRota"
-                            formControlProps={{
-                                fullWidth: true
-                            }}
-                        />
-                        <CustomInput
-                            labelText="Número de pessoas atendidas:"
-                            id="nroPessoas"
-                            formControlProps={{
-                                fullWidth: true
-                            }}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Button color="danger" onClick={this.limparCampos}>Limpar Marcadores</Button>
-                        <Button color="success" onClick={this.cadastrarRota} children={{}}>Salvar</Button>
-                    </GridItem>
-                </GridContainer>
-                <GridContainer>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <Direction />
-                    </GridItem>
-                </GridContainer>
+                <CardBody>
+                  <h4>Instruções</h4>
+                  <p>
+                    Para traçar uma rota clique com o botão esquerdo do mouse em
+                    qualquer ponto. Para gerar uma rota clique com o botão direito
+                    em qualquer ponto no mapa. Serão aceitos no máximo 10 pontos."
+                  </p>
+                </CardBody>
+                <GridItem xs={12} sm={12} md={8}>
+
+                    <CustomInput
+                        labelText="Nome da rota:"
+                        id="nmRota"
+                        formControlProps={{
+                            fullWidth: true
+                        }}
+                    />
+                    <CustomInput
+                        labelText="Número de pessoas atendidas:"
+                        id="nroPessoas"
+                        formControlProps={{
+                            fullWidth: true
+                        }}
+                    />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                    <Button color="danger" onClick={this.limparCampos}>Limpar Dados</Button>
+                    <Button color="success" onClick={this.cadastrarRota} children={{}}>Salvar</Button>
+                </GridItem>
+            </GridContainer>
+            <GridContainer>
+                <GridItem xs={12} sm={12} md={12}>
+                    <Direction />
+                </GridItem>
+            </GridContainer>
             </div>
         );
     }
