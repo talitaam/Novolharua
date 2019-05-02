@@ -23,7 +23,7 @@ const enhance = compose(
         clickHandler: props => event => {
             const { waypoints, setWaypoints } = props;
             if (waypoints.length > MAX_ROUTE_POINTS) {
-                alert('Limite de pontos máximo atigido ! Não é possível adicionar mais pontos !');
+                alert('Limite de pontos máximo atigido\n Não é possível adicionar mais do que 10 pontos');
             } else {
                 window.canUpdate = true;
                 waypoints.push({
@@ -39,7 +39,7 @@ const enhance = compose(
             const { waypoints, setDirection, setWaypoints, travelMode } = props;
 
             if (!waypoints.length || waypoints.length < 2) {
-                alert('Pontos insuficientes para calcular uma rota ! É preciso de no mínimo 3 !');
+                alert('Pontos insuficientes para calcular uma rota \n É necessário no mínimo 2');
             } else {
                 window.waypoints = waypoints;
                 const waypointsAux = waypoints.slice(0);
