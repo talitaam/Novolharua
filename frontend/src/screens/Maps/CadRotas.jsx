@@ -37,11 +37,12 @@ class CadRotas extends React.Component {
 
         this.state = {
             nroPessoas: '',
-            nmRota
+            nmRota: ''
         };
 
         this.cadastrarRota = this.cadastrarRota.bind(this);
         this.onChangeNroPessoas = this.onChangeNroPessoas.bind(this);
+        this.onChangeNmRota = this.onChangeNmRota.bind(this);
     }
     
     onChangeNroPessoas (event) {
