@@ -91,7 +91,7 @@ class Doador extends React.Component {
       <div className={classes.wrapper}>
         <Sidebar
           routes={routes}
-          logoText={"Novolharua"}
+          logoText={"Novolharnarua"}
           logo={logo}
           image={this.state.image}
           handleDrawerToggle={this.handleDrawerToggle}
