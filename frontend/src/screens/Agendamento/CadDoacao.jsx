@@ -10,7 +10,12 @@ import DatePicker from "components/Date/DatePicker.jsx";
 import Select from "components/Select/Select";
 import Map from "components/Map/Map.jsx";
 
+import DirectionsHelper from "components/Map/DirectionsHelper";
+
 import moment from "moment";
+
+import DoacoesService from "./DoacoesService";
+import RotasService from "../Rotas/RotasService";
 
 const styles = {
 	cardCategoryWhite: {
@@ -54,7 +59,9 @@ class CadDoacao extends React.Component {
 	}
 
 	componentDidMount() {
-		this.findRoutes();
+		RotasService.findRoutes().then(json => {
+			this.setRoutes(json);
+		});
 	}
 
 	onChangeDonatorName (event) {
@@ -62,61 +69,14 @@ class CadDoacao extends React.Component {
 			donatorName: event.target.value
 		})
 	}
-	
-	fecthRoutes() {
-		const fetchData = {
-			method: "GET"
-		};
-		return fetch('http://localhost:3001/rota/', fetchData).then((res) => res.json());
-	}
-
-	fetchRouteById(id) {
-		const fetchData = {
-			method: "POST",
-			body: JSON.stringify({ routeId: id })
-		};
-		return fetch('http://localhost:3001/rota/findById', fetchData).then((res) => res.json());
-	}
-
-	findRoutes() {
-		return this.fecthRoutes()
-			.then(json => {
-				this.setRoutes(json);
-			});
-	}
-
-	findRouteById(id) {
-		this.fetchRouteById(id).then(this.setDirection);
-	}	
 
 	setDirection({rota}) {
 		const { google } = window;
-		const waypoints = rota.points
+
+		if(rota && rota.points) {
+			const waypoints = rota.points
 							.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}));
-
-        if (!waypoints.length || waypoints.length < 2) {
-            alert('Pontos insuficientes para calcular uma rota ! É preciso de no mínimo 2 !');
-        } else {
-            const waypointsAux = waypoints.slice(0);
-			const origin = waypointsAux.shift();
-			const destination = waypointsAux.pop();
-
-            const DirectionsService = new google.maps.DirectionsService();
-
-            DirectionsService.route({
-                origin: origin,
-                destination: destination,
-                waypoints: waypointsAux,
-                travelMode: google.maps.TravelMode['WALKING'],
-            }, (result, status) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-					this.setState({
-						directions: result
-                    });
-                } else {
-                    alert(`Erro ao buscar rota : ${result}`);
-                }
-            });
+			DirectionsHelper.getRouteAPI(waypoints, result => this.setState({ directions: result }) );
 		}
 	}
 
@@ -127,40 +87,33 @@ class CadDoacao extends React.Component {
 	}
 
 	changeRoute(route) {
-		this.findRouteById(route.id);
+		RotasService.findRouteById(route.id).then(this.setDirection);
 		this.setState({
 			selectedRoute: route
 		});
 	}
 
 	saveDonation() {
-		const { donatorName, donationDate, selectedRoute } =  this.state;
-
-		const doacao = {
-			doador: donatorName,
-			data: donationDate,
-			rota: selectedRoute.id
-		};
+		const { donatorName, donationDate, selectedRoute } =  this.state;		
 		
-		if(!doacao.doador.trim()) {
-			this.setState({ donatorName: '' });
+		if(!donatorName.trim()) {
+			this.setState({ 
+				donatorName: '' 
+			});
 			alert("Nome do doador não é válido ! ");
-		} else if(!(doacao.data) || (moment(this.state.dataDoacao).isBefore(moment(), 'day')) ) {
-			this.setState({ donationDate: "", selectedRoute: '' });
+		} else if((!donationDate) || (moment(donationDate).isBefore(moment(), 'day')) ) {
+			this.setState({ 
+				donationDate: "", 
+				selectedRoute: '' 
+			});
 			alert("A data escolhida para a doação não é válida !");
-		} else if(!doacao.rota) {
+		} else if(!selectedRoute) {
 			alert("É preciso que uma rota seja selecionada !");
 		} else {
-			fetch('http://localhost:3001/doacao/add',
-				{
-					method: "POST",
-					body: JSON.stringify(doacao)
-				}
-			).then(res => res.json())
-			.then(json => {
-				alert(json.message);
-			}).catch(error => {
-				alert("Erro ao enviar cadastro de agendamento");
+			DoacoesService.saveDonation({
+				donatorName: donatorName,
+				donationDate: donationDate,
+				selectedRoute: selectedRoute
 			});
 		}
 	};
@@ -172,7 +125,7 @@ class CadDoacao extends React.Component {
 			donationDate: date 
 		});
 
-		this.fecthRoutes(date).then((json) => {
+		RotasService.findAvaiableRoutesByDate(date).then((json) => {
 			const { rotas } = json;
 			const canAutoSetRoute = rotas.length > 0;
 

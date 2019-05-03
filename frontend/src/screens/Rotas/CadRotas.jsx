@@ -8,6 +8,9 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput";
 
+import DirectionsHelper from "components/Map/DirectionsHelper.js";
+import RotasService from "./RotasService";
+
 const styles = {
     cardCategoryWhite: {
         color: "rgba(255,255,255,.62)",
@@ -83,74 +86,44 @@ class CadRotas extends React.Component {
     }
 
     onRightClickMap() {
-        const { google } = window;
         const { waypoints } = this.state;
-
-        if (!waypoints.length || waypoints.length < 2) {
-            alert('Pontos insuficientes para calcular uma rota ! É preciso de no mínimo 2 !');
-        } else {
-            const waypointsAux = waypoints.slice(0);
-            const origin = waypointsAux.shift().location;
-            const destination = waypointsAux.pop().location;
-
-            const DirectionsService = new google.maps.DirectionsService();
-
-            DirectionsService.route({
-                origin: origin,
-                destination: destination,
-                waypoints: waypointsAux,
-                travelMode: google.maps.TravelMode['WALKING'],
-            }, (result, status) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-                    const mapsRoute = result.routes[0].overview_path.map(point => { return ({ lat: point.lat(), lng: point.lng() }); });
-                    this.setState({
-                        waypoints: [],
-                        mapsRoute: mapsRoute,
-                        directions: result
-                    });
-                } else {
-                    alert(`Erro ao buscar rota : ${result}`);
-                }
+        DirectionsHelper.getRouteAPI(waypoints, result => {
+            const mapsRoute = result.routes[0].overview_path.map(point => { return ({ lat: point.lat(), lng: point.lng() }); });
+            this.setState({
+                waypoints: [],
+                mapsRoute: mapsRoute,
+                directions: result
             });
-        }
+        });
     }
 
     saveRoute() {
         const { routeName, infoPeople, mapsRoute, userRoute } = this.state;
-
-        let data = {
-            nomeRota: routeName,
-            qtdPessoas: infoPeople,
-            rotaMaps: {
-                points: mapsRoute
-            },
-            rotaUsuario: {
-                points: userRoute.map(({ location }) => ({ lat: location.lat(), lng: location.lng() }))
-            }
+        const saveData = {
+            routeName,
+            infoPeople,
+            mapsRoute,
+            userRoute
         };
 
-        if (!userRoute.length) {
+        if (!mapsRoute || !mapsRoute.length) {
             alert("É preciso que uma rota seja selecionada!");
         } else {
-            fetch('http://localhost:3001/rota/add',
-                {
-                    method: "POST",
-                    body: JSON.stringify(data)
-                }
-            ).then(res => res.json())
-                .then(json => {
-                    alert(json.message);
-                }).catch(error => {
-                    alert("Erro ao enviar cadastro de rota");
-                });
+            RotasService.saveRoute(saveData).then( json => {
+                if(json) 
+                    alert(json.message)
+            } );
         }
     };
 
     cleanMap() {
         this.setState({
             waypoints: [],
-            rotaMaps: [],
-            rotaUsuario: []
+            mapsRoute: [],
+            userRoute: [],
+            directions: {
+                routes: []
+            }
         });
     }
 

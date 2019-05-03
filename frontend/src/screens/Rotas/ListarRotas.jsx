@@ -5,6 +5,9 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import Select from "components/Select/Select.jsx";
 import Map from "components/Map/Map.jsx";
 
+import DirectionsHelper from "components/Map/DirectionsHelper";
+import RotasService from "./RotasService";
+
 class ListarRotas extends React.Component {
 	constructor(props) {
 		super();
@@ -22,64 +25,17 @@ class ListarRotas extends React.Component {
 	}
 
 	componentDidMount() {
-		this.findRoutes();
+		RotasService.findRoutes().then(json => {
+			this.setRoutes(json);
+		});
 	}
-
-	fecthRoutes() {
-		const fetchData = {
-			method: "GET"
-		};
-		return fetch('http://localhost:3001/rota/', fetchData).then((res) => res.json());
-	}
-
-	fetchRouteById(id) {
-		const fetchData = {
-			method: "POST",
-			body: JSON.stringify({ routeId: id })
-		};
-		return fetch('http://localhost:3001/rota/findById', fetchData).then((res) => res.json());
-	}
-
-	findRoutes() {
-		return this.fecthRoutes()
-			.then(json => {
-				this.setRoutes(json);
-			});
-	}
-
-	findRouteById(id) {
-		this.fetchRouteById(id).then(this.setDirection);
-	}	
 
 	setDirection({rota}) {
 		const { google } = window;
 		const waypoints = rota.points
 							.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}));
 
-        if (!waypoints.length || waypoints.length < 2) {
-            alert('Pontos insuficientes para calcular uma rota ! É preciso de no mínimo 2 !');
-        } else {
-            const waypointsAux = waypoints.slice(0);
-			const origin = waypointsAux.shift();
-			const destination = waypointsAux.pop();
-
-            const DirectionsService = new google.maps.DirectionsService();
-
-            DirectionsService.route({
-                origin: origin,
-                destination: destination,
-                waypoints: waypointsAux,
-                travelMode: google.maps.TravelMode['WALKING'],
-            }, (result, status) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-					this.setState({
-						directions: result
-                    });
-                } else {
-                    alert(`Erro ao buscar rota : ${result}`);
-                }
-            });
-		}
+		DirectionsHelper.getRouteAPI(waypoints, result => this.setState({ directions: result }) );
 	}
 
 	setRoutes({rotas}) {
@@ -89,7 +45,7 @@ class ListarRotas extends React.Component {
 	}
 
 	changeRoute(route) {
-		this.findRouteById(route.id);
+		RotasService.findRouteById(route.id).then(this.setDirection);
 		this.setState({
 			selectedRoute: route
 		});
