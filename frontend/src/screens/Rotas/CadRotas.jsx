@@ -114,20 +114,20 @@ class CadRotas extends React.Component {
     }
 
     saveRoute() {
-        const { nomeRota, qtdPessoas, rotaMaps, rotaUsuario } = this.state;
+        const { routeName, infoPeople, mapsRoute, userRoute } = this.state;
 
         let data = {
-            nomeRota: nomeRota,
-            qtdPessoas: qtdPessoas,
+            nomeRota: routeName,
+            qtdPessoas: infoPeople,
             rotaMaps: {
-                points: rotaMaps
+                points: mapsRoute
             },
             rotaUsuario: {
-                points: rotaUsuario.map(({ location }) => ({ lat: location.lat(), lng: location.lng() }))
+                points: userRoute.map(({ location }) => ({ lat: location.lat(), lng: location.lng() }))
             }
         };
 
-        if (rotaUsuario) {
+        if (!userRoute.length) {
             alert("É preciso que uma rota seja selecionada!");
         } else {
             fetch('http://localhost:3001/rota/add',
@@ -192,7 +192,7 @@ class CadRotas extends React.Component {
                         <Direction waypoints={waypoints}
                             directions={directions}
                             onClick={this.onClickMap}
-                            onRightClick={this.onRightClick} />
+                            onRightClick={this.onRightClickMap} />
                     </GridItem>
                 </GridContainer>
             </>
