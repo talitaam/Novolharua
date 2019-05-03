@@ -4,7 +4,7 @@ import moment from "moment";
 import var_dump from "var_dump";
 
 class Rota {
-	getAvaiableRotas (req, res, next) {
+	getAllRotas (req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		let respObj = {};
@@ -32,27 +32,28 @@ class Rota {
 	addRota(req, res, next){
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		try {
-			const params = JSON.parse(req.body);
-			const qtdPessoas = params.qtdPessoas;
-			const nomeRota = params.nomeRota;
-			const rotaMapsApi = params.rotaMaps;
-			const rotaUsuario = params.rotaUsuario;
+			const params 	  = JSON.parse(req.body);
+
+			const qtdPessoas  = params.qtdPessoas, 
+				  nomeRota    = params.nomeRota, 
+				  rotaMapsAPI = params.rotaMaps, 
+				  rotaUsuario = params.rotaUsuario;
 
 			const respObj = {
 				message : "Salvo com sucesso !",
 				idRota: 0
 			};
 
-			const newPointsMapsAPI = getMostValuablePoints(rotaMapsApi.points);
+			let valuablePointsMapsAPI = getMostValuablePoints(rotaMapsAPI.points);
 
-			var_dump( newPointsMapsAPI );
+			var_dump( valuablePointsMapsAPI );
 
 			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
 				respObj.idRota = response.insertId;
 				console.log("Gravou rota com sucesso");
 				console.log(response.insertId);
 
-				rotaMapsApi.points.forEach(function (ponto, index) {
+				valuablePointsMapsAPI.forEach(function (ponto, index) {
 					console.log(ponto.lat);
 					console.log(ponto.lng);
 					console.log(respObj.idRota);
@@ -83,13 +84,13 @@ class Rota {
 			let respObj = {
 				message : "Um erro inesperado ocorreu !" + e
 			};
-			var_dump(e);
+			var_dump(e + "");
 			res.json(respObj);
 			next();
 		}
 	}
 
-	getRotaPorId(req, res, next){
+	getRotaById(req, res, next){
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		let respObj = {};
 
@@ -100,14 +101,16 @@ class Rota {
 			var_dump(params);
 			var_dump(idRota);
 
-			rotaService.getRotaPorId(idRota).then((response) => {
-				respObj.rota = response;
+			rotaService.getPontosRota(idRota).then((response) => {
+				respObj.rota = {
+					id: rota,
+					points: response
+				};
 				res.json(respObj);
 				next();
 			});
-
 		} catch (e) {
-			var_dump(e);
+			var_dump(e + '');
 			respObj.error = e;
 			res.json(respObj);
 			next();

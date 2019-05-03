@@ -4,13 +4,13 @@ import logger from "./basic-logger";
 
 const server = restify.createServer({
 	name: "TIS",
-	version: "1.0.0",
+	version: "1.0.0"
 });
 
 server.use(restify.plugins.throttle({
 	burst: 100,  	// Max 10 concurrent requests (if tokens)
 	rate: 2,  		// Steady state: 2 request / 1 seconds
-	ip: true,		// throttle per IP
+	ip: true		// throttle per IP
 }));
 
 server.use(restify.plugins.bodyParser());

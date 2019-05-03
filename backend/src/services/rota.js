@@ -2,14 +2,15 @@ import dbService from "../util/db";
 
 class Rota {
 	constructor() {
-		this.GET_AVAIABLE_ROTAS = "SELECT IDROTA, SGROTA, NMROTA FROM ROTA WHERE IDROTA NOT IN (SELECT IDROTA FROM DOACAO WHERE DTDOACAO = STR_TO_DATE(@DTDOACAO, '%d/%m/%Y')) ORDER BY 1";
+		this.GET_ALL_ROTAS = "SELECT ID, NOME, QTDPESSOAS, DTINCLUSAO FROM ROTAMAPS";
+		this.GET_PONTOS_ROTA = "SELECT LAT, LNG FROM ROTAMAPS RM JOIN PONTOUSUARIO PU ON RM.ID = PU.IDROTA WHERE IDROTA = @idRota ORDER BY IDORDEMPONTO";
 		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `QTDPESSOAS`, `DTINCLUSAO`) VALUES ( @nomRota, @qtdPessoas, now())";
 		this.INSERT_PONTO_MAPS = "INSERT INTO `PONTOMAPS`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.INSERT_PONTO_USUARIO = "INSERT INTO `PONTOUSUARIO`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.SELECT_ROTA_POR_ID = "SELECT RM.*, PM.* FROM ROTAMAPS RM JOIN PONTOMAPS PM ON RM.ID = PM.IDROTA WHERE RM.ID = @idRota";
 	}
 
-	addRota(nomeRota, qtdPessoas, rotaMapsApi, rotaUsuario) {
+	addRota(nomeRota, qtdPessoas) {
 		let queryParams = {
 			nomRota: nomeRota,
 			qtdPessoas: qtdPessoas
@@ -49,29 +50,30 @@ class Rota {
 		});
 	}
 
-	getAvaiableRotas(dtDoacao) {
-		let queryParams = {
-			DTDOACAO: dtDoacao
-		};
-
-		return dbService.runQuery(this.GET_AVAIABLE_ROTAS, queryParams).then(result => {
-			let newArray = [];
-
-			result.forEach((ele) => {
-				newArray = newArray.concat({
-					id: ele.IDROTA,
-					label: ele.NMROTA,
-					value: ele.SGROTA
-				});
-			});
-
-			return newArray;
-		});
+	getAllRotas() {
+		return dbService.runQuery(this.GET_ALL_ROTAS)
+			.then(result =>
+				result.map(rota => ({
+					id: rota.ID,
+					label: rota.NOME,
+					value: rota.ID
+				}))
+			);
 	}
 
-	getRotaPorId(idRota) {
+	getPontosRota(id) {
+		const queryParams = {
+			idRota: id
+		};
 
+		return dbService.runQuery(this.GET_PONTOS_ROTA, queryParams)
+			.then(result => result.map(ponto => (
+				{
+					lat: ponto.lat,
+					lng: ponto.lng
+				}
+			) ) );
 	}
 }
 
-export default Rota;
+export default new Rota();

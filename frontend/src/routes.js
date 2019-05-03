@@ -3,10 +3,10 @@ import CalendarToday from "@material-ui/icons/CalendarToday";
 import Map from "@material-ui/icons/Map";
 import Navigation from "@material-ui/icons/Navigation";
 
-import CadDoacao from "screens/Agendamento/CadDoacao.jsx";
-import Maps from "screens/Maps/Maps.jsx";
+import CadDoacao from "screens/Agendamento/CadDoacao";
+import CadRotas from "./screens/Rotas/CadRotas";
 import ListarDoacoes from "./screens/Agendamento/ListarDoacoes";
-import CadRotas from "./screens/Maps/CadRotas";
+import ListarRotas from "screens/Rotas/ListarRotas";
 
 const dashboardRoutes = [
   {
@@ -27,7 +27,7 @@ const dashboardRoutes = [
     path: "/visualizarRotas",
     name: "Visualizar Rotas",
     icon: Map,
-    component: Maps,
+    component: ListarRotas,
     layout: "/doador"
   },
   {
