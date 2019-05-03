@@ -12,7 +12,6 @@ import DatePicker from "components/Date/DatePicker.jsx";
 import Select from "components/Select/Select";
 import Map from "components/Map/Map.jsx";
 
-import $ from "jquery";
 import moment from "moment";
 
 const styles = {
@@ -79,23 +78,28 @@ class CadDoacao extends React.Component {
 		this.message = "Doação agendada com sucesso!";
 
 		this.state = {
-			nomeDoador: {},
-			dataDoacao: new Date(),
-			rota: "",
-			rotas: [],
-			image: '',
-			map: []
+			donatorName: '',
+			donationDate: new Date(),
+			selectedRoute: "",
+			routes: []
 		};
 
 		this.cadastrarDoacao = this.cadastrarDoacao.bind(this);
 		this.buscarRotas = this.buscarRotas.bind(this);
 		this.changeData = this.changeData.bind(this);
 		this.changeRoute = this.changeRoute.bind(this);
+		this.onChangeDonatorName = this.onChangeDonatorName.bind(this);
 		this.renderMap = this.renderMap.bind(this);
 	}
 
 	componentDidMount() {
 		this.buscarRotas();
+	}
+
+	onChangeDonatorName (event) {
+		this.setState({
+			nomeDoador: event.target.value
+		})
 	}
 
 	fetchRotas(date) {
@@ -120,30 +124,28 @@ class CadDoacao extends React.Component {
 	}
 
 	cadastrarDoacao() {
-		const doacao = {
-			doador: $('#nmDoador').val(),
-			data: this.state.dataDoacao,
-			rota: this.state.rota.id
-		};
-		let canSave = true;
+		const { donatorName, donationDate, selectedRoute } =  this.state;
 
+		const doacao = {
+			doador: donatorName,
+			data: donationDate,
+			rota: selectedRoute.id
+		};
+		
 		if(!doacao.doador.trim()) {
-			$('#nmDoador').val('');
+			this.setState({
+				donatorName: ''
+			});
 			alert("Nome do doador não é válido ! ");
-			canSave = false;
 		} else if(!(doacao.data) || (moment(this.state.dataDoacao).isBefore(moment(), 'day')) ) {
 			this.setState({
 				dataDoacao: "",
 				rota: ''
 			});
 			alert("A data escolhida para a doação não é válida !");
-			canSave = false;
-		} else if(!doacao.rota ) {
+		} else if(!doacao.rota) {
 			alert("É preciso que uma rota seja selecionada !");
-			canSave = false;
-		}
-
-		if(canSave) {
+		} else {
 			fetch('http://localhost:3001/doacao/add',
 				{
 					method: "POST",
@@ -151,7 +153,6 @@ class CadDoacao extends React.Component {
 				}
 			).then(res => res.json())
 			.then(json => {
-				console.log(json);
 				alert(json.message);
 			}).catch(error => {
 				alert("Erro ao enviar cadastro de agendamento");
@@ -162,52 +163,37 @@ class CadDoacao extends React.Component {
 	changeData(date) {
 		let actualDate = moment(date, 'DD/MM/YYYY');
 
+		this.setState({
+			donationDate: date 
+		});
+
 		this.fetchRotas(date).then((json) => {
-			const rotas = json.rotas;
+			const { rotas } = json;
 			const canAutoSetRoute = rotas.length > 0;
 
-			let rota,
-				maps;
-
-			if (canAutoSetRoute) {
-				rota = rotas[0];
-				maps = mapsPlaces.filter(map => map.id === rotas[0].value);
-			} else {
-				rota = "";
-				maps = [];
+			const selectedRoute = canAutoSetRoute ? rotas[0] : {};
+			
+			if(!canAutoSetRoute) {
 				alert("Não há rotas disponíveis para esta data !");	
 			}
 
 			this.setState({
-				dataDoacao: new Date(actualDate),
-				rotas: json.rotas,
-				rota: rota,
-				map: maps
+				donationDate: new Date(actualDate),
+				routes: rotas,
+				selectedRoute: selectedRoute
 			});
 		});
 	}
 
 	changeRoute(rota) {
-		const maps = mapsPlaces.filter(map => map.id === rota.value);
 		this.setState({
-			map: maps,
-			rota: rota
+			routes: rota
 		});
 	}
 
-	renderMap(mapData) {
-		return (
-			<Map
-				key={mapData.id}
-				defaultBounds={mapData.defaultBounds}
-				defaultUrl={mapData.defaultUrl}
-				defaultZoom={mapData.defaultZoom}
-				defaultCenter={mapData.defaultCenter}
-			/>
-		);
-	}
-
 	render() {
+		const { donatorName, donationDate, routes, selectedRoute, directions } = this.state;
+
 		return (
 			<div>
 				<GridContainer>
@@ -217,19 +203,22 @@ class CadDoacao extends React.Component {
 								<CustomInput
 									labelText="Doador :"
 									id="nmDoador"
-									inputProps={this.state.nomeDoador}
 									formControlProps={{
 										fullWidth: true
+									}}
+									inputProps= {{
+										value: donatorName,
+										onChange: this.onChangeDonatorName
 									}}
 								/>
 							</GridItem>
 							<GridItem xs={12} sm={12} md={3}>
-								<DatePicker selected={this.state.dataDoacao}
+								<DatePicker selected={donationDate}
 									onChange={this.changeData} />
 							</GridItem>
 							<GridItem xs={12} sm={12} md={3}>
-								<Select options={this.state.rotas}
-									value={this.state.rota}
+								<Select options={routes}
+									value={selectedRoute}
 									onChange={this.changeRoute}
 									placeholder={"Selecione :"}
 									noOptionsMessage={ "Não há rotas disponíveis !" } />
@@ -237,11 +226,11 @@ class CadDoacao extends React.Component {
 						</GridContainer>
 					</GridItem>
 					<GridItem xs={12} sm={12} md={12}>
-						{this.state.map.map((mapObject, index) => this.renderMap(mapObject, index))}
+						<Map directions={directions} />
 					</GridItem>
 					<GridItem xs={4} sm={4} md={4}></GridItem>
 					<GridItem xs={4} sm={4} md={4}>
-						<Button color="primary" onClick={this.cadastrarDoacao} children={{}}>Cadastrar Doação</Button>
+						<Button color="primary" onClick={this.cadastrarDoacao}>Cadastrar Doação</Button>
 					</GridItem>
 					<GridItem xs={4} sm={4} md={4}></GridItem>
 				</GridContainer>

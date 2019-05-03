@@ -1,8 +1,9 @@
 import dbService from "../util/db";
+import var_dump from "var_dump";
 
 class Rota {
 	constructor() {
-		this.GET_ALL_ROTAS = "SELECT ID, NOME, QTDPESSOAS, DTINCLUSAO FROM ROTAMAPS";
+		this.GET_ALL_ROTAS = "SELECT ID, NMROTA, QTDPESSOAS, DTINCLUSAO FROM ROTAMAPS";
 		this.GET_PONTOS_ROTA = "SELECT LAT, LNG FROM ROTAMAPS RM JOIN PONTOUSUARIO PU ON RM.ID = PU.IDROTA WHERE IDROTA = @idRota ORDER BY IDORDEMPONTO";
 		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `QTDPESSOAS`, `DTINCLUSAO`) VALUES ( @nomRota, @qtdPessoas, now())";
 		this.INSERT_PONTO_MAPS = "INSERT INTO `PONTOMAPS`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
@@ -55,7 +56,7 @@ class Rota {
 			.then(result =>
 				result.map(rota => ({
 					id: rota.ID,
-					label: rota.NOME,
+					label: rota.NMROTA,
 					value: rota.ID
 				}))
 			);
@@ -67,12 +68,14 @@ class Rota {
 		};
 
 		return dbService.runQuery(this.GET_PONTOS_ROTA, queryParams)
-			.then(result => result.map(ponto => (
-				{
-					lat: ponto.lat,
-					lng: ponto.lng
-				}
-			) ) );
+			.then(result => result.map(ponto => {
+				var_dump(ponto);
+
+				return ({
+					lat: ponto.LAT,
+					lng: ponto.LNG
+				});
+			}) );
 	}
 }
 

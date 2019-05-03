@@ -2,7 +2,7 @@ import React from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
-import Direction from "components/Direction/Direction.jsx";
+import Map from "components/Map/Map.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import Button from "components/CustomButtons/Button.jsx";
@@ -36,7 +36,9 @@ class CadRotas extends React.Component {
         this.state = {
             infoPeople: '',
             routeName: '',
-            directions: [],
+            directions: {
+				routes:[]
+			},
             waypoints: [],
 
         };
@@ -189,7 +191,7 @@ class CadRotas extends React.Component {
                 </GridContainer>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
-                        <Direction waypoints={waypoints}
+                        <Map waypoints={waypoints}
                             directions={directions}
                             onClick={this.onClickMap}
                             onRightClick={this.onRightClickMap} />

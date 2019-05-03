@@ -10,12 +10,7 @@ class Rota {
 		let respObj = {};
 
 		try {
-			let params = JSON.parse(req.body);
-			let dtDoacao = moment(params.data, 'YYYY-MM-DD').format('DD/MM/YYYY');
-
-			var_dump(params);
-			var_dump(dtDoacao);
-			rotaService.getAvaiableRotas(dtDoacao).then((response) => {
+			rotaService.getAllRotas().then((response) => {
 				respObj.rotas = response;
 				res.json(respObj);
 				next();
@@ -96,14 +91,11 @@ class Rota {
 
 		try {
 			let params = JSON.parse(req.body);
-			let idRota = params.idRota;
+			let routeId = params.routeId;
 
-			var_dump(params);
-			var_dump(idRota);
-
-			rotaService.getPontosRota(idRota).then((response) => {
+			rotaService.getPontosRota(routeId).then((response) => {
 				respObj.rota = {
-					id: rota,
+					id: routeId,
 					points: response
 				};
 				res.json(respObj);
@@ -111,7 +103,7 @@ class Rota {
 			});
 		} catch (e) {
 			var_dump(e + '');
-			respObj.error = e;
+			respObj.error = e + '';
 			res.json(respObj);
 			next();
 		}
