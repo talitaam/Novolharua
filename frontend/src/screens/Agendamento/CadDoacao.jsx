@@ -1,9 +1,7 @@
 import React from "react";
 
-// @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 
-// core components
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
@@ -33,97 +31,109 @@ const styles = {
 	}
 };
 
-const mapsPlaces = [
-	{
-		id: 'praca_liberdade',
-		defaultBounds: {
-			north: -19.929512,
-			south: -19.933168,
-			east: -43.933712,
-			west: -43.940968
-		},
-		defaultUrl: "https://i.ibb.co/xmL7qjT/Rota-Pra-a-da-Liberdade.jpg",
-		defaultZoom: 17.3,
-		defaultCenter: { lat: -19.93134, lng: -43.93734 }
-	},
-	{
-		id: "praca_savassi",
-		defaultZoom: 17.3,
-		defaultBounds: {
-			north: -19.936686,
-			south: -19.939718,
-			east: -43.933951,
-			west: -43.939428
-		},
-		defaultCenter: { lat: -19.938202, lng: -43.9366895 },
-		defaultUrl: "https://i.ibb.co/FgRtynK/Rota-Praca-Savassi.jpg"
-	},
-	{
-		id: "area_hospitalar",
-		defaultZoom: 17.3,
-		defaultBounds: {
-			north: -19.922602,
-			south: -19.926201,
-			east: -43.923093,
-			west: -43.929062
-		},
-		defaultCenter: { lat: -19.9244015, lng: -43.9260775 },
-		defaultUrl: "https://i.ibb.co/F4GzSn5/Rota-Area-Hospitalar.jpg"
-	}
-];
-
 class CadDoacao extends React.Component {
-	constructor() {
-		super();
-		this.message = "Doação agendada com sucesso!";
-
+	constructor(props) {
+		super(props);
+		
 		this.state = {
+			directions:{
+				routes: []
+			},
 			donatorName: '',
 			donationDate: new Date(),
 			selectedRoute: "",
 			routes: []
 		};
 
-		this.cadastrarDoacao = this.cadastrarDoacao.bind(this);
-		this.buscarRotas = this.buscarRotas.bind(this);
+		this.saveDonation = this.saveDonation.bind(this);
+
 		this.changeData = this.changeData.bind(this);
 		this.changeRoute = this.changeRoute.bind(this);
 		this.onChangeDonatorName = this.onChangeDonatorName.bind(this);
-		this.renderMap = this.renderMap.bind(this);
+		this.setDirection = this.setDirection.bind(this);
 	}
 
 	componentDidMount() {
-		this.buscarRotas();
+		this.findRoutes();
 	}
 
 	onChangeDonatorName (event) {
 		this.setState({
-			nomeDoador: event.target.value
+			donatorName: event.target.value
 		})
 	}
-
-	fetchRotas(date) {
-		date = date || moment();
-
-		return fetch('http://localhost:3001/rota/', {
-			method: "POST",
-			body: JSON.stringify({ 'data': moment(date).format('YYYY-MM-DD') })
-		}).then((res) => res.json());
+	
+	fecthRoutes() {
+		const fetchData = {
+			method: "GET"
+		};
+		return fetch('http://localhost:3001/rota/', fetchData).then((res) => res.json());
 	}
 
-	buscarRotas() {
-		this.fetchRotas()
+	fetchRouteById(id) {
+		const fetchData = {
+			method: "POST",
+			body: JSON.stringify({ routeId: id })
+		};
+		return fetch('http://localhost:3001/rota/findById', fetchData).then((res) => res.json());
+	}
+
+	findRoutes() {
+		return this.fecthRoutes()
 			.then(json => {
-				const rotas = Object.values(json.rotas);
-				this.setState({
-					rotas: rotas,
-					rota: rotas.length > 0 ? rotas[0] : "",
-					map: rotas.filter(map => map.id === rotas[0].id )
-				});
+				this.setRoutes(json);
 			});
 	}
 
-	cadastrarDoacao() {
+	findRouteById(id) {
+		this.fetchRouteById(id).then(this.setDirection);
+	}	
+
+	setDirection({rota}) {
+		const { google } = window;
+		const waypoints = rota.points
+							.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}));
+
+        if (!waypoints.length || waypoints.length < 2) {
+            alert('Pontos insuficientes para calcular uma rota ! É preciso de no mínimo 2 !');
+        } else {
+            const waypointsAux = waypoints.slice(0);
+			const origin = waypointsAux.shift();
+			const destination = waypointsAux.pop();
+
+            const DirectionsService = new google.maps.DirectionsService();
+
+            DirectionsService.route({
+                origin: origin,
+                destination: destination,
+                waypoints: waypointsAux,
+                travelMode: google.maps.TravelMode['WALKING'],
+            }, (result, status) => {
+                if (status === google.maps.DirectionsStatus.OK) {
+					this.setState({
+						directions: result
+                    });
+                } else {
+                    alert(`Erro ao buscar rota : ${result}`);
+                }
+            });
+		}
+	}
+
+	setRoutes({rotas}) {
+		this.setState({
+			routes: rotas
+		});
+	}
+
+	changeRoute(route) {
+		this.findRouteById(route.id);
+		this.setState({
+			selectedRoute: route
+		});
+	}
+
+	saveDonation() {
 		const { donatorName, donationDate, selectedRoute } =  this.state;
 
 		const doacao = {
@@ -133,15 +143,10 @@ class CadDoacao extends React.Component {
 		};
 		
 		if(!doacao.doador.trim()) {
-			this.setState({
-				donatorName: ''
-			});
+			this.setState({ donatorName: '' });
 			alert("Nome do doador não é válido ! ");
 		} else if(!(doacao.data) || (moment(this.state.dataDoacao).isBefore(moment(), 'day')) ) {
-			this.setState({
-				dataDoacao: "",
-				rota: ''
-			});
+			this.setState({ donationDate: "", selectedRoute: '' });
 			alert("A data escolhida para a doação não é válida !");
 		} else if(!doacao.rota) {
 			alert("É preciso que uma rota seja selecionada !");
@@ -167,7 +172,7 @@ class CadDoacao extends React.Component {
 			donationDate: date 
 		});
 
-		this.fetchRotas(date).then((json) => {
+		this.fecthRoutes(date).then((json) => {
 			const { rotas } = json;
 			const canAutoSetRoute = rotas.length > 0;
 
@@ -182,12 +187,6 @@ class CadDoacao extends React.Component {
 				routes: rotas,
 				selectedRoute: selectedRoute
 			});
-		});
-	}
-
-	changeRoute(rota) {
-		this.setState({
-			routes: rota
 		});
 	}
 
@@ -230,7 +229,7 @@ class CadDoacao extends React.Component {
 					</GridItem>
 					<GridItem xs={4} sm={4} md={4}></GridItem>
 					<GridItem xs={4} sm={4} md={4}>
-						<Button color="primary" onClick={this.cadastrarDoacao}>Cadastrar Doação</Button>
+						<Button color="primary" onClick={this.saveDonation}>Cadastrar Doação</Button>
 					</GridItem>
 					<GridItem xs={4} sm={4} md={4}></GridItem>
 				</GridContainer>
