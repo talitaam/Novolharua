@@ -1,38 +1,43 @@
-import React from 'react';
-const {
+import React from "react";
+import { compose, withProps, mapProps} from "recompose";
+import {
     withScriptjs,
     withGoogleMap,
     GoogleMap,
-    GroundOverlay,
-} = require("react-google-maps");
+    DirectionsRenderer,
+    Marker
+} from "react-google-maps";
 
-const MapWithGroundOverlay = withScriptjs(
-    withGoogleMap(props =>
-        <GoogleMap
-            defaultZoom={props.defaultZoom}
-            defaultCenter={props.defaultCenter}
-        >
-            <GroundOverlay
-                defaultUrl={props.defaultUrl}
-                defaultBounds={
-                    props.defaultBounds
-                }
-
-                defaultOpacity={1}
-            />
-        </GoogleMap>
-    )
+const enhance = compose(
+    withProps({
+        googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAXRoo8kh7I1XuGA_OjinkIoZ4mEJ0w4j4&v=3.exp&libraries=geometry,drawing,places",
+        loadingElement: <div style={{ height: `100%` }} />,
+        containerElement: <div style={{ height: `400px` }} />,
+        mapElement: <div style={{ height: `100%` }} />
+    }),
+    mapProps(({ waypoints, ...rest }) => {
+        return (
+            {
+                markers: (waypoints || []).map((point, index) => {
+                    return (<Marker position={point.location} key={index} />);
+                }),
+                ...rest
+            }
+        )
+    }),
+    withScriptjs,
+    withGoogleMap
 );
 
-export default (props) => (
-    <MapWithGroundOverlay
-        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXRoo8kh7I1XuGA_OjinkIoZ4mEJ0w4j4&v=3.exp&libraries=geometry,drawing,places"
-        loadingElement={<div style={{ height: `100%` }} />}
-        containerElement={<div style={{ height: `700px` }} />}
-        mapElement={<div style={{ height: `100%` }} />}
-        defaultBounds={props.defaultBounds}
-        defaultUrl={props.defaultUrl}
-        defaultZoom={props.defaultZoom}
-        defaultCenter={props.defaultCenter}
-    />
+const Map = enhance(({ onClick, onRightClick, markers, directions }) => (
+    <GoogleMap
+        defaultZoom={ 14 }
+        defaultCenter={ new window.google.maps.LatLng(-19.932654, -43.936020)}
+        onClick={ onClick }
+        onRightClick={ onRightClick } >
+        { markers }
+        { directions && <DirectionsRenderer directions={ directions } /> }
+    </GoogleMap>)
 );
+
+export default Map;

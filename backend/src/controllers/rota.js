@@ -1,21 +1,16 @@
 import rotaService from "../services/rota";
-import validarPontos from "../services/validarPontos";
+import { getMostValuablePoints } from "../services/points";
 import moment from "moment";
 import var_dump from "var_dump";
 
 class Rota {
-	getAvaiableRotas (req, res, next) {
+	getAllRotas (req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		let respObj = {};
 
 		try {
-			let params = JSON.parse(req.body);
-			let dtDoacao = moment(params.data, 'YYYY-MM-DD').format('DD/MM/YYYY');
-
-			var_dump(params);
-			var_dump(dtDoacao);
-			rotaService.getAvaiableRotas(dtDoacao).then((response) => {
+			rotaService.getAllRotas().then((response) => {
 				respObj.rotas = response;
 				res.json(respObj);
 				next();
@@ -32,33 +27,28 @@ class Rota {
 	addRota(req, res, next){
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		try {
-			let params = JSON.parse(req.body);
-			let qtdPessoas = params.qtdPessoas;
-			let nomeRota = params.nomeRota;
-			let rotaMapsApi = params.rotaMaps;
-			let rotaUsuario = params.rotaUsuario;
+			const params 	  = JSON.parse(req.body);
 
-			var_dump(params);
-			var_dump(qtdPessoas);
-			var_dump(nomeRota);
+			const qtdPessoas  = params.qtdPessoas, 
+				  nomeRota    = params.nomeRota, 
+				  rotaMapsAPI = params.rotaMaps, 
+				  rotaUsuario = params.rotaUsuario;
 
-			var_dump(rotaMapsApi);
-			var_dump(rotaUsuario);
-
-			let respObj = {
+			const respObj = {
 				message : "Salvo com sucesso !",
 				idRota: 0
 			};
 
-			//validarPontos.getMostValuablePoints(rotaMapsApi.points);
-			//rotaMapsApi.points = validarPontos.points;
+			let valuablePointsMapsAPI = getMostValuablePoints(rotaMapsAPI.points);
+
+			var_dump( valuablePointsMapsAPI );
 
 			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
 				respObj.idRota = response.insertId;
 				console.log("Gravou rota com sucesso");
 				console.log(response.insertId);
 
-				rotaMapsApi.points.forEach(function (ponto, index) {
+				valuablePointsMapsAPI.forEach(function (ponto, index) {
 					console.log(ponto.lat);
 					console.log(ponto.lng);
 					console.log(respObj.idRota);
@@ -89,32 +79,52 @@ class Rota {
 			let respObj = {
 				message : "Um erro inesperado ocorreu !" + e
 			};
-			var_dump(e);
+			var_dump(e + "");
 			res.json(respObj);
 			next();
 		}
 	}
 
-	getRotaPorId(req, res, next){
+	getRotaById(req, res, next){
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		let respObj = {};
 
 		try {
 			let params = JSON.parse(req.body);
-			let idRota = params.idRota;
+			let routeId = params.routeId;
 
-			var_dump(params);
-			var_dump(idRota);
-
-			rotaService.getRotaPorId(idRota).then((response) => {
-				respObj.rota = response;
+			rotaService.getPontosRota(routeId).then((response) => {
+				respObj.rota = {
+					id: routeId,
+					points: response
+				};
 				res.json(respObj);
 				next();
 			});
-
 		} catch (e) {
-			var_dump(e);
-			respObj.error = e;
+			var_dump(e + '');
+			respObj.error = e + '';
+			res.json(respObj);
+			next();
+		}
+	}
+
+	getRoutesByDate(req, res, next) {
+		res.setHeader("Access-Control-Allow-Origin", "*");
+		let respObj = {};
+
+		try {
+			let params = JSON.parse(req.body);
+			let date = params.date;
+
+			rotaService.getRoutesByDate(date).then((response) => {
+				respObj.rotas = response;
+				res.json(respObj);
+				next();
+			});
+		} catch (e) {
+			var_dump(e + '');
+			respObj.error = e + '';
 			res.json(respObj);
 			next();
 		}

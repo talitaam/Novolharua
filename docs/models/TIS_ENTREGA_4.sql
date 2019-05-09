@@ -8,63 +8,62 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema tis_exemplo_2
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema tis_exemplo_2
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `tis_exemplo_2` DEFAULT CHARACTER SET utf8 ;
+USE `tis_exemplo_2` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`rotamaps`
+-- Table `tis_exemplo_2`.`rotamaps`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`rotamaps` (
-  `ID` INT(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`rotamaps` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `NMROTA` VARCHAR(80) NOT NULL,
   `QTDPESSOAS` VARCHAR(45) NULL DEFAULT NULL,
   `DTINCLUSAO` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  UNIQUE INDEX `ID_ROTA` (`ID` ASC) VISIBLE)
+  UNIQUE INDEX `ID_ROTA` (`ID` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`doacao`
+-- Table `tis_exemplo_2`.`doacao`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`doacao` (
-  `ID` INT(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`doacao` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `IDROTA` INT(11) NOT NULL,
   `NOME` VARCHAR(50) NOT NULL,
   `DTDOACAO` DATE NOT NULL,
   PRIMARY KEY (`ID`, `IDROTA`),
-  INDEX `fk_doacao_rotamaps2_idx` (`IDROTA` ASC) VISIBLE,
+  INDEX `fk_doacao_rotamaps2_idx` (`IDROTA` ASC) ,
   CONSTRAINT `fk_doacao_rotamaps2`
     FOREIGN KEY (`IDROTA`)
-    REFERENCES `mydb`.`rotamaps` (`ID`)
+    REFERENCES `tis_exemplo_2`.`rotamaps` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
-
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `mydb`.`pontomaps`
+-- Table `tis_exemplo_2`.`pontomaps`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`pontomaps` (
-  `ID` INT(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`pontomaps` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `IDROTA` INT(11) NOT NULL,
   `IDORDEMPONTO` INT(11) NOT NULL,
   `LAT` VARCHAR(30) NOT NULL,
   `LNG` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `fk_ponto_rota_idx` (`IDROTA` ASC) VISIBLE,
+  INDEX `fk_ponto_rota_idx` (`IDROTA` ASC) ,
   CONSTRAINT `fk_ponto_rota`
     FOREIGN KEY (`IDROTA`)
-    REFERENCES `mydb`.`rotamaps` (`ID`)
+    REFERENCES `tis_exemplo_2`.`rotamaps` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -73,19 +72,19 @@ COLLATE = utf8_bin;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`pontousuario`
+-- Table `tis_exemplo_2`.`pontousuario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`pontousuario` (
-  `ID` INT(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`pontousuario` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `IDROTA` INT(11) NOT NULL,
   `IDORDEMPONTO` INT(11) NOT NULL,
   `LAT` VARCHAR(30) NOT NULL,
   `LNG` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `fk_pontousuario_rota1_idx` (`IDROTA` ASC) VISIBLE,
+  INDEX `fk_pontousuario_rota1_idx` (`IDROTA` ASC) ,
   CONSTRAINT `fk_pontousuario_rota1`
     FOREIGN KEY (`IDROTA`)
-    REFERENCES `mydb`.`rotamaps` (`ID`)
+    REFERENCES `tis_exemplo_2`.`rotamaps` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

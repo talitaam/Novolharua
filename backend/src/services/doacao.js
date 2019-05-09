@@ -3,7 +3,7 @@ import moment from "moment";
 
 class Doacao {
 	constructor() {
-		this.GET_ALL_DOACOES = "SELECT NOME, DTDOACAO, NMROTA FROM DOACAO D JOIN ROTA R ON D.IDROTA = R.IDROTA ORDER BY 1";
+		this.GET_ALL_DOACOES = "SELECT NOME, DTDOACAO, NMROTA FROM DOACAO D JOIN ROTAMAPS R ON D.IDROTA = R.ID ORDER BY 1";
 		this.INSERT_DOACAO = "INSERT INTO `doacao`(`IDROTA`, `NOME`, `DTDOACAO`) VALUES ( @idRota, @nomeDoador, @dtDoacao)";
 	}
     
