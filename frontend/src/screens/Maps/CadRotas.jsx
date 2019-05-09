@@ -9,6 +9,7 @@ import Direction from "components/Direction/Direction.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import Button from "components/CustomButtons/Button.jsx";
+import CardBody from "../../components/Card/CardBody";
 import CustomInput from "../../components/CustomInput/CustomInput";
 
 const styles = {
@@ -64,17 +65,29 @@ class CadRotas extends React.Component {
                 points: window.mapsRoute
             },
             rotaUsuario: {
-                points: window.waypoints.map(({ location }) => ({ lat: location.lat(), lng: location.lng()}))
+                points: window.waypoints
             }
         };
 
         let canSave = true;
+
+        if($('#nmRota').val() == ''){
+          alert("O campo nome da rota deve ser preenchido!");
+          canSave = false;
+        }
+
+        if($('#nroPessoas').val() == ''){
+          alert("O campo número de pessoas atendidas deve ser preenchido!");
+          canSave = false;
+        }
 
         if (!window.mapsRoute) {
             alert("É preciso que uma rota seja selecionada!");
             canSave = false;
         }
 
+console.log(canSave);
+console.log(data);
         if (canSave) {
             fetch('http://localhost:3001/rota/add',
                 {
@@ -94,6 +107,7 @@ class CadRotas extends React.Component {
         $('#nmRota').val('');
         $('#nroPessoas').val('');
         window.waypoints = [];
+        window.location.reload();
     }
 
     render() {
@@ -101,6 +115,14 @@ class CadRotas extends React.Component {
         return (
             <div>
                 <GridContainer justify="center" alignItems="baseline">
+                <CardBody>
+                  <h4>Instruções</h4>
+                  <p>
+                    Para traçar uma rota clique com o botão esquerdo do mouse em
+                    qualquer ponto. Para gerar uma rota clique com o botão direito
+                    em qualquer ponto no mapa. Serão aceitos no máximo 10 pontos."
+                  </p>
+                </CardBody>
                     <GridItem xs={12} sm={12} md={8}>
                         <CustomInput
                             labelText="Nome da rota:"
@@ -135,6 +157,14 @@ class CadRotas extends React.Component {
                         <Direction />
                     </GridItem>
                 </GridContainer>
+
+               
+            <GridContainer>
+                <GridItem xs={12} sm={12} md={12}>
+                    <Direction />
+                </GridItem>
+            </GridContainer>
+            
             </div>
         );
     }
