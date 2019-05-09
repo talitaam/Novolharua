@@ -125,7 +125,7 @@ class CadDoacao extends React.Component {
 			donationDate: date 
 		});
 
-		RotasService.findAvaiableRoutesByDate(date).then((json) => {
+		RotasService.findAvaiableRoutesByDate(actualDate.format('DD/MM/YYYY')).then((json) => {
 			const { rotas } = json;
 			const canAutoSetRoute = rotas.length > 0;
 

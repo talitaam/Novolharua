@@ -108,6 +108,27 @@ class Rota {
 			next();
 		}
 	}
+
+	getRoutesByDate(req, res, next) {
+		res.setHeader("Access-Control-Allow-Origin", "*");
+		let respObj = {};
+
+		try {
+			let params = JSON.parse(req.body);
+			let date = params.date;
+
+			rotaService.getRoutesByDate(date).then((response) => {
+				respObj.rotas = response;
+				res.json(respObj);
+				next();
+			});
+		} catch (e) {
+			var_dump(e + '');
+			respObj.error = e + '';
+			res.json(respObj);
+			next();
+		}
+	}
 }
 
 export default new Rota ();
