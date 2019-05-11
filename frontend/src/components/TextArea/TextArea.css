@@ -1,0 +1,41 @@
+textarea {
+    resize: none;
+}
+
+.textarea {
+    outline: none;
+    background: none;
+    height: 100px;
+    width: 100%;    
+    border: none;
+    font-size: 12px;
+    color: currentColor;
+    font: inherit;
+}
+
+.textarea-border {
+  border-bottom: solid 1px #d2d2d2; 
+}
+
+.textarea-border:after {
+  outline: none;
+  display:block;
+  content: '';
+  border: solid 1px #9c27b0;  
+  transform: scaleX(0);  
+  transition: transform 250ms ease-in-out;
+}
+
+.textarea-border:hover:after { 
+    transform: scaleX(1); 
+}
+
+.textarea-border:after .textarea:focus {
+    border: solid 1px #9c27b0;  
+}
+
+.textarea-label {
+    border-color: #d2d2d2;
+    margin-right: 20px;
+    font-size: 14px;
+}

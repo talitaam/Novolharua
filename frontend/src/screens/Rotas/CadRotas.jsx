@@ -8,6 +8,8 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import CardBody from "../../components/Card/CardBody";
+import Slider from "../../components/Slider/Slider.jsx";
+import TextArea from "../../components/TextArea/TextArea.jsx";
 
 import DirectionsHelper from "components/Map/DirectionsHelper.js";
 import RotasService from "./RotasService";
@@ -38,29 +40,20 @@ class CadRotas extends React.Component {
         super();
 
         this.state = {
-            infoPeople: '',
             routeName: '',
             directions: {
 				routes:[]
 			},
-            waypoints: [],
-
+            waypoints: []
         };
 
         this.saveRoute = this.saveRoute.bind(this);
 
-        this.onChangeInfoPeople = this.onChangeInfoPeople.bind(this);
         this.onChangeRouteName = this.onChangeRouteName.bind(this);
         this.onClickMap = this.onClickMap.bind(this);
         this.onRightClickMap = this.onRightClickMap.bind(this);
 
         this.cleanMap = this.cleanMap.bind(this);
-    }
-
-    onChangeInfoPeople(event) {
-        this.setState({
-            infoPeople: event.target.value
-        })
     }
 
     onChangeRouteName(event) {
@@ -99,10 +92,9 @@ class CadRotas extends React.Component {
     }
 
     saveRoute() {
-        const { routeName, infoPeople, mapsRoute, userRoute } = this.state;
+        const { routeName, mapsRoute, userRoute } = this.state;
         const saveData = {
             routeName,
-            infoPeople,
             mapsRoute,
             userRoute
         };
@@ -129,7 +121,7 @@ class CadRotas extends React.Component {
     }
 
     render() {
-        const { routeName, infoPeople, waypoints, directions } = this.state;
+        const { routeName, waypoints, directions } = this.state;
 
         return (
             <>
@@ -142,7 +134,7 @@ class CadRotas extends React.Component {
                   </p>
                 </CardBody>
                 <GridContainer justify="center" alignItems="baseline">
-                    <GridItem xs={12} sm={12} md={8}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <CustomInput
                             labelText="Nome da rota:"
                             id="nmRota"
@@ -154,18 +146,11 @@ class CadRotas extends React.Component {
                                 onChange: this.onChangeRouteName
                             }}
                         />
-                        <CustomInput
-                            labelText="Número de pessoas atendidas:"
-                            id="nroPessoas"
-                            formControlProps={{
-                                fullWidth: true
-                            }}
-                            inputProps={{
-                                value: infoPeople,
-                                onChange: this.onChangeInfoPeople
-                            }}
-                        />
                     </GridItem>
+                    
+                    <GridItem xs={12} sm={12} md={12}>
+                        <TextArea />
+                    </GridItem> 
                     <GridItem xs={12} sm={12} md={4}>
                         <Button color="danger" onClick={this.cleanMap}>Limpar Marcadores</Button>
                         <Button color="success" onClick={this.saveRoute}>Salvar</Button>
@@ -178,6 +163,7 @@ class CadRotas extends React.Component {
                             onClick={this.onClickMap}
                             onRightClick={this.onRightClickMap} />
                     </GridItem>
+                    
                 </GridContainer>
             </>
         );

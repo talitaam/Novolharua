@@ -34,3 +34,25 @@
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":15328,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-02T21:19:22.746Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":15328,"level":10,"msg":"POST /rota/add 200 52 ms","time":"2019-05-02T21:19:55.297Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":15328,"level":10,"msg":"POST /rota/add 200 16 ms","time":"2019-05-02T21:22:37.241Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":8124,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-11T16:48:07.588Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-11T17:24:24.614Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST //rota/add 200 36 ms","time":"2019-05-11T17:24:35.611Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 6 ms","time":"2019-05-11T17:24:38.170Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /rota/findById 200 6 ms","time":"2019-05-11T17:24:46.695Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 5 ms","time":"2019-05-11T17:25:30.675Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /rota/findById 200 9 ms","time":"2019-05-11T17:25:32.920Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 5 ms","time":"2019-05-11T17:58:26.910Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 9 ms","time":"2019-05-11T18:35:44.543Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 6 ms","time":"2019-05-11T18:35:48.135Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 4 ms","time":"2019-05-11T18:35:51.623Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 5 ms","time":"2019-05-11T18:36:06.139Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 9 ms","time":"2019-05-11T18:36:06.776Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 6 ms","time":"2019-05-11T18:36:10.718Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 4 ms","time":"2019-05-11T18:36:17.284Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 5 ms","time":"2019-05-11T18:46:19.191Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 4 ms","time":"2019-05-11T18:46:19.523Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 9 ms","time":"2019-05-11T19:46:40.973Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 4 ms","time":"2019-05-11T19:46:41.602Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 14 ms","time":"2019-05-11T19:46:44.035Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"POST /doacao/ 200 6 ms","time":"2019-05-11T19:46:47.056Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":10,"msg":"GET /rota/ 200 24 ms","time":"2019-05-11T19:48:52.795Z","v":0}
