@@ -27,32 +27,29 @@ class Rota {
 	addRota(req, res, next){
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		try {
-			const params 	  = JSON.parse(req.body);
-
-			const qtdPessoas  = params.qtdPessoas, 
-				  nomeRota    = params.nomeRota, 
-				  rotaMapsAPI = params.rotaMaps, 
+			const params = JSON.parse(req.body);
+			var_dump(params);
+			const qtdPessoas  = params.qtdPessoas,
+				  nomeRota    = params.nomeRota,
+				  rotaMapsAPI = params.rotaMaps,
 				  rotaUsuario = params.rotaUsuario;
 
 			const respObj = {
 				message : "Salvo com sucesso !",
 				idRota: 0
 			};
-
-			let valuablePointsMapsAPI = getMostValuablePoints(rotaMapsAPI.points);
-
-			var_dump( valuablePointsMapsAPI );
-
-			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
+			var_dump(rotaMapsAPI.points);
+			if(rotaMapsAPI.points.length > 2){
+				rotaMapsAPI.points = getMostValuablePoints(rotaMapsAPI.points);
+				var_dump( rotaMapsAPI.points );
+			}
+				rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
 				respObj.idRota = response.insertId;
 				console.log("Gravou rota com sucesso");
 				console.log(response.insertId);
 
-				valuablePointsMapsAPI.forEach(function (ponto, index) {
-					console.log(ponto.lat);
-					console.log(ponto.lng);
-					console.log(respObj.idRota);
-
+				rotaMapsAPI.points.forEach(function (ponto, index) {
+					console.log("Pontos - Rota Usuario");
 					rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
 						console.log("Gravou pontoMaps com sucesso");
 						respObj.rotaMaps = response;
@@ -61,6 +58,7 @@ class Rota {
 				});
 
 				rotaUsuario.points.forEach(function (ponto, index) {
+					console.log("Pontos - Rota Usuario");
 					var_dump(ponto.lat);
 					var_dump(ponto.lng);
 
