@@ -32,6 +32,7 @@ const enhance = compose(
 const Map = enhance(({ onClick, onRightClick, markers, directions }) => (
     <GoogleMap
         defaultZoom={ 14 }
+        options={{gestureHandling: "cooperative"}}
         defaultCenter={ new window.google.maps.LatLng(-19.932654, -43.936020)}
         onClick={ onClick }
         onRightClick={ onRightClick } >
