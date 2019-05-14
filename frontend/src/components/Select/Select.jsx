@@ -7,7 +7,7 @@ class CustomSelect extends React.Component {
         const {value, onChange, options, placeholder, noOptionsMessage} = this.props;
 
         return (
-            <div className="divSpacing">
+            <div className="select-container">
                 <Select
                     className="select"
                     value={ value }

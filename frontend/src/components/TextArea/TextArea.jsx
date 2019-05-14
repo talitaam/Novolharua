@@ -8,11 +8,10 @@ class TextArea extends React.Component {
 
     render() {
         return (
-            <div>
-                <label htmlFor="textarea" className="textarea-label" > Observação: </label>
-                <div className="textarea-border">
-                    <textarea name="textarea" className="textarea"></textarea>
-                </div>
+            <div className="textarea-container">
+                <textarea name="textarea" className="textarea" required pattern="\S+.*"></textarea>
+                <div className="textarea-border"></div>
+                <label htmlFor="textarea" className="textarea-label"><span>Observações:</span></label>
             </div>
         );
     }

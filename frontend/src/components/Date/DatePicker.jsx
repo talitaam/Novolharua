@@ -12,7 +12,7 @@ class CustomDatePicker extends React.Component {
                         minDate={new Date()}
                         dateFormat="dd/MM/yyyy"
                         placeholder="Selecione uma data :"
-                        className="defaultInput"
+                        className="MuiInputBase-input-347 MuiInput-input-332 datepicker"
                         disabledKeyboardNavigation
                     />
                 </div>

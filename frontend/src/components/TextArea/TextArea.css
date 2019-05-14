@@ -1,8 +1,10 @@
-textarea {
-    resize: none;
+.textarea-container {
+    margin-top: 4%;
+    height: 158px;
 }
 
 .textarea {
+    resize: none;
     outline: none;
     background: none;
     height: 100px;
@@ -13,8 +15,14 @@ textarea {
     font: inherit;
 }
 
+.textarea-label {
+    border-color: #d2d2d2;
+    margin-right: 20px;
+}
+
 .textarea-border {
-  border-bottom: solid 1px #d2d2d2; 
+  border-bottom: solid 1px #d2d2d2;
+  transition: border-width 250ms ease-in-out;
 }
 
 .textarea-border:after {
@@ -26,16 +34,55 @@ textarea {
   transition: transform 250ms ease-in-out;
 }
 
-.textarea-border:hover:after { 
+.textarea ~ .textarea-label span {
+    position: relative;
+    font-size: inherit;
+    transition: font-size 250ms, transform 250ms;
+    -webkit-transition: font-size 250ms, transform 250ms;
+    -moz-transition: font-size 250ms, transform 250ms;
+    -o-transition: font-size 250ms, transform 250ms;
+}
+
+.textarea:focus + .textarea-border { 
+    border-width: 0px;
+}
+
+.textarea:focus + .textarea-border:after { 
     transform: scaleX(1); 
 }
 
-.textarea-border:after .textarea:focus {
-    border: solid 1px #9c27b0;  
+.textarea ~ .textarea-label {
+    position: relative;
+    top: -106px;
+    transition: top 250ms;
+    -webkit-transition: top 250ms;
+    -moz-transition: top 250ms;
+    -o-transition: top 250ms;
 }
 
-.textarea-label {
-    border-color: #d2d2d2;
-    margin-right: 20px;
-    font-size: 14px;
+.textarea:focus ~ .textarea-label {
+    position: relative;
+    top: -132px;
+}
+
+.textarea:focus ~ .textarea-label span {
+    font-size: 11px;
+}
+
+.textarea:valid ~ .textarea-label span {
+    font-size: 11px;
+}
+
+.textarea:valid ~ .textarea-label {
+    top: -132px;
+}
+
+@keyframes moving {
+    from {top: 0px;}
+    to {top: -100px;}
+}
+
+@-webkit-keyframes moving {
+    from {top: 0px;}
+    to {top: -100px;}
 }
