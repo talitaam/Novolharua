@@ -1,0 +1,262 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+        <title>Validar Rota</title>
+        <meta name="description" content="Validar Rota">
+        <meta name="author" content="SitePoint">
+      
+        <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+        <meta charset="utf-8">
+
+
+  <script>
+
+    
+    //---------------------------------- COMEÇO PASSO 1 E PASSO 2 -----------------------------
+
+    //PASSO 1 - Passar o vetor de coordenadas recebido da API no algoritmo já implementado
+
+    //PASSO 2 - Passar o mesmo vetor, porém invertido (cuidado para não inverter latitude com longitude) no algoritmo já implementado.
+
+    /*{
+	    routeName: "",
+	    mapsRoute : {
+	    	points: [
+	    		{
+		    		lat: -19.935750000000002, 
+	    			lng: -43.93468
+			    }
+    		]
+	    },
+    	userRoute: {
+	    	points: [
+		    	{
+			    	lat: -19.935750000000002, 
+				    lng: -43.93468
+		    	}
+		    ],
+		    qtdPessoas: ''
+	    }
+    }
+
+
+    while(i< mapsRoute.points[].lenght-1){
+        if(i==0){
+            addNaRotaVerdadeira(mapsRoute.points[i]);
+        }
+        int dis = getDistanceFromLatLonInKm(mapsRoute.points[i], mapsRoute.points[i+1]);
+        if (dis >= 80 || i==mapsRoute.points[].lenght-2){
+            addNaRotaVerdadeira(mapsRoute.points[i+1]);
+            i++;
+        }
+
+        else{ 
+            int aux = dis; 
+            int j=i+1; 3
+            while(aux<80 && j < mapsRoute.points[].lenght){
+                int aux2 = getDistanceFromLatLonInKm(mapsRoute.points[j], mapsRoute.points[j+1]);
+                if(aux2 > 200 || j==mapsRoute.points[].lenght-2){
+                    addNaRotaVerdadeira(mapsRoute.points[j]);
+                    addNaRotaVerdadeira(mapsRoute.points[j+1]);
+                    aux=81;
+                }
+                else{
+                    aux += aux2; 
+                    if(aux>=80){
+                        addNaRotaVerdadeira(mapsRoute.points[j+1]);
+                    }
+                    j++;
+                }
+            }
+            i=j;
+        }
+    }
+
+    
+    
+  function getDistanceFromLatLonInKm(position1, position2) {
+    "use strict";
+    var deg2rad = function (deg) { return deg * (Math.PI / 180); },
+        R = 6371,
+        dLat = deg2rad(position2.lat - position1.lat),
+        dLng = deg2rad(position2.lng - position1.lng),
+        a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+            + Math.cos(deg2rad(position1.lat))
+            * Math.cos(deg2rad(position1.lat))
+            * Math.sin(dLng / 2) * Math.sin(dLng / 2),
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return ((R * c *1000).toFixed());
+}
+
+var distancia = (getDistanceFromLatLonInKm(
+   {lat: -19.932920000000003, lng: -43.938320000000004},
+   {lat: -19.933030000000002, lng: -43.93775} 
+));
+
+console.log(distancia);*/
+
+//---------------------------------- FIM PASSO 1 E PASSO 2 -----------------------------
+
+</script>
+
+
+
+<script>
+
+//---------------------------------- COMEÇO PASSO 3 -----------------------------
+
+//PASSO 3 - Usar função truncate (turfe.js) para precisar as casas decimais das coordenadas de cada posição do vetor.
+
+
+//1- Transformar as coordenadas retornadas após o PASSO 2 em uma turf.lineString. Exemplo a baixo (rotaParaValidar):
+
+    var rotaParaValidar = turf.lineString([ 
+    //                                      [-19.932660000000002, -43.93892], 
+    //                                      [-19.933030000000002, -43.93768], 
+    //                                      [-19.932920000000003, -43.938320000000004]
+                                        ]);
+
+//2- chamar a função de truncar atribuindo à mesma variável
+
+    rotaParaValidar = truncarCoordenadas(rotaParaValidar);
+    
+    function truncarCoordenadas(line){
+        for (var i = 0; i < line.geometry.coordinates.length; i++){
+            var point = turf.point(line.geometry.coordinates[i]); //transforma um par de coordenadas em um point
+            var truncated = turf.truncate(point, {precision: 6, coordinates: 2}); //limite para 6 casas decimais a lat e a lng
+            line.geometry.coordinates[i] = truncated.geometry.coordinates; //reescreve as coordenadas já truncadas
+        }
+        return line;
+    }
+
+    //os valores passariam a ser: 
+    //rotaParaValidar = [[-19.93266, -43.93892], 
+    //                   [-19.93303, -43.93768], 
+    //                   [-19.93292, -43.93832]
+    //                  ];
+
+
+
+    //---------------------------------- FIM PASSO 3 -----------------------------
+
+</script>
+
+
+<script>
+    //---------------------------------- COMEÇO PASSO 4 -----------------------------
+
+    //PASSO 4 - Usar função para excluir coordenadas duplicadas consecutivas do vetor (rotaParaValidar)
+
+
+    var array = rotaParaValidar.geometry.coordinates; //cria um array separa só com as coordenadas (o código funcionou só dessa maneira)
+
+    var apagaCoordDuplicada = compress(array); //atribui o novo vetor à essa variável
+
+    rotaParaValidar.geometry.coordinates = apagaDuplicada; //volta os valores para a variável de origem (rotaParaValidar)
+
+    //função que apaga coordenadas duplicadas consecutivas do vetor
+    function compress(list) {
+        if (list.length <= 1) {
+            return list
+        } else if (list[0][0] === list[1][0] && list[0][1] === list[1][1]) {
+            console.log("Encontrou duplicada: " + list[0] + " e " + list[1]);
+             return compress(list.slice(1, ))
+        } else {
+            return [list.shift()].concat(compress(list))
+        }
+    }
+
+    //---------------------------------- FIM PASSO 4 -----------------------------
+
+</script>
+
+
+<script>
+    //---------------------------------- COMEÇO PASSO 5, PASSO 6 E PASSO 7 -----------------------------
+    
+    //PASSO 5 - Pesquisar cada ponto na tabela de pontos e verificar se ele pertence a alguma rota (Ver arquivo passosValidaRota.pdf no mesmo diretório)
+
+    //PASSO 6 - Buscar no BD as (coordenadas) de cada Rota encontrada na Tabela de Pontos (que serão as rotas que apresentam pontos em comum com a rota a ser validada)
+
+        //1- Transformar as coordenadas retornadas em uma turf.lineString. Exemplo a baixo (rotaConflitante):
+
+        var rotaConflitante = turf.lineString([
+        //                                      [-19.93186, -43.93861], 
+        //                                      [-19.93216, -43.9387], 
+        //                                      [-19.93277, -43.93886], 
+        //                                      [-19.93285, -43.93858], 
+                                        ]);
+
+
+    //PASSO 7 - Chamar a função lineOverlap passando a rota a ser validada e a rota retirada da tabela de pontos.
+
+    var overlapping = turf.lineOverlap(rotaParaValidar, rotaConflitante, {tolerance: 0.005}); //chamar função lineOverlap para identificar os trechos com sobreposição
+    //considera pontos iguais com uma tolerância de 5 metros entre eles
+   
+   
+   //---------------------------------- FIM PASSO 5, PASSO 6 E PASSO 7 -----------------------------
+
+</script>
+
+
+<script>
+
+    //---------------------------------- COMEÇO PASSO 8, 9 e 10  -----------------------------
+
+    //PASSO 8 - Calcular distância entre coordenadas que foram retornadas pelo lineOverlap.
+
+    //PASSO 9 - Invalidar a rota a ser cadastrada caso a distância seja maior que um valor pré estabelecido
+    //          Serão considerados trechos superiores à 60 metros de sobreposição
+
+    //__________________________________________ATENÇÃO______________________________________________________
+
+    // ATENCÃO: FAZER O PASSO 6, 7 E 8 PARA TODAS AS ROTAS CONFLITANTES ENCONTRADAS NA TABELA DE PONTOS
+
+    //__________________________________________ATENÇÃO______________________________________________________
+
+    var trechosComOverlap = distanciaCoord(overlapping2); 
+    // variável que receberá os trechos que serão exibidos no mapa para o usuário para justificar a não validação
+   
+
+    //PASSO 10 - -Exibir as variáveis retornadas pelo código no mapa caso a rota é dada como inválida.
+    //            exibir juntos na tela: trechosComOverlap, rotaConflitante e rotaParaValidar
+    
+    //           -Exibir mensagem de Cadastrado com Sucesso caso não seja encontrado nenhum trecho conflitante 
+    //            em nenhuma rota buscada na tabela de pontos. (variável trechosComOverlap não retorna nada para  
+    //            todas as rotasConflitantes pesquisadas.)
+
+
+ 
+    function distanciaCoord(overlapping){
+        var retornaOverlaps = [];
+        let sizeArrayResposta = overlapping.features.length;
+        let tamanhoMaximo = 60;
+        for(var i = 0; i < sizeArrayResposta; i++){
+            var ultimoIndice = overlapping.features[i].geometry.coordinates.length;
+            for(var j = 0; j < ultimoIndice-1; j++){
+                for(var k = j+1; k < ultimoIndice; k++){
+                    var from = overlapping.features[i].geometry.coordinates[j];
+                    var to = overlapping.features[i].geometry.coordinates[k];
+                    var distance = turf.distance(from, to, {units: 'meters'});
+                    if (distance > tamanhoMaximo){
+                        console.log("Rota inválidada");
+                        var lat1 = from[0];
+                        var lng1 = from[1];
+                        var lat2 = to[0];
+                        var lng2 = to[1];
+                        var overlapCoordinates = {lat1: lat1, lng1: lng1, lat2: lat2, lng2: lng2}; 
+                        //trecho correspondente entre coordenada 1 (lat1 e lng1) e coordenada2 (lat2 e lng2)
+                        retornaOverlaps.push(overlapCoordinates);
+                    }
+                }
+            }
+            
+        }
+        return retornaOverlaps;
+    }    
+  
+  </script>
+</head>
+<body></body>
+</html>
