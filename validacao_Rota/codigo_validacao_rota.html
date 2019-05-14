@@ -225,15 +225,19 @@ console.log(distancia);*/
     //           -Exibir mensagem de Cadastrado com Sucesso caso não seja encontrado nenhum trecho conflitante 
     //            em nenhuma rota buscada na tabela de pontos. (variável trechosComOverlap não retorna nada para  
     //            todas as rotasConflitantes pesquisadas.)
+	
+    //		 -Atualizar Tabela de Pontos assim que uma rota nova é validada e passa a ser cadastrada no sistema.
 
 
  
     function distanciaCoord(overlapping){
         var retornaOverlaps = [];
         let sizeArrayResposta = overlapping.features.length;
-        let tamanhoMaximo = 60;
+        let tamanhoMaximo = 70;
         for(var i = 0; i < sizeArrayResposta; i++){
             var ultimoIndice = overlapping.features[i].geometry.coordinates.length;
+            var maior = 0;
+            var overlapCoordinates = {};
             for(var j = 0; j < ultimoIndice-1; j++){
                 for(var k = j+1; k < ultimoIndice; k++){
                     var from = overlapping.features[i].geometry.coordinates[j];
@@ -241,20 +245,20 @@ console.log(distancia);*/
                     var distance = turf.distance(from, to, {units: 'meters'});
                     if (distance > tamanhoMaximo){
                         console.log("Rota inválidada");
-                        var lat1 = from[0];
-                        var lng1 = from[1];
-                        var lat2 = to[0];
-                        var lng2 = to[1];
-                        var overlapCoordinates = {lat1: lat1, lng1: lng1, lat2: lat2, lng2: lng2}; 
-                        //trecho correspondente entre coordenada 1 (lat1 e lng1) e coordenada2 (lat2 e lng2)
-                        retornaOverlaps.push(overlapCoordinates);
+                        if (distance > maior){
+                            maior = distance;
+                            var overlapCoordinates = {lat1: from[0], lng1: from[1], lat2: to[0], lng2: to[1]};
+                            //trecho correspondente entre coordenada 1 (lat1 e lng1) e coordenada2 (lat2 e lng2)
+                        }
                     }
                 }
             }
-            
+            if (maior != 0){
+                retornaOverlaps.push(overlapCoordinates);
+            }
         }
         return retornaOverlaps;
-    }    
+    }
   
   </script>
 </head>
