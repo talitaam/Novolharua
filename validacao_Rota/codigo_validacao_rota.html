@@ -190,8 +190,11 @@ console.log(distancia);*/
 
     //PASSO 7 - Chamar a função lineOverlap passando a rota a ser validada e a rota retirada da tabela de pontos.
 
-    var overlapping = turf.lineOverlap(rotaParaValidar, rotaConflitante, {tolerance: 0.005}); //chamar função lineOverlap para identificar os trechos com sobreposição
-    //considera pontos iguais com uma tolerância de 5 metros entre eles
+    var overlapping = turf.lineOverlap(rotaParaValidar, rotaConflitante, {tolerance: 0.005}); 
+    //chamar função lineOverlap para identificar os trechos com sobreposição
+    // Considera pontos iguais com uma tolerância de 5 metros entre eles
+	
+    // Se retornar um overlapping.length > 0,  ir para PASSO 8
    
    
    //---------------------------------- FIM PASSO 5, PASSO 6 E PASSO 7 -----------------------------
