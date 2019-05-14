@@ -5,17 +5,19 @@ class Rota {
 	constructor() {
 		this.GET_ALL_ROTAS = "SELECT ID, NMROTA, QTDPESSOAS, DTINCLUSAO FROM ROTAMAPS";
 		this.GET_PONTOS_ROTA = "SELECT LAT, LNG FROM ROTAMAPS RM JOIN PONTOUSUARIO PU ON RM.ID = PU.IDROTA WHERE IDROTA = @idRota ORDER BY IDORDEMPONTO";
-		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `QTDPESSOAS`, `DTINCLUSAO`) VALUES ( @nomRota, @qtdPessoas, now())";
+		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `NUMPESSOASMIN`, `NUMPESSOASMAX`, `OBSERVACAO`, `DTINCLUSAO`) VALUES ( @nomRota, @numMinPessoas, @numMaxPessoas, @observacao, now())";
 		this.INSERT_PONTO_MAPS = "INSERT INTO `PONTOMAPS`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.INSERT_PONTO_USUARIO = "INSERT INTO `PONTOUSUARIO`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.SELECT_ROTA_POR_ID = "SELECT RM.*, PM.* FROM ROTAMAPS RM JOIN PONTOMAPS PM ON RM.ID = PM.IDROTA WHERE RM.ID = @idRota";
 		this.GET_ROUTES_BY_DATE = "SELECT ID, NMROTA, QTDPESSOAS, DTINCLUSAO FROM ROTAMAPS WHERE ID NOT IN (SELECT IDROTA FROM DOACAO WHERE DATE_FORMAT(DTDOACAO, '%d/%m/%Y') = @dataFiltrada )	";
 	}
 
-	addRota(nomeRota, qtdPessoas) {
+	addRota(nomeRota, numMinPessoas, numMaxPessoas, observacao) {
 		let queryParams = {
 			nomRota: nomeRota,
-			qtdPessoas: qtdPessoas
+			numMinPessoas : numMinPessoas,
+			numMaxPessoas : numMaxPessoas,
+			observacao : observacao
 		};
 
 		return dbService.runQuery(this.INSERT_ROTA, queryParams, result => {
@@ -24,9 +26,6 @@ class Rota {
 	}
 
 	addPontoUsuario(idOrdemPonto, idRota, latitude, longitude) {
-		console.log(idRota);
-		console.log(latitude);
-		console.log(longitude);
 		let queryParams = {
 			idOrdemPonto: idOrdemPonto,
 			idRota: idRota,
