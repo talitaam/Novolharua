@@ -160,7 +160,6 @@ console.log(distancia);*/
         if (list.length <= 1) {
             return list
         } else if (list[0][0] === list[1][0] && list[0][1] === list[1][1]) {
-            console.log("Encontrou duplicada: " + list[0] + " e " + list[1]);
              return compress(list.slice(1, ))
         } else {
             return [list.shift()].concat(compress(list))
