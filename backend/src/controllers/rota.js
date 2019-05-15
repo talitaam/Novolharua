@@ -60,7 +60,7 @@ class Rota {
 
 				rotaUsuario.points.forEach(function (ponto, index) {
 					console.log("Pontos - Rota Usuario");
-					console.log ("Lat: " + ponto.lat " / Lng: " + ponto.lng);
+					console.log ("Lat: " + ponto.lat + " / Lng: " + ponto.lng);
 
 					rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
 						console.log("Gravou pontoUsuario com sucesso");
