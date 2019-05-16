@@ -57,10 +57,9 @@ class CadRotas extends React.Component {
         this.onChangeRouteName = this.onChangeRouteName.bind(this);
         this.onChangeMaxPessoas = this.onChangeMaxPessoas.bind(this);
         this.onChangeMinPessoas = this.onChangeMinPessoas.bind(this);
+        this.cleanFields = this.cleanFields.bind(this);
         this.onClickMap = this.onClickMap.bind(this);
         this.onRightClickMap = this.onRightClickMap.bind(this);
-
-        this.cleanMap = this.cleanMap.bind(this);
     }
 
     onChangeRouteName(event) {
@@ -131,7 +130,7 @@ class CadRotas extends React.Component {
 
         let canSave = true;
 
-         if(routeName == ''){
+         if(!routeName.trim()){
           alert("O campo nome da rota deve ser preenchido!");
           canSave = false;
         }
@@ -154,23 +153,24 @@ class CadRotas extends React.Component {
         if (canSave){
             RotasService.saveRoute(saveData).then( json => {
                 if(json)
-                    alert(json.message)
+                    alert(json.message);
+                this.cleanFields();
             } );
         }
     };
 
-
-
-
-    cleanMap() {
-        this.setState({
-            waypoints: [],
-            mapsRoute: [],
-            userRoute: [],
-            directions: {
-                routes: []
-            }
-        });
+    cleanFields(){
+      this.setState({
+        routeName: '',
+        minPessoas: '',
+        maxPessoas: '',
+        waypoints: [],
+        mapsRoute: [],
+        userRoute: [],
+        directions: {
+            routes: []
+        }
+      });
     }
 
     render() {
@@ -232,7 +232,7 @@ class CadRotas extends React.Component {
                         <TextArea/>
                       </GridItem>
                       <GridItem xs={12} sm={12} md={4}>
-                          <Button color="danger" onClick={this.cleanMap}>Limpar Marcadores</Button>
+                          <Button color="danger" onClick={this.cleanFields}>Limpar Dados</Button>
                           <Button color="success" onClick={this.saveRoute}>Salvar</Button>
                       </GridItem>
                 </GridContainer>
