@@ -99,7 +99,7 @@ class Slider extends React.Component {
     //           }
     //         }
     //       }
-    //     });      
+    //     });
     //   });
     // ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all
     render() {
@@ -113,7 +113,7 @@ class Slider extends React.Component {
                             <div className="range">
                                 <span className="range-value"> {values[0]} </span>
                                 <span className="range-divider"></span>
-                                <span class="range-value"> {values[1]} </span>
+                                <span className="range-value"> {values[1]} </span>
                             </div>
                             <div className="range-alert">+</div>
                             <div className="gear-wrapper">
