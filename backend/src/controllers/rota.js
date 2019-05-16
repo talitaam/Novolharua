@@ -30,9 +30,12 @@ class Rota {
 			const params = JSON.parse(req.body);
 			var_dump(params);
 			const nomeRota = params.nomeRota,
+					  origem = params.origem,
+						destino = params.destino,
+						distancia = params.distancia,
 						numMinPessoas = param.numMinPessoas,
 						numMaxPessoas = param.numMaxPessoas,
-						observacao = param.observacao,
+						observacao = params.observacao,
 				  	rotaMapsAPI = params.rotaMaps,
 				  	rotaUsuario = params.rotaUsuario;
 
@@ -41,11 +44,21 @@ class Rota {
 				idRota: 0
 			};
 
+			const rota = {
+				nomeRota : nomeRota,
+			  origem : origem,
+				destino : destino,
+				distancia : distancia,
+				numMinPessoas : numMinPessoas,
+				numMaxPessoas : numMaxPessoas,
+				observacao : observacao
+			}
+
 			if(rotaMapsAPI.points.length > 2){
 				rotaMapsAPI.points = getMostValuablePoints(rotaMapsAPI.points);
 				var_dump( rotaMapsAPI.points );
 			}
-				rotaService.addRota(nomeRota, numMinPessoas, numMaxPessoas, observacao).then((response) => {
+				rotaService.addRota(rota).then((response) => {
 				respObj.idRota = response.insertId;
 				console.log("Gravou rota com sucesso: " + response.insertId);
 

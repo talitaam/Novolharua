@@ -44,7 +44,10 @@ class CadRotas extends React.Component {
           directions: {
 			      routes:[]
 		      },
-          waypoints: []
+          waypoints: [],
+          startAddress : '',
+          endAddress: '',
+          distance: ''
         };
 
         this.saveRoute = this.saveRoute.bind(this);
@@ -83,23 +86,32 @@ class CadRotas extends React.Component {
         const { waypoints } = this.state;
         DirectionsHelper.getRouteAPI(waypoints, result => {
             const mapsRoute = result.routes[0].overview_path.map(point => { return ({ lat: point.lat(), lng: point.lng() }); });
+            const distance = result.routes[0].legs[0].distance.text;
+            const startAddress =  result.routes[0].legs[0].start_address;
+            const endAddress =  result.routes[0].legs[0].end_address;
             this.setState({
                 waypoints: [],
                 mapsRoute: mapsRoute,
-                directions: result
+                directions: result,
+                distance : distance,
+                startAddress : startAddress,
+                endAddress : endAddress
             });
         });
     }
 
     saveRoute() {
-        const { routeName, mapsRoute, userRoute } = this.state;
+        const { routeName, mapsRoute, userRoute, startAddress, endAddress, distance } = this.state;
         const saveData = {
             routeName,
             mapsRoute,
-            userRoute
+            userRoute,
+            startAddress,
+            endAddress,
+            distance
         };
-        let canSave = true;
 
+        let canSave = true;
 
          if(routeName == ''){
           alert("O campo nome da rota deve ser preenchido!");
