@@ -41,7 +41,7 @@ class RotasService {
         return this.fetchAvaiableRoutesByDate(date);
     }
 
-    saveRoute({ routeName, mapsRoute, userRoute, startAddress, endAddress, distance }) {
+    saveRoute({ routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance }) {
         let data = {
             nomeRota: routeName,
             rotaMaps: {
@@ -50,6 +50,8 @@ class RotasService {
             rotaUsuario: {
                 points: userRoute.map(({ location }) => ({ lat: location.lat(), lng: location.lng() }))
             },
+            numMinPessoas: minPessoas,
+            numMaxPessoas: maxPessoas,
             origem: startAddress,
             destino: endAddress,
             distancia: distance

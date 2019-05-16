@@ -45,6 +45,8 @@ class CadRotas extends React.Component {
 			      routes:[]
 		      },
           waypoints: [],
+          minPessoas: 0,
+          maxPessoas: 0,
           startAddress : '',
           endAddress: '',
           distance: ''
@@ -53,6 +55,8 @@ class CadRotas extends React.Component {
         this.saveRoute = this.saveRoute.bind(this);
 
         this.onChangeRouteName = this.onChangeRouteName.bind(this);
+        this.onChangeMaxPessoas = this.onChangeMaxPessoas.bind(this);
+        this.onChangeMinPessoas = this.onChangeMinPessoas.bind(this);
         this.onClickMap = this.onClickMap.bind(this);
         this.onRightClickMap = this.onRightClickMap.bind(this);
 
@@ -62,6 +66,18 @@ class CadRotas extends React.Component {
     onChangeRouteName(event) {
         this.setState({
             routeName: event.target.value
+        })
+    }
+
+    onChangeMaxPessoas(event) {
+        this.setState({
+            maxPessoas: event.target.value
+        })
+    }
+
+    onChangeMinPessoas(event) {
+        this.setState({
+            minPessoas: event.target.value
         })
     }
 
@@ -101,11 +117,13 @@ class CadRotas extends React.Component {
     }
 
     saveRoute() {
-        const { routeName, mapsRoute, userRoute, startAddress, endAddress, distance } = this.state;
+        const { routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance } = this.state;
         const saveData = {
             routeName,
             mapsRoute,
             userRoute,
+            minPessoas,
+            maxPessoas,
             startAddress,
             endAddress,
             distance
@@ -118,7 +136,17 @@ class CadRotas extends React.Component {
           canSave = false;
         }
 
-         if (!mapsRoute || !mapsRoute.length) {
+        if (minPessoas <= 0 || maxPessoas <= 0){
+          alert("A quantidade estimada de pessoas não pode ser zero ou abaixo de zero");
+          canSave = false;
+        }
+
+        if (minPessoas > maxPessoas){
+          alert("A quantidade máxima estimada de pessoas não pode ser menor que a minima");
+          canSave = false;
+        }
+
+       if (!mapsRoute || !mapsRoute.length) {
             alert("É preciso que uma rota seja selecionada!");
             canSave = false;
         }
@@ -130,6 +158,9 @@ class CadRotas extends React.Component {
             } );
         }
     };
+
+
+
 
     cleanMap() {
         this.setState({
@@ -143,7 +174,7 @@ class CadRotas extends React.Component {
     }
 
     render() {
-        const { routeName, waypoints, directions } = this.state;
+        const { routeName, waypoints, directions, minPessoas, maxPessoas } = this.state;
 
         return (
             <>
@@ -169,17 +200,41 @@ class CadRotas extends React.Component {
                             }}
                         />
                     </GridItem>
-
-                    <GridItem xs={12} sm={12} md={12}>
+                    <GridItem xs={6} sm={6} md={6}>
+                      <CustomInput
+                          labelText="Min Pessoas:"
+                          id="minPessoas"
+                          formControlProps={{
+                              fullWidth: false
+                          }}
+                          inputProps={{
+                              type: "number",
+                              value: minPessoas,
+                              onChange: this.onChangeMinPessoas
+                          }}
+                      />
+                      </GridItem>
+                      <GridItem xs={6} sm={6} md={6}>
+                        <CustomInput
+                            labelText="Max Pessoas:"
+                            id="maxPessoas"
+                            formControlProps={{
+                                fullWidth: false
+                            }}
+                            inputProps={{
+                                type: "number",
+                                value: maxPessoas,
+                                onChange: this.onChangeMaxPessoas
+                            }}
+                        />
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={12}>
                         <TextArea/>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <Slider/>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Button color="danger" onClick={this.cleanMap}>Limpar Marcadores</Button>
-                        <Button color="success" onClick={this.saveRoute}>Salvar</Button>
-                    </GridItem>
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={4}>
+                          <Button color="danger" onClick={this.cleanMap}>Limpar Marcadores</Button>
+                          <Button color="success" onClick={this.saveRoute}>Salvar</Button>
+                      </GridItem>
                 </GridContainer>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>

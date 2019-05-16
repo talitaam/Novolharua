@@ -33,8 +33,8 @@ class Rota {
 					  origem = params.origem,
 						destino = params.destino,
 						distancia = params.distancia,
-						numMinPessoas = param.numMinPessoas,
-						numMaxPessoas = param.numMaxPessoas,
+						numMinPessoas = params.numMinPessoas,
+						numMaxPessoas = params.numMaxPessoas,
 						observacao = params.observacao,
 				  	rotaMapsAPI = params.rotaMaps,
 				  	rotaUsuario = params.rotaUsuario;
