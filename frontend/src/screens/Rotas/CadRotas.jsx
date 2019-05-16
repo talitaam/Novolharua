@@ -40,11 +40,11 @@ class CadRotas extends React.Component {
         super();
 
         this.state = {
-            routeName: '',
-            directions: {
-				routes:[]
-			},
-            waypoints: []
+          routeName: '',
+          directions: {
+			      routes:[]
+		      },
+          waypoints: []
         };
 
         this.saveRoute = this.saveRoute.bind(this);
@@ -98,12 +98,22 @@ class CadRotas extends React.Component {
             mapsRoute,
             userRoute
         };
+        let canSave = true;
 
-        if (!mapsRoute || !mapsRoute.length) {
+
+         if(routeName == ''){
+          alert("O campo nome da rota deve ser preenchido!");
+          canSave = false;
+        }
+
+         if (!mapsRoute || !mapsRoute.length) {
             alert("É preciso que uma rota seja selecionada!");
-        } else {
+            canSave = false;
+        }
+
+        if (canSave){
             RotasService.saveRoute(saveData).then( json => {
-                if(json) 
+                if(json)
                     alert(json.message)
             } );
         }
@@ -147,10 +157,13 @@ class CadRotas extends React.Component {
                             }}
                         />
                     </GridItem>
-                    
+
                     <GridItem xs={12} sm={12} md={12}>
-                        <TextArea />
-                    </GridItem> 
+                        <TextArea/>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={12}>
+                        <Slider/>
+                    </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                         <Button color="danger" onClick={this.cleanMap}>Limpar Marcadores</Button>
                         <Button color="success" onClick={this.saveRoute}>Salvar</Button>
@@ -163,7 +176,7 @@ class CadRotas extends React.Component {
                             onClick={this.onClickMap}
                             onRightClick={this.onRightClickMap} />
                     </GridItem>
-                    
+
                 </GridContainer>
             </>
         );
