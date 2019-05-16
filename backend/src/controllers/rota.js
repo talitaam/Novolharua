@@ -1,5 +1,4 @@
 import rotaService from "../services/rota";
-import { getMostValuablePoints } from "../services/points";
 import moment from "moment";
 import var_dump from "var_dump";
 
@@ -24,56 +23,60 @@ class Rota {
 		}
 	}
 
-	addRota(req, res, next){
+	addRota(req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		try {
-			const params 	  = JSON.parse(req.body);
-
-			const qtdPessoas  = params.qtdPessoas, 
-				  nomeRota    = params.nomeRota, 
-				  rotaMapsAPI = params.rotaMaps, 
-				  rotaUsuario = params.rotaUsuario;
-
+			const params = JSON.parse(req.body);
 			const respObj = {
 				message : "Salvo com sucesso !",
 				idRota: 0
 			};
 
-			let valuablePointsMapsAPI = getMostValuablePoints(rotaMapsAPI.points);
+			const { rotaMaps } = params;
 
-			var_dump( valuablePointsMapsAPI );
-
-			rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
-				respObj.idRota = response.insertId;
-				console.log("Gravou rota com sucesso");
-				console.log(response.insertId);
-
-				valuablePointsMapsAPI.forEach(function (ponto, index) {
-					console.log(ponto.lat);
-					console.log(ponto.lng);
-					console.log(respObj.idRota);
-
-					rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
-						console.log("Gravou pontoMaps com sucesso");
-						respObj.rotaMaps = response;
-						var_dump(response);
-					});
-				});
-
-				rotaUsuario.points.forEach(function (ponto, index) {
-					var_dump(ponto.lat);
-					var_dump(ponto.lng);
-
-					rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
-						console.log("Gravou pontoUsuario com sucesso");
-						respObj.rotaUsuario = response;
-						var_dump(response);
-					});
-				});
-			});
-
-			res.json(respObj);
+			const newRoutePoints = rotaService.getSignificantPoints(rotaMaps);
+			var_dump(newRoutePoints);
+			
+			const bool = rotaService.overlapsExistingRoute(newRoutePoints);
 			next();
+
+			// if(rotaService.overlapsExistingRoute(newRoutePoints)) {
+			// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
+			// } else {
+			// 	rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
+			// 		respObj.idRota = response.insertId;
+			// 		console.log("Gravou rota com sucesso");
+			// 		console.log(response.insertId);
+	
+			// 		newRoutePoints.forEach(function (ponto, index) {
+			// 			console.log(ponto.lat);
+			// 			console.log(ponto.lng);
+			// 			console.log(respObj.idRota);
+	
+			// 			rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
+			// 				console.log("Gravou pontoMaps com sucesso");
+			// 				respObj.rotaMaps = response;
+			// 				var_dump(response);
+			// 			});
+			// 		});
+	
+			// 		rotaUsuario.points.forEach(function (ponto, index) {
+			// 			var_dump(ponto.lat);
+			// 			var_dump(ponto.lng);
+	
+			// 			rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
+			// 				console.log("Gravou pontoUsuario com sucesso");
+			// 				respObj.rotaUsuario = response;
+			// 				var_dump(response);
+			// 			});
+			// 		});
+
+			// 	res.json(respObj);
+			// 	next();
+				
+			// 	});	
+				
+			// }
 
 		} catch (e) {
 			let respObj = {

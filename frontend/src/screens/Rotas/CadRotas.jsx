@@ -99,7 +99,9 @@ class CadRotas extends React.Component {
             userRoute
         };
 
-        if (!mapsRoute || !mapsRoute.length) {
+        if(!(routeName + '').trim()) {
+            alert("O nome da rota deve ser preenchido !");
+        } else if (!mapsRoute || !mapsRoute.length) {
             alert("É preciso que uma rota seja selecionada!");
         } else {
             RotasService.saveRoute(saveData).then( json => {
@@ -163,7 +165,6 @@ class CadRotas extends React.Component {
                             onClick={this.onClickMap}
                             onRightClick={this.onRightClickMap} />
                     </GridItem>
-                    
                 </GridContainer>
             </>
         );
