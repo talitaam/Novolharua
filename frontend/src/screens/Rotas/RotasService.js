@@ -41,7 +41,7 @@ class RotasService {
         return this.fetchAvaiableRoutesByDate(date);
     }
 
-    saveRoute({ routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance }) {
+    saveRoute({ routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance, obs }) {
         let data = {
             nomeRota: routeName,
             rotaMaps: {
@@ -54,7 +54,8 @@ class RotasService {
             numMaxPessoas: maxPessoas,
             origem: startAddress,
             destino: endAddress,
-            distancia: distance
+            distancia: distance,
+            observacao: obs
         };
 
         return fetch(serverParams.SERVER_URL + '/rota/add',

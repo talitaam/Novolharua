@@ -34,7 +34,6 @@ const styles = {
 };
 
 const MAX_ROUTE_POINTS = 10;
-
 class CadRotas extends React.Component {
     constructor() {
         super();
@@ -49,7 +48,8 @@ class CadRotas extends React.Component {
           maxPessoas: 0,
           startAddress : '',
           endAddress: '',
-          distance: ''
+          distance: '',
+          obs: ''
         };
 
         this.saveRoute = this.saveRoute.bind(this);
@@ -57,6 +57,7 @@ class CadRotas extends React.Component {
         this.onChangeRouteName = this.onChangeRouteName.bind(this);
         this.onChangeMaxPessoas = this.onChangeMaxPessoas.bind(this);
         this.onChangeMinPessoas = this.onChangeMinPessoas.bind(this);
+        this.onChangeObservation = this.onChangeObservation.bind(this);
         this.cleanFields = this.cleanFields.bind(this);
         this.onClickMap = this.onClickMap.bind(this);
         this.onRightClickMap = this.onRightClickMap.bind(this);
@@ -80,9 +81,15 @@ class CadRotas extends React.Component {
         })
     }
 
+    onChangeObservation(event) {
+        this.setState({
+            obs: event.target.value
+        })
+    }
+
     onClickMap(event) {
         const { waypoints } = this.state;
-        if (waypoints.length > MAX_ROUTE_POINTS) {
+        if (waypoints.length >= MAX_ROUTE_POINTS) {
             alert('Limite de pontos máximo atigido ! Não é possível adicionar mais pontos !');
         } else {
             waypoints.push({
@@ -116,7 +123,7 @@ class CadRotas extends React.Component {
     }
 
     saveRoute() {
-        const { routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance } = this.state;
+        const { routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance, obs } = this.state;
         const saveData = {
             routeName,
             mapsRoute,
@@ -125,7 +132,8 @@ class CadRotas extends React.Component {
             maxPessoas,
             startAddress,
             endAddress,
-            distance
+            distance,
+            obs
         };
 
         let canSave = true;
@@ -169,12 +177,13 @@ class CadRotas extends React.Component {
         userRoute: [],
         directions: {
             routes: []
-        }
+        },
+        obs: ''
       });
     }
 
     render() {
-        const { routeName, waypoints, directions, minPessoas, maxPessoas } = this.state;
+        const { routeName, waypoints, directions, minPessoas, maxPessoas, obs } = this.state;
 
         return (
             <>
@@ -229,7 +238,12 @@ class CadRotas extends React.Component {
                         />
                       </GridItem>
                       <GridItem xs={12} sm={12} md={12}>
-                        <TextArea/>
+                        <TextArea 
+                            inputProps={{
+                                value: obs,
+                                onChange: this.onChangeObservation
+                            }}
+                        />
                       </GridItem>
                       <GridItem xs={12} sm={12} md={4}>
                           <Button color="danger" onClick={this.cleanFields}>Limpar Dados</Button>

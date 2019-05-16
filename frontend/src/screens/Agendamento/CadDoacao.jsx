@@ -59,7 +59,7 @@ class CadDoacao extends React.Component {
 	}
 
 	componentDidMount() {
-		RotasService.findRoutes().then(json => {
+		RotasService.findAvaiableRoutesByDate(moment().format('DD/MM/YYYY')).then(json => {
 			this.setRoutes(json);
 		});
 	}
@@ -107,13 +107,23 @@ class CadDoacao extends React.Component {
 				selectedRoute: '' 
 			});
 			alert("A data escolhida para a doação não é válida !");
-		} else if(!selectedRoute) {
+		} else if(!selectedRoute  && !selectedRoute.length) {
 			alert("É preciso que uma rota seja selecionada !");
 		} else {
 			DoacoesService.saveDonation({
 				donatorName: donatorName,
 				donationDate: donationDate,
 				selectedRoute: selectedRoute
+			}).then((response) => {
+				this.setState({
+					directions:{
+						routes: []
+					},
+					donatorName: '',
+					donationDate: new Date(),
+					selectedRoute: "",
+					routes: []
+				});		
 			});
 		}
 	};
@@ -124,7 +134,7 @@ class CadDoacao extends React.Component {
 		this.setState({
 			donationDate: date 
 		});
-
+		
 		RotasService.findAvaiableRoutesByDate(actualDate.format('DD/MM/YYYY')).then((json) => {
 			const { rotas } = json;
 			const canAutoSetRoute = rotas.length > 0;
@@ -133,13 +143,24 @@ class CadDoacao extends React.Component {
 			
 			if(!canAutoSetRoute) {
 				alert("Não há rotas disponíveis para esta data !");	
+				this.setState({
+					directions:{
+						routes: []
+					},
+					donationDate: new Date(),
+					selectedRoute: "",
+					routes: []
+				});
+				
+			} else {
+				this.setState({
+					donationDate: new Date(actualDate),
+					routes: rotas,
+					selectedRoute: selectedRoute
+				});
+				
+				RotasService.findRouteById(rotas[0].id).then(this.setDirection);
 			}
-
-			this.setState({
-				donationDate: new Date(actualDate),
-				routes: rotas,
-				selectedRoute: selectedRoute
-			});
 		});
 	}
 
