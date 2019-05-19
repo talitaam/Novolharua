@@ -19,7 +19,7 @@ class DoacoesService {
 			rota: selectedRoute.id
 		};
 		
-        fetch('http://localhost:3001/doacao/add',
+        return fetch('http://localhost:3001/doacao/add',
             {
                 method: "POST",
                 body: JSON.stringify(doacao)

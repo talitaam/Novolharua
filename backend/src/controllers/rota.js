@@ -27,10 +27,33 @@ class Rota {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		try {
 			const params = JSON.parse(req.body);
+
+			var_dump(params);
+			const nomeRota = params.nomeRota,
+					  origem = params.origem,
+						destino = params.destino,
+						distancia = params.distancia,
+						numMinPessoas = params.numMinPessoas,
+						numMaxPessoas = params.numMaxPessoas,
+						observacao = params.observacao,
+				  	rotaMapsAPI = params.rotaMaps,
+				  	rotaUsuario = params.rotaUsuario;
+
 			const respObj = {
 				message: "Salvo com sucesso !",
 				idRota: 0
 			};
+
+			const rota = {
+				nomeRota : nomeRota,
+			    origem : origem,
+				destino : destino,
+				distancia : distancia,
+				numMinPessoas : numMinPessoas,
+				numMaxPessoas : numMaxPessoas,
+				observacao : observacao
+			}
+
 
 			const { rotaMaps } = params;
 
@@ -38,44 +61,50 @@ class Rota {
 			var_dump(newRoutePoints);
 
 			rotaService.overlapsExistingRoute(newRoutePoints).then(bool => {
-				if (bool) {
-					rotaService.addRota(nomeRota, qtdPessoas).then((response) => {
-						var_dump(response);
+				
+				// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
+
+				if (bool) {				
+
+				// rotaService.addRota(rota).then((response) => {
+				// respObj.idRota = response.insertId;
+				// console.log("Gravou rota com sucesso: " + response.insertId);
+
+				// rotaMapsAPI.points.forEach(function (ponto, index) {
+				// 	console.log("Pontos - Rota Usuario");
+				// 	rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
+				// 		console.log("Gravou pontoMaps com sucesso");
+				// 		respObj.rotaMaps = response;
+
+				// 		var_dump(response);
 						
-						respObj.idRota = response.insertId;
-						console.log("Gravou rota com sucesso");
-						console.log(response.insertId);
+				// 		respObj.idRota = response.insertId;
+				// 		console.log("Gravou rota com sucesso");
+				// 		console.log(response.insertId);
 
-						newRoutePoints.forEach(function (ponto, index) {
-							rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
-								respObj.rotaMaps = response;
-								var_dump(response);
-							});
-						});
+				// 		newRoutePoints.forEach(function (ponto, index) {
+				// 			rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
+				// 				respObj.rotaMaps = response;
+				// 				var_dump(response);
+				// 			});
+				// 		});
 
-						rotaUsuario.points.forEach(function (ponto, index) {
-							rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
-								respObj.rotaUsuario = response;
-								var_dump(response);
-							});
-						});
+				// 		rotaUsuario.points.forEach(function (ponto, index) {
+				// 			rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
+				// 				respObj.rotaUsuario = response;
+				// 				var_dump(response);
+				// 			});
+				// 		});
 
-						res.json(respObj);
-						next();
-					});
+				// 		res.json(respObj);
+				// 		next();
+				// 	});
 				}
 
-				var_dump(bool);
-				res.json(respObj);
-				next();
+
+				
 			});
 
-			// if(rotaService.overlapsExistingRoute(newRoutePoints)) {
-			// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
-			// } else {
-			// 	
-
-			// }
 
 		} catch (e) {
 			let respObj = {

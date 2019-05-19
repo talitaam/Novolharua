@@ -7,9 +7,11 @@ class TextArea extends React.Component {
     }
 
     render() {
+        const { text, onChange } = this.props.inputProps;
+
         return (
             <div className="textarea-container">
-                <textarea name="textarea" className="textarea" required pattern="\S+.*"></textarea>
+                <textarea name="textarea" className="textarea" onChange={ onChange } required pattern="\S+.*">{ text }</textarea>
                 <div className="textarea-border"></div>
                 <label htmlFor="textarea" className="textarea-label"><span>Observações:</span></label>
             </div>
