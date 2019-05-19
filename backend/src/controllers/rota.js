@@ -37,9 +37,13 @@ class Rota {
 			const newRoutePoints = rotaService.getSignificantPoints(rotaMaps);
 			var_dump(newRoutePoints);
 			
-			const bool = rotaService.overlapsExistingRoute(newRoutePoints);
-			next();
+			rotaService.overlapsExistingRoute(newRoutePoints).then(bool => {
+				var_dump(bool);
+				res.json(respObj);
+				next();
+			});
 
+			
 			// if(rotaService.overlapsExistingRoute(newRoutePoints)) {
 			// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
 			// } else {
@@ -108,6 +112,8 @@ class Rota {
 			var_dump(e + '');
 			respObj.error = e + '';
 			res.json(respObj);
+			next();
+		} finally {
 			next();
 		}
 	}

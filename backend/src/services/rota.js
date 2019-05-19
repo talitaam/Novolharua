@@ -105,6 +105,10 @@ class Rota {
 		return getCommomPoints(pointsNormalDirection, pointsBackwardsDirection);
 	}
 
+	getConflitantRoutes(routes) {
+		return routes.filter(rota => !rota);
+	}
+
 	overlapsExistingRoute(routePoints) {
 		const turfPoints = routePoints.map((point) => [point.lat, point.lng]);
 		const truncatedRoute = truncateCoordinates (turfPoints); 		
@@ -113,37 +117,68 @@ class Rota {
 		const apagaCoordDuplicada = compressArrayPoints(array); //atribui o novo vetor à essa variável
 		truncatedRoute.geometry.coordinates = apagaCoordDuplicada; //volta os valores para a variável de origem (rotaParaValidar)
 
-		var_dump(truncatedRoute);
+		const truncatedCoordinates = truncatedRoute.geometry.coordinates;
+		var_dump(truncatedCoordinates);
 
-		findConflitantRoute();
+		try {
+			return this.findConflitantRoute(truncatedCoordinates).then(routes => {
+				const conflitantRoutes = this.getConflitantRoutes(routes);
 
-        var rotaConflitante = turf.lineString([
-			//                                      [-19.93186, -43.93861], 
-			//                                      [-19.93216, -43.9387], 
-			//                                      [-19.93277, -43.93886], 
-			//                                      [-19.93285, -43.93858], 
-											]);
-		//PASSO 7 - Chamar a função lineOverlap passando a rota a ser validada e a rota retirada da tabela de pontos.
-		var overlapping = turf.lineOverlap(rotaParaValidar, rotaConflitante, {tolerance: 0.005}); 
-		
+				var_dump(conflitantRoutes, conflitantRoutes.length, 'ALO');
+				
+				if(conflitantRoutes.length === 0 ) {
+					return true;
+				} else {
+					conflitantRoutes.forEach(conflitantRoute => {
+						// this.GET_ROUTES_BY_ID;
+					const turfConflitantRoute = turf.lineString(conflitantRoute);
+					
+					var_dump(turfConflitantRoute);
+					
+					const overlapping = turf.lineOverlap(truncatedRoute, turfConflitantRoute, {tolerance: 0.005}); 
+							
+					//---------------------------------- COMEÇO PASSO 8, 9 e 10  -----------------------------
+					// PASSO 8 - Calcular distância entre coordenadas que foram retornadas pelo lineOverlap.
+					// PASSO 9 - Invalidar a rota a ser cadastrada caso a distância seja maior que um valor pré estabelecido
+					//          Serão considerados trechos superiores à 60 metros de sobreposição
+					//__________________________________________ATENÇÃO______________________________________________________
+					// ATENCÃO: FAZER O PASSO 6, 7 E 8 PARA TODAS AS ROTAS CONFLITANTES ENCONTRADAS NA TABELA DE PONTOS
+					//__________________________________________ATENÇÃO______________________________________________________
+					var trechosComOverlap = distanciaCoord(overlapping); 
+					// variável que receberá os trechos que serão exibidos no mapa para o usuário para justificar a não validação
+				
+					//PASSO 10 - -Exibir as variáveis retornadas pelo código no mapa caso a rota é dada como inválida.
+					//            exibir juntos na tela: trechosComOverlap, rotaConflitante e rotaParaValidar
+					
+					//           -Exibir mensagem de Cadastrado com Sucesso caso não seja encontrado nenhum trecho conflitante 
+					//            em nenhuma rota buscada na tabela de pontos. (variável trechosComOverlap não retorna nada para  
+					//            todas as rotasConflitantes pesquisadas.)
+					
+					//		 -Atualizar Tabela de Pontos assim que uma rota nova é validada e passa a ser cadastrada no sistema.
+				
+					
+					});
+				}
+			});
+		} catch (e) {
+			throw e;
+		}	
 	}
 
 	findConflitantRoute(route) {
 		const promises = [];
 
 		route.forEach(([lat, lng]) => {
+			const queryParams = {
+				'lat': lat, 
+				'lng': lng
+			};
 			const promise = dbService.runQuery(this.GET_ROUTE_BY_POINT, queryParams)
-									 .then(result =>
-										result.map(rota => ({
-											id: rota.ID,
-											label: rota.NMROTA,
-											value: rota.ID
-										}))
-									 );
+									 .then(result => result.map(rota => rota) );
 			promises.push(promise);						 
 		});
 
-		return promises;
+		return Promise.all(promises);
 	}
 }
 

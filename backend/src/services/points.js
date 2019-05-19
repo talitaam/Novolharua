@@ -94,6 +94,36 @@ const truncateCoordinates = turfPoints => {
     return turfLineString;
 }
 
+const distanciaCoord = (overlapping) => {
+    var retornaOverlaps = [];
+    let sizeArrayResposta = overlapping.features.length;
+    let tamanhoMaximo = 60;
+    for(var i = 0; i < sizeArrayResposta; i++){
+        var ultimoIndice = overlapping.features[i].geometry.coordinates.length;
+        var maior = 0;
+        var overlapCoordinates = {};
+        for(var j = 0; j < ultimoIndice-1; j++){
+            for(var k = j+1; k < ultimoIndice; k++){
+                var from = overlapping.features[i].geometry.coordinates[j];
+                var to = overlapping.features[i].geometry.coordinates[k];
+                var distance = turf.distance(from, to, {units: 'meters'});
+                if (distance > tamanhoMaximo){
+                    console.log("Rota inválidada");
+                    if (distance > maior){
+                        maior = distance;
+                        overlapCoordinates = {lat1: from[0], lng1: from[1], lat2: to[0], lng2: to[1]};
+                        //trecho correspondente entre coordenada 1 (lat1 e lng1) e coordenada2 (lat2 e lng2)
+                    }
+                }
+            }
+        }
+        if (maior != 0){
+            retornaOverlaps.push(overlapCoordinates);
+        }
+    }
+    return retornaOverlaps;
+};
+
 export {
     getMostValuablePoints,
     getCommomPoints,

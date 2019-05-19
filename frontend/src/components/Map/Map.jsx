@@ -29,15 +29,22 @@ const enhance = compose(
     withGoogleMap
 );
 
-const Map = enhance(({ onClick, onRightClick, markers, directions }) => (
-    <GoogleMap
-        defaultZoom={ 14 }
-        defaultCenter={ new window.google.maps.LatLng(-19.932654, -43.936020)}
-        onClick={ onClick }
-        onRightClick={ onRightClick } >
-        { markers }
-        { directions && <DirectionsRenderer directions={ directions } /> }
-    </GoogleMap>)
-);
+const Map = enhance(({ onClick, onRightClick, markers, directions }) => {
+    if(!window.google) {
+        alert('Não foi possível se conectar ao Maps API. Verifique sua conexão !');
+        return (<></>);
+    } else {
+        return (
+            <GoogleMap
+                defaultZoom={ 14 }
+                defaultCenter={ new window.google.maps.LatLng(-19.932654, -43.936020)}
+                onClick={ onClick }
+                onRightClick={ onRightClick } >
+                { markers }
+                { directions && <DirectionsRenderer directions={ directions } /> }
+            </GoogleMap>
+        );
+    }
+});
 
 export default Map;
