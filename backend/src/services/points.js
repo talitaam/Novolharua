@@ -87,7 +87,7 @@ const truncateCoordinates = turfPoints => {
 
     for (var i = 0; i < turfLineString.geometry.coordinates.length; i++){
         var point = turf.point(turfLineString.geometry.coordinates[i]); //transforma um par de coordenadas em um point
-        var truncated = turf.truncate(point, {precision: 6, coordinates: 2}); //limite para 6 casas decimais a lat e a lng
+        var truncated = turf.truncate(point, {precision: 5, coordinates: 2}); //limite para 6 casas decimais a lat e a lng
         turfLineString.geometry.coordinates[i] = truncated.geometry.coordinates; //reescreve as coordenadas já truncadas
     }
     

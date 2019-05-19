@@ -6,7 +6,7 @@ class Rota {
 	constructor() {
 		this.GET_ALL_ROTAS = "SELECT ID, NMROTA, ORIGEM, DESTINO, DISTANCIA, NUMPESSOASMIN, NUMPESSOASMAX, OBSERVACAO, DTINCLUSAO FROM ROTAMAPS";
 		this.GET_PONTOS_ROTA = "SELECT LAT, LNG FROM ROTAMAPS RM JOIN PONTOUSUARIO PU ON RM.ID = PU.IDROTA WHERE IDROTA = @idRota ORDER BY IDORDEMPONTO";
-		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `ORIGEM`, `DESTINO`, `DISTANCIA`, `NUMPESSOASMIN`, `NUMPESSOASMAX`, `OBSERVACAO`, `DTINCLUSAO`) VALUES ( @nomRota, @origem, @destino, @distancia, @numMinPessoas, @numMaxPessoas, @observacao, now())";
+		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `ORIGEM`, `DESTINO`, `DISTANCIA`, `NUMPESSOASMIN`, `NUMPESSOASMAX`, `OBSERVACAO`, `DTINCLUSAO`) VALUES ( @nomeRota, @origem, @destino, @distancia, @numMinPessoas, @numMaxPessoas, @observacao, now())";
 		this.INSERT_PONTO_MAPS = "INSERT INTO `PONTOMAPS`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.INSERT_PONTO_USUARIO = "INSERT INTO `PONTOUSUARIO`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.SELECT_ROTA_POR_ID = "SELECT RM.*, PM.* FROM ROTAMAPS RM JOIN PONTOMAPS PM ON RM.ID = PM.IDROTA WHERE RM.ID = @idRota";
@@ -15,23 +15,14 @@ class Rota {
 	}
 
 	addRota(rota) {
-		let queryParams = {
-			nomRota : rota.nomeRota,
-			origem : rota.origem,
-			destino : rota.destino,
-			distancia : rota.distancia,
-			numMinPessoas : rota.numMinPessoas,
-			numMaxPessoas : rota.numMaxPessoas,
-			observacao : rota.observacao
-		};
 
-		return dbService.runQuery(this.INSERT_ROTA, queryParams, result => {
+		return dbService.runQuery(this.INSERT_ROTA, rota, result => {
 			return result;
 		});
 	}
 
 	addPontoUsuario(idOrdemPonto, idRota, latitude, longitude) {
-		let queryParams = {
+		const queryParams = {
 			idOrdemPonto: idOrdemPonto,
 			idRota: idRota,
 			lat: latitude,
@@ -44,7 +35,7 @@ class Rota {
 	}
 
 	addPontoMaps(idOrdemPonto, idRota, latitude, longitude) {
-		let queryParams = {
+		const queryParams = {
 			idOrdemPonto: idOrdemPonto,
 			idRota: idRota,
 			lat: latitude,
@@ -127,7 +118,7 @@ class Rota {
 			return this.findConflitantRoute(truncatedCoordinates).then(routes => {
 				const conflitantRoutes = this.getConflitantRoutes(routes);
 
-				var_dump(conflitantRoutes, conflitantRoutes.length, 'ALO');
+				var_dump( conflitantRoutes );
 				
 				if(conflitantRoutes.length === 0 ) {
 					return true;
@@ -159,7 +150,6 @@ class Rota {
 					
 					//		 -Atualizar Tabela de Pontos assim que uma rota nova é validada e passa a ser cadastrada no sistema.
 				
-					
 					});
 				}
 			});
