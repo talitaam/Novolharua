@@ -62,7 +62,7 @@ const sidebarStyle = theme => ({
   },
   logo: {
     position: "relative",
-    padding: "15px 15px",
+    padding: "25px 15px",
     zIndex: "4",
     "&:after": {
       content: '""',
