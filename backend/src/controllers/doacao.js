@@ -37,11 +37,20 @@ class Doacao {
 		};
 
 		try {
-			doacaoService.addDoacao(params).then(result => {
-				respObj.doacao  = result;
-				res.json(respObj);
-				next();
+			params.idRotas.forEach(function (idRota, index) {
+
+				let doacaoBD = {
+					rota : idRota,
+					doador : params.doador,
+					dtDoacao : moment(params.data).format('YYYY-MM-DD')
+				}
+				doacaoService.addDoacao(doacaoBD).then(result => {
+					respObj.doacao.push(result);
+				});
 			});
+
+			res.json(respObj);
+			next();
 		} catch(e) {
 			respObj.message = "Um erro inesperado ocorreu !" + e;
 			res.json(respObj);
