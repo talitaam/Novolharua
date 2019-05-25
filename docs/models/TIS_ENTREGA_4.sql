@@ -18,6 +18,43 @@ CREATE SCHEMA IF NOT EXISTS `tis_exemplo_2` DEFAULT CHARACTER SET utf8 ;
 USE `tis_exemplo_2` ;
 
 -- -----------------------------------------------------
+-- Table `tis_exemplo_2`.`acao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`acao` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `NOMEACAO` VARCHAR(150) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `ID_ACAO` (`ID` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+-- -----------------------------------------------------
+-- Table `tis_exemplo_2`.`doador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`doador` (
+  `IDDOADOR` INT(11) NOT NULL AUTO_INCREMENT,
+  `NOMDOADOR` VARCHAR(150) NOT NULL,
+  `CPFCNPJ` VARCHAR(14) NOT NULL,
+  `TELEFONE` VARCHAR(10) NOT NULL,
+  `CELULAR` VARCHAR(11) NULL,
+  `EMAIL` VARCHAR(150) NOT NULL,
+  `IDACAO` INT(11) NOT NULL,
+  `OBSERVACAO` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`IDDOADOR`),
+  INDEX `fk_doador_acao_idx` (`IDACAO` ASC) ,
+  CONSTRAINT `fk_doador_acao`
+    FOREIGN KEY (`IDACAO`)
+    REFERENCES `tis_exemplo_2`.`acao` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+
+
+-- -----------------------------------------------------
 -- Table `tis_exemplo_2`.`rotamaps`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`rotamaps` (
@@ -100,3 +137,8 @@ COLLATE = utf8_bin;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+INSERT INTO `acao`(`ID`, `NOMEACAO`) VALUES (1,"Refeição");
+INSERT INTO `acao`(`ID`, `NOMEACAO`) VALUES (2,"Higiene");
+INSERT INTO `acao`(`ID`, `NOMEACAO`) VALUES (3,"Roupas / Agasalhos");
+INSERT INTO `acao`(`ID`, `NOMEACAO`) VALUES (4,"Cursos de capacitação");
