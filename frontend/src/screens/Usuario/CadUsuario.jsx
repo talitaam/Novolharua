@@ -10,6 +10,8 @@ import TextArea from "../../components/TextArea/TextArea.jsx";
 import UserService from "./UserService";
 import Checkbox from "../../components/Checkbox/Checkbox.jsx";
 import "./CadUsuario.css";
+import JqueryMaskPlugin from 'jquery-mask-plugin';
+ import $ from 'jquery';
 
 const OPTIONS = ["Agasalho", "Cursos", "Higiene", "Refeição"];
 
@@ -35,7 +37,30 @@ const styles = {
 class CadUsuario extends React.Component {
   constructor() {
     super();
-
+    $("#cpfcnpj").keydown(function(){
+      try {
+          $("#cpfcnpj").unmask();
+      } catch (e) {}
+  
+      var tamanho = $("#cpfcnpj").val().length;
+  
+      if(tamanho < 11){
+          $("#cpfcnpj").mask("999.999.999-99");
+      } else {
+          $("#cpfcnpj").mask("99.999.999/9999-99");
+      }
+  
+      // ajustando foco
+      var elem = this;
+      setTimeout(function(){
+          // mudo a posição do seletor
+          elem.selectionStart = elem.selectionEnd = 10000;
+      }, 0);
+      // reaplico o valor para mudar o foco
+      var currentValue = $(this).val();
+      $(this).val('');
+      $(this).val(currentValue);
+  });
     this.state = {
       name: "",
       email: "",
@@ -49,7 +74,8 @@ class CadUsuario extends React.Component {
           [option]: false
         }),
         {}
-      )
+      ),
+      validaDoc: false
     };
 
     this.saveUser = this.saveUser.bind(this);
@@ -75,11 +101,13 @@ class CadUsuario extends React.Component {
   }
 
   onChangeCpfCnpj(event) {
-    if(!event.target.value.trim()){
-
+    var validaDoc = this.state.validaDoc;
+    if (!event.target.value.trim()) {
+     validaDoc = !(/^(\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2})|((\d{3}.\d{3}.\d{3}-\d{2}))$/).test(event.target.value)
     }
     this.setState({
-      cpf: event.target.value
+      doc: event.target.value,
+      validaDoc: validaDoc
     });
   }
 
@@ -105,7 +133,7 @@ class CadUsuario extends React.Component {
       telefoneCelular,
       obs
     } = this.state;
-    
+
     const saveData = {
       name,
       email,
@@ -185,9 +213,9 @@ class CadUsuario extends React.Component {
       doc: "",
       telefoneFixo: "",
       telefoneCelular: "",
-      obs: "", 
+      obs: "",
       //checkboxes.deselectAll
-      });
+    });
   }
 
   render() {
@@ -198,13 +226,14 @@ class CadUsuario extends React.Component {
       telefoneFixo,
       telefoneCelular,
       obs,
-      disabled
+      disabled,
+      validaDoc
     } = this.state;
 
     return (
       <>
-      <GridContainer justify="flex-start" alignItems="center">
-			<GridItem xs={6} sm={6} md={6}>
+        <GridContainer justify="flex-start" alignItems="center">
+          <GridItem xs={6} sm={6} md={6}>
             <CustomInput
               labelText="Nome do usuário:"
               id="nmUsuario"
@@ -230,14 +259,15 @@ class CadUsuario extends React.Component {
                 onChange: this.onChangeEmail
               }}
             />
-          </GridItem>          
+          </GridItem>
           <GridItem xs={6} sm={6} md={6}>
             <CustomInput
               labelText="CPF/CNPJ:"
-              id="doc"
+              id="cpfcnpj"
               formControlProps={{
                 fullWidth: true
               }}
+              error={validaDoc}
               inputProps={{
                 type: "cpf/cnpj",
                 value: doc,
