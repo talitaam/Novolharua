@@ -53,14 +53,26 @@ class Rota {
 				observacao: observacao
 			};
 
-			const newRoutePoints = rotaService.getSignificantPoints(rotaMaps);
-			
-			rotaService.overlapsExistingRoute(newRoutePoints).then(bool => {
+			const newRoutePoints 		= rotaService.getSignificantPoints(rotaMaps.points);
+			const newRoutePointsReverse = rotaService.getSignificantPoints(rotaMaps.reversePoints);
+			const resultedRoute         = rotaService.mergePointsArrays(newRoutePoints, newRoutePointsReverse);
+
+			rotaService.overlapsExistingRoute( resultedRoute ).then(bool => {
 				// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
+
+				const mappedMapsRoute = resultedRoute.map(point  => (
+					{
+						lat: point[0],
+						lng: point[1]
+					}
+				)) 
+
 				if ( bool ) {
+					var_dump(bool);
 					rotaService.addRota(rota).then((response) => {
 						const idRota = response.insertId;
-						newRoutePoints.forEach(function (ponto, index) {
+
+						mappedMapsRoute.forEach((ponto, index) => {
 							rotaService.addPontoMaps(index, idRota, ponto.lat, ponto.lng).then((response) => {
 								respObj.rotaMaps = response;
 							});
@@ -84,6 +96,7 @@ class Rota {
 			};
 			var_dump(e + "");
 			res.json(respObj);
+		} finally {
 			next();
 		}
 	}

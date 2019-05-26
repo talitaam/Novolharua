@@ -2,7 +2,7 @@ import var_dump from 'var_dump';
 import turf from '@turf/turf';
 
 const getMostValuablePoints = (points) => {
-    const MIN_DISTANCE_FOR_TWO_POINTS = 80,
+    const MIN_DISTANCE_FOR_TWO_POINTS = 40,
         MAX_DISTANCE_FOR_TWO_POINTS = 200,
         POINTS_SIZE = points.length;
     let mostValuablePoints = [],
@@ -98,6 +98,7 @@ const distanciaCoord = (overlapping) => {
     var retornaOverlaps = [];
     let sizeArrayResposta = overlapping.features.length;
     let tamanhoMaximo = 60;
+
     for(var i = 0; i < sizeArrayResposta; i++){
         var ultimoIndice = overlapping.features[i].geometry.coordinates.length;
         var maior = 0;
@@ -107,7 +108,7 @@ const distanciaCoord = (overlapping) => {
                 var from = overlapping.features[i].geometry.coordinates[j];
                 var to = overlapping.features[i].geometry.coordinates[k];
                 var distance = turf.distance(from, to, {units: 'meters'});
-                if (distance > tamanhoMaximo){
+                if (distance > tamanhoMaximo) {
                     console.log("Rota inválidada");
                     if (distance > maior){
                         maior = distance;
@@ -124,9 +125,19 @@ const distanciaCoord = (overlapping) => {
     return retornaOverlaps;
 };
 
+const getTrechosComOverlap = (conflitantRoute, toSaveRoute) => {
+    const turf = require('@turf/turf');
+    var_dump(conflitantRoute);
+    const turfConflitantRoute = turf.lineString(conflitantRoute);
+    const overlapping = turf.lineOverlap(toSaveRoute, turfConflitantRoute, {tolerance: 0.005}); 
+    
+    return distanciaCoord(overlapping);
+}
+
 export {
     getMostValuablePoints,
     getCommomPoints,
     truncateCoordinates,
-    compressArrayPoints
+    compressArrayPoints,
+    getTrechosComOverlap
 };

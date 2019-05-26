@@ -1,5 +1,5 @@
 import dbService from "../util/db";
-import { getMostValuablePoints, getCommomPoints, truncateCoordinates, compressArrayPoints } from './points';
+import { getMostValuablePoints, getCommomPoints, truncateCoordinates, compressArrayPoints, getTrechosComOverlap } from './points';
 import var_dump from "var_dump";
 
 class Rota {
@@ -10,12 +10,11 @@ class Rota {
 		this.INSERT_PONTO_MAPS = "INSERT INTO `PONTOMAPS`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.INSERT_PONTO_USUARIO = "INSERT INTO `PONTOUSUARIO`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.SELECT_ROTA_POR_ID = "SELECT RM.*, PM.* FROM ROTAMAPS RM JOIN PONTOMAPS PM ON RM.ID = PM.IDROTA WHERE RM.ID = @idRota";
-		this.GET_ROUTE_BY_POINT = "SELECT RM.*, PM.ID, PM.LAT, PM.LNG FROM ROTAMAPS RM JOIN PONTOMAPS PM WHERE PM.ID IN (SELECT ID FROM PONTOMAPS WHERE PM.LAT = @lat AND PM.LNG = @lng)";
+		this.GET_ROUTE_BY_POINT = "SELECT RM.ID FROM ROTAMAPS RM JOIN PONTOMAPS PM WHERE PM.ID IN (SELECT ID FROM PONTOMAPS WHERE PM.LAT = @lat AND PM.LNG = @lng)";
 		this.GET_ROUTES_BY_DATE = "SELECT ID, NMROTA, ORIGEM, DESTINO, DISTANCIA, NUMPESSOASMIN, NUMPESSOASMAX, OBSERVACAO, DTINCLUSAO FROM ROTAMAPS WHERE ID NOT IN (SELECT IDROTA FROM DOACAO WHERE DATE_FORMAT(DTDOACAO, '%d/%m/%Y') = @dataFiltrada )";
 	}
 
 	addRota(rota) {
-
 		return dbService.runQuery(this.INSERT_ROTA, rota, result => {
 			return result;
 		});
@@ -90,68 +89,30 @@ class Rota {
 			);
 	}
 
-	getSignificantPoints ( rotaMaps ) {
-		const { points }  = rotaMaps;
-
+	getSignificantPoints ( points ) {
 		const pointsNormalDirection    = getMostValuablePoints(points.slice(0));
 		const pointsBackwardsDirection = getMostValuablePoints(points.slice(0).reverse());
-		
-		return getCommomPoints(pointsNormalDirection, pointsBackwardsDirection);
+
+		const routePoints = getCommomPoints(pointsNormalDirection, pointsBackwardsDirection);
+
+		const turfPoints = routePoints.map((point) => [point.lat, point.lng]);
+		const truncatedRoute = truncateCoordinates (turfPoints); 		
+	
+		return truncatedRoute.geometry.coordinates; 				   
 	}
 
-	getConflitantRoutes(routes) {
-		return routes.filter(rota => !rota);
+	mergePointsArrays( pointsArrA, pointsArrB) {
+		return compressArrayPoints(pointsArrA.concat(pointsArrB.slice(0).reverse()));
 	}
 
 	overlapsExistingRoute(routePoints) {
-		const turfPoints = routePoints.map((point) => [point.lat, point.lng]);
-		const truncatedRoute = truncateCoordinates (turfPoints); 		
-		
-		const array = truncatedRoute.geometry.coordinates; //cria um array separa só com as coordenadas (o código funcionou só dessa maneira)
-		const apagaCoordDuplicada = compressArrayPoints(array); //atribui o novo vetor à essa variável
-		truncatedRoute.geometry.coordinates = apagaCoordDuplicada; //volta os valores para a variável de origem (rotaParaValidar)
-
-		const truncatedCoordinates = truncatedRoute.geometry.coordinates;
-		var_dump(truncatedCoordinates);
-
 		try {
-			return this.findConflitantRoute(truncatedCoordinates).then(routes => {
-				const conflitantRoutes = this.getConflitantRoutes(routes);
-
-				var_dump( conflitantRoutes );
-				
-				if(conflitantRoutes.length === 0 ) {
-					return true;
-				} else {
-					conflitantRoutes.forEach(conflitantRoute => {
-						// this.GET_ROUTES_BY_ID;
-					const turfConflitantRoute = turf.lineString(conflitantRoute);
-					
-					var_dump(turfConflitantRoute);
-					
-					const overlapping = turf.lineOverlap(truncatedRoute, turfConflitantRoute, {tolerance: 0.005}); 
-							
-					//---------------------------------- COMEÇO PASSO 8, 9 e 10  -----------------------------
-					// PASSO 8 - Calcular distância entre coordenadas que foram retornadas pelo lineOverlap.
-					// PASSO 9 - Invalidar a rota a ser cadastrada caso a distância seja maior que um valor pré estabelecido
-					//          Serão considerados trechos superiores à 60 metros de sobreposição
-					//__________________________________________ATENÇÃO______________________________________________________
-					// ATENCÃO: FAZER O PASSO 6, 7 E 8 PARA TODAS AS ROTAS CONFLITANTES ENCONTRADAS NA TABELA DE PONTOS
-					//__________________________________________ATENÇÃO______________________________________________________
-					var trechosComOverlap = distanciaCoord(overlapping); 
-					// variável que receberá os trechos que serão exibidos no mapa para o usuário para justificar a não validação
-				
-					//PASSO 10 - -Exibir as variáveis retornadas pelo código no mapa caso a rota é dada como inválida.
-					//            exibir juntos na tela: trechosComOverlap, rotaConflitante e rotaParaValidar
-					
-					//           -Exibir mensagem de Cadastrado com Sucesso caso não seja encontrado nenhum trecho conflitante 
-					//            em nenhuma rota buscada na tabela de pontos. (variável trechosComOverlap não retorna nada para  
-					//            todas as rotasConflitantes pesquisadas.)
-					
-					//		 -Atualizar Tabela de Pontos assim que uma rota nova é validada e passa a ser cadastrada no sistema.
-				
-					});
+			return this.findConflitantRoute(routePoints).then(conflitantRoutes => {				
+				if( conflitantRoutes.length !== 0 ) {
+					var_dump('OLÁ!');
+					return this.getConflitantRoutes(conflitantRoutes); 
 				}
+				return false;				
 			});
 		} catch (e) {
 			throw e;
@@ -160,19 +121,80 @@ class Rota {
 
 	findConflitantRoute(route) {
 		const promises = [];
+		const returnedRoutes = [];
+		let queryParams, 
+			promise;
 
 		route.forEach(([lat, lng]) => {
-			const queryParams = {
+			queryParams = {
 				'lat': lat, 
 				'lng': lng
 			};
-			const promise = dbService.runQuery(this.GET_ROUTE_BY_POINT, queryParams)
-									 .then(result => result.map(rota => rota) );
-			promises.push(promise);						 
+
+			promise = dbService .runQuery(this.GET_ROUTE_BY_POINT, queryParams)
+								.then(result => { 
+									returnedRoutes.push(result);
+								});
+			
+			promises.push(promise);
 		});
 
-		return Promise.all(promises);
+		return Promise	.all(promises)
+						.then(() => {
+			return this.minifyRoutes(returnedRoutes);
+		});
 	}
+
+	minifyRoutes(arrayOfRoutes) {
+		const mappedRoutes = [];
+		let test = [];
+
+		var_dump(arrayOfRoutes);
+
+		arrayOfRoutes.forEach( routesIds => {
+			routesIds.forEach( route => {
+				if ( test.indexOf(route.ID) === -1 ) {
+					test.push(route.ID);
+				}
+			});
+		});
+		
+
+
+		var_dump(test);
+
+		// arrayOfRoutes.forEach( (routes, index) => {
+		// 	routes.forEach ( route => {
+		// 		mappedRoutes.push({
+		// 			routeId: route.ID,
+		// 			routeIndex: index
+		// 		});
+		// 	});				
+		// });
+		
+		// var_dump(mappedRoutes);
+
+		// const minifiedRoutes = mappedRoutes.map(({routeId, routeIndex}) => ({
+		// 	routeId: routeId,
+		// 	points : arrayOfRoutes[routeIndex].map(route => ([
+		// 		route.LAT, route.LNG
+		// 	]))
+		// }));
+
+		return minifiedRoutes;	
+	}
+
+	getConflitantRoutes(conflitantRoutes, toSaveRoute) {
+
+		const routes = conflitantRoutes.filter(conflitantRoute => {
+			var_dump(conflitantRoute);
+			return (getTrechosComOverlap(conflitantRoute.points, toSaveRoute).length > 0 );
+		});
+
+		var_dump(routes);
+
+		return routes;
+	} 
 }
 
 export default new Rota ();
