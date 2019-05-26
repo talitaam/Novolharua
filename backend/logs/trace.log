@@ -241,3 +241,8 @@
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":5324,"level":10,"msg":"GET /rota/ 200 17 ms","time":"2019-05-16T21:47:30.114Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":5324,"level":10,"msg":"POST /rota/findById 200 5 ms","time":"2019-05-16T22:07:38.386Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":5324,"level":10,"msg":"POST /doacao/ 200 7 ms","time":"2019-05-16T22:08:33.525Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":7052,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-25T15:31:39.419Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":7052,"level":10,"msg":"POST /doacao/ 200 15 ms","time":"2019-05-25T15:31:56.263Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":7052,"level":10,"msg":"POST /doacao/ 200 4 ms","time":"2019-05-25T15:32:03.352Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":7236,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-25T18:26:46.241Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":7236,"level":10,"msg":"POST /doacao/ 200 22 ms","time":"2019-05-25T19:47:03.675Z","v":0}

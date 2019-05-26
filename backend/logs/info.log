@@ -10,3 +10,5 @@
 {"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":25488,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-11T17:24:24.614Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":12152,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-16T20:48:53.026Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-0NIMAT6","pid":5324,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-16T20:53:31.691Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":7052,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-25T15:31:39.419Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-2TSKBRP","pid":7236,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-25T18:26:46.241Z","v":0}
