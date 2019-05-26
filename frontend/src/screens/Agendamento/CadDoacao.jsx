@@ -194,7 +194,8 @@ class CadDoacao extends React.Component {
 									value={selectedRoute}
 									onChange={this.changeRoute}
 									placeholder={"Selecione :"}
-									noOptionsMessage={ "Não há rotas disponíveis !" } />
+									noOptionsMessage={ "Não há rotas disponíveis !" }
+									isMulti={ true } />
 							</GridItem>
 						</GridContainer>
 					</GridItem>

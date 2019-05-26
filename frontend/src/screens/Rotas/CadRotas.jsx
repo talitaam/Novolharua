@@ -10,6 +10,7 @@ import CustomInput from "../../components/CustomInput/CustomInput";
 import CardBody from "../../components/Card/CardBody";
 import Slider from "../../components/Slider/Slider.jsx";
 import TextArea from "../../components/TextArea/TextArea.jsx";
+import Badge from "../../components/Badge/Badge";
 
 import DirectionsHelper from "components/Map/DirectionsHelper.js";
 import RotasService from "./RotasService";
@@ -39,28 +40,31 @@ class CadRotas extends React.Component {
         super();
 
         this.state = {
-          routeName: '',
-          directions: {
-			      routes:[]
-		      },
-          waypoints: [],
-          minPessoas: 0,
-          maxPessoas: 0,
-          startAddress : '',
-          endAddress: '',
-          distance: '',
-          obs: ''
+            routeName: '',
+            directions: {
+                routes: []
+            },
+            mapsRoute: [],
+            mapsRouteReverse: [],
+            userRoute: [],
+            waypoints: [],
+            minPessoas: 1,
+            maxPessoas: 1,
+            startAddress: '',
+            endAddress: '',
+            distance: '',
+            obs: ''
         };
 
         this.saveRoute = this.saveRoute.bind(this);
 
-        this.onChangeRouteName = this.onChangeRouteName.bind(this);
-        this.onChangeMaxPessoas = this.onChangeMaxPessoas.bind(this);
-        this.onChangeMinPessoas = this.onChangeMinPessoas.bind(this);
+        this.onChangeRouteName   = this.onChangeRouteName.bind(this);
+        this.onChangeMaxPessoas  = this.onChangeMaxPessoas.bind(this);
+        this.onChangeMinPessoas  = this.onChangeMinPessoas.bind(this);
         this.onChangeObservation = this.onChangeObservation.bind(this);
-        this.cleanFields = this.cleanFields.bind(this);
-        this.onClickMap = this.onClickMap.bind(this);
-        this.onRightClickMap = this.onRightClickMap.bind(this);
+        this.cleanFields         = this.cleanFields.bind(this);
+        this.onClickMap          = this.onClickMap.bind(this);
+        this.onRightClickMap     = this.onRightClickMap.bind(this);
     }
 
     onChangeRouteName(event) {
@@ -106,27 +110,43 @@ class CadRotas extends React.Component {
 
     onRightClickMap() {
         const { waypoints } = this.state;
-        DirectionsHelper.getRouteAPI(waypoints, result => {
-            const mapsRoute = result.routes[0].overview_path.map(point => { return ({ lat: point.lat(), lng: point.lng() }); });
-            const distance = result.routes[0].legs[0].distance.text;
-            const startAddress =  result.routes[0].legs[0].start_address;
-            const endAddress =  result.routes[0].legs[0].end_address;
+        
+        return DirectionsHelper.getRouteAPI(waypoints).then( result => {
+            const route = result.routes[0];
+            const leg = route.legs[0];
+            
+            const mapsRoute = route.overview_path.map(point => { return ({ lat: point.lat(), lng: point.lng() }); });
+            const distance = leg.distance.text;
+            const startAddress = leg.start_address;
+            const endAddress = leg.end_address;
+
             this.setState({
                 waypoints: [],
                 mapsRoute: mapsRoute,
                 directions: result,
-                distance : distance,
-                startAddress : startAddress,
-                endAddress : endAddress
+                distance: distance,
+                startAddress: startAddress,
+                endAddress: endAddress
             });
-        });
+        }).then(() => {
+            return DirectionsHelper.getRouteAPI(waypoints.slice(0).reverse()).then( result => {
+                const route = result.routes[0];
+                
+                const mapsRoute = route.overview_path.map(point => { return ({ lat: point.lat(), lng: point.lng() }); });
+                
+                this.setState({
+                    mapsRouteReverse: mapsRoute 
+                });
+            });
+        }); 
     }
 
     saveRoute() {
-        const { routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance, obs } = this.state;
+        const { routeName, mapsRoute, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance, obs, mapsRouteReverse } = this.state;
         const saveData = {
             routeName,
             mapsRoute,
+            mapsRouteReverse,
             userRoute,
             minPessoas,
             maxPessoas,
@@ -138,48 +158,48 @@ class CadRotas extends React.Component {
 
         let canSave = true;
 
-         if(!(routeName + '').trim()){
-          alert("O campo nome da rota deve ser preenchido!");
-          canSave = false;
+        if (!(routeName + '').trim()) {
+            alert("O campo nome da rota deve ser preenchido!");
+            canSave = false;
         }
 
         if (parseInt(minPessoas) <= 0 || parseInt(maxPessoas) <= 0) {
-          alert("A quantidade estimada de pessoas não pode ser zero ou abaixo de zero");
-          canSave = false;
+            alert("A quantidade estimada de pessoas não pode ser zero ou abaixo de zero");
+            canSave = false;
         }
 
-        if (minPessoas > maxPessoas){
-          alert("A quantidade máxima estimada de pessoas não pode ser menor que a minima");
-          canSave = false;
+        if (minPessoas > maxPessoas) {
+            alert("A quantidade máxima estimada de pessoas não pode ser menor que a minima");
+            canSave = false;
         }
 
-       if (!mapsRoute || !mapsRoute.length) {
+        if (!mapsRoute || !mapsRoute.length) {
             alert("É preciso que uma rota seja selecionada!");
             canSave = false;
         }
 
-        if (canSave){
-            RotasService.saveRoute(saveData).then( json => {
-                if(json)
+        if (canSave) {
+            RotasService.saveRoute(saveData).then(json => {
+                if (json)
                     alert(json.message);
-                this.cleanFields();
-            } );
+                // this.cleanFields();
+            });
         }
     };
 
-    cleanFields(){
-      this.setState({
-        routeName: '',
-        minPessoas: '',
-        maxPessoas: '',
-        waypoints: [],
-        mapsRoute: [],
-        userRoute: [],
-        directions: {
-            routes: []
-        },
-        obs: ''
-      });
+    cleanFields() {
+        this.setState({
+            routeName: '',
+            minPessoas: 1,
+            maxPessoas: 1,
+            waypoints: [],
+            mapsRoute: [],
+            userRoute: [],
+            directions: {
+                routes: []
+            },
+            obs: ''
+        });
     }
 
     render() {
@@ -188,11 +208,11 @@ class CadRotas extends React.Component {
         return (
             <>
                 <CardBody>
-                  <h4>Instruções</h4>
-                  <p>
-                    Para traçar uma rota clique com o botão esquerdo do mouse em
-                    qualquer ponto. Para gerar uma rota clique com o botão direito
-                    em qualquer ponto no mapa. Serão aceitos no máximo 10 pontos.
+                    <h4>Instruções</h4>
+                    <p>
+                        Para traçar uma rota clique com o botão esquerdo do mouse em
+                        qualquer ponto. Para gerar uma rota clique com o botão direito
+                        em qualquer ponto no mapa. Serão aceitos no máximo 10 pontos.
                   </p>
                 </CardBody>
                 <GridContainer justify="center" alignItems="baseline">
@@ -210,20 +230,20 @@ class CadRotas extends React.Component {
                         />
                     </GridItem>
                     <GridItem xs={6} sm={6} md={6}>
-                      <CustomInput
-                          labelText="Min Pessoas:"
-                          id="minPessoas"
-                          formControlProps={{
-                              fullWidth: false
-                          }}
-                          inputProps={{
-                              type: "number",
-                              value: minPessoas,
-                              onChange: this.onChangeMinPessoas
-                          }}
-                      />
-                      </GridItem>
-                      <GridItem xs={6} sm={6} md={6}>
+                        <CustomInput
+                            labelText="Min Pessoas:"
+                            id="minPessoas"
+                            formControlProps={{
+                                fullWidth: false
+                            }}
+                            inputProps={{
+                                type: "number",
+                                value: minPessoas,
+                                onChange: this.onChangeMinPessoas
+                            }}
+                        />
+                    </GridItem>
+                    <GridItem xs={6} sm={6} md={6}>
                         <CustomInput
                             labelText="Max Pessoas:"
                             id="maxPessoas"
@@ -236,26 +256,33 @@ class CadRotas extends React.Component {
                                 onChange: this.onChangeMaxPessoas
                             }}
                         />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={12}>
-                        <TextArea 
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={12}>
+                        <TextArea
                             inputProps={{
                                 value: obs,
                                 onChange: this.onChangeObservation
                             }}
                         />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={4}>
-                          <Button color="danger" onClick={this.cleanFields}>Limpar Dados</Button>
-                          <Button color="success" onClick={this.saveRoute}>Salvar</Button>
-                      </GridItem>
-                </GridContainer>
-                <GridContainer>
+                    </GridItem>
                     <GridItem xs={12} sm={12} md={12}>
+                        <Badge maxValue={MAX_ROUTE_POINTS}
+                            actualValue={waypoints.length} />
+
                         <Map waypoints={waypoints}
                             directions={directions}
                             onClick={this.onClickMap}
                             onRightClick={this.onRightClickMap} />
+                    </GridItem>
+                </GridContainer>
+                <GridContainer>
+                    <GridItem xs={12} sm={12} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
+                        <Button color="danger" onClick={this.cleanFields}>Limpar Dados</Button>
+                        <Button color="success" onClick={this.saveRoute}>Salvar</Button>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
                     </GridItem>
                 </GridContainer>
             </>

@@ -35,7 +35,9 @@ class ListarRotas extends React.Component {
 		const waypoints = rota.points
 							.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}));
 
-		DirectionsHelper.getRouteAPI(waypoints, result => this.setState({ directions: result }) );
+		DirectionsHelper.getRouteAPI(waypoints).then(
+			result => this.setState({ directions: result })
+		);
 	}
 
 	setRoutes({rotas}) {
