@@ -43,3 +43,7 @@
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":1412,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T16:38:26.179Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":1412,"level":10,"msg":"POST /doador/remover 200 37 ms","time":"2019-05-26T16:39:49.254Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":1412,"level":10,"msg":"POST /doador/ 200 6 ms","time":"2019-05-26T16:39:56.013Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":2228,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T18:15:08.903Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":2228,"level":10,"msg":"POST /acao/ 200 26 ms","time":"2019-05-26T18:15:34.117Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":1176,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T18:15:56.280Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":1176,"level":10,"msg":"POST /acao/ 200 31 ms","time":"2019-05-26T18:20:10.428Z","v":0}

@@ -13,3 +13,5 @@
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":7360,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T16:33:37.866Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":12088,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T16:34:56.536Z","v":0}
 {"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":1412,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T16:38:26.179Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":2228,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T18:15:08.903Z","v":0}
+{"name":"TIS","hostname":"DESKTOP-6CNIPV0","pid":1176,"level":30,"msg":"TIS listening at http://[::]:3001","time":"2019-05-26T18:15:56.280Z","v":0}
