@@ -33,15 +33,15 @@ COLLATE = utf8_bin;
 -- Table `tis_exemplo_2`.`doador`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`doador` (
-  `IDDOADOR` INT(11) NOT NULL AUTO_INCREMENT,
-  `NOMDOADOR` VARCHAR(150) NOT NULL,
   `CPFCNPJ` VARCHAR(14) NOT NULL,
+  `NOMDOADOR` VARCHAR(150) NOT NULL,
   `TELEFONE` VARCHAR(10) NOT NULL,
   `CELULAR` VARCHAR(11) NULL,
   `EMAIL` VARCHAR(150) NOT NULL,
   `IDACAO` INT(11) NOT NULL,
   `OBSERVACAO` TEXT NULL DEFAULT NULL,
-  PRIMARY KEY (`IDDOADOR`),
+  `STATUS` INT(1) NOT NULL,
+  PRIMARY KEY (`CPFCNPJ`),
   INDEX `fk_doador_acao_idx` (`IDACAO` ASC) ,
   CONSTRAINT `fk_doador_acao`
     FOREIGN KEY (`IDACAO`)
@@ -51,8 +51,6 @@ CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`doador` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
-
-
 
 -- -----------------------------------------------------
 -- Table `tis_exemplo_2`.`rotamaps`
