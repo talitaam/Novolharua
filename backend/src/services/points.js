@@ -82,7 +82,7 @@ const compressArrayPoints = list => {
 
 // Using turfjs to limit the decimal to .6 format.
 const truncateCoordinates = turfPoints => {
-    const turf = require('@turf/turf');
+    const turf = require('@turf/turf');    
     const turfLineString = turf.lineString(turfPoints);
 
     for (var i = 0; i < turfLineString.geometry.coordinates.length; i++){
@@ -95,6 +95,7 @@ const truncateCoordinates = turfPoints => {
 }
 
 const distanciaCoord = (overlapping) => {
+    const turf = require('@turf/turf');    
     var retornaOverlaps = [];
     let sizeArrayResposta = overlapping.features.length;
     let tamanhoMaximo = 60;
@@ -128,9 +129,14 @@ const distanciaCoord = (overlapping) => {
 const getTrechosComOverlap = (conflitantRoute, toSaveRoute) => {
     const turf = require('@turf/turf');
     var_dump(conflitantRoute);
-    const turfConflitantRoute = turf.lineString(conflitantRoute);
-    const overlapping = turf.lineOverlap(toSaveRoute, turfConflitantRoute, {tolerance: 0.005}); 
+    const turfConflitantRoute = truncateCoordinates(conflitantRoute);
+    var_dump(toSaveRoute);
+    const turfToSaveRoute = truncateCoordinates(toSaveRoute);
     
+    const overlapping = turf.lineOverlap(turfToSaveRoute, turfConflitantRoute, {tolerance: 0.005}); 
+
+    var_dump(overlapping);
+
     return distanciaCoord(overlapping);
 }
 

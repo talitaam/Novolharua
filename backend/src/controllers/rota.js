@@ -1,5 +1,6 @@
 import rotaService from "../services/rota";
 import var_dump from "var_dump";
+import { nearest } from "@turf/turf";
 
 class Rota {
 	getAllRotas(req, res, next) {
@@ -57,7 +58,7 @@ class Rota {
 			const newRoutePointsReverse = rotaService.getSignificantPoints(rotaMaps.reversePoints);
 			const resultedRoute         = rotaService.mergePointsArrays(newRoutePoints, newRoutePointsReverse);
 
-			rotaService.overlapsExistingRoute( resultedRoute ).then(bool => {
+			rotaService.overlapsExistingRoute( resultedRoute ).then( bool => {
 				// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
 
 				const mappedMapsRoute = resultedRoute.map(point  => (
@@ -65,10 +66,16 @@ class Rota {
 						lat: point[0],
 						lng: point[1]
 					}
-				)) 
+				));
 
-				if ( bool ) {
-					var_dump(bool);
+				const test = bool.filter(item => {
+					return !!item.isValidOverlap;
+				});
+				
+				var_dump(test);
+					
+
+				if ( test.length === 0 ) {
 					rotaService.addRota(rota).then((response) => {
 						const idRota = response.insertId;
 
@@ -88,17 +95,19 @@ class Rota {
 						res.json(respObj);
 						next();
 					});
+				} else {
+					respObj.message = "Há rotas cadastradas que soberpõe a rota informada ! Favor corrigir a sobreposição !";
+					respObj.overlappingRoutes = test;					
+					res.json(respObj);
+					next();				
 				}
 			});
 		} catch (e) {
-			let respObj = {
-				message: "Um erro inesperado ocorreu !" + e
-			};
+			respObj.message = "Um erro inesperado ocorreu : " + e;
 			var_dump(e + "");
 			res.json(respObj);
-		} finally {
 			next();
-		}
+		} 
 	}
 
 	getRotaById(req, res, next) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import $ from 'jquery-ui';
+import $ from 'jquery';
 import './Slider.scss';
 
 class Slider extends React.Component {

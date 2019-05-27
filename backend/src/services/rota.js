@@ -5,7 +5,8 @@ import var_dump from "var_dump";
 class Rota {
 	constructor() {
 		this.GET_ALL_ROTAS = "SELECT ID, NMROTA, ORIGEM, DESTINO, DISTANCIA, NUMPESSOASMIN, NUMPESSOASMAX, OBSERVACAO, DTINCLUSAO FROM ROTAMAPS";
-		this.GET_PONTOS_ROTA = "SELECT LAT, LNG FROM ROTAMAPS RM JOIN PONTOUSUARIO PU ON RM.ID = PU.IDROTA WHERE IDROTA = @idRota ORDER BY IDORDEMPONTO";
+		this.GET_PONTOS_ROTA = "SELECT RM.ID, LAT, LNG FROM ROTAMAPS RM JOIN PONTOUSUARIO PU ON RM.ID = PU.IDROTA WHERE IDROTA = @idRota ORDER BY IDORDEMPONTO";
+		this.GET_PONTOS_MAPS_ROTA = "SELECT LAT, LNG FROM ROTAMAPS RM JOIN PONTOMAPS PU ON RM.ID = PU.IDROTA WHERE IDROTA = @idRota ORDER BY IDORDEMPONTO";
 		this.INSERT_ROTA = "INSERT INTO `ROTAMAPS`(`NMROTA`, `ORIGEM`, `DESTINO`, `DISTANCIA`, `NUMPESSOASMIN`, `NUMPESSOASMAX`, `OBSERVACAO`, `DTINCLUSAO`) VALUES ( @nomeRota, @origem, @destino, @distancia, @numMinPessoas, @numMaxPessoas, @observacao, now())";
 		this.INSERT_PONTO_MAPS = "INSERT INTO `PONTOMAPS`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
 		this.INSERT_PONTO_USUARIO = "INSERT INTO `PONTOUSUARIO`(`IDORDEMPONTO`,`IDROTA`, `LAT`, `LNG`) VALUES ( @idOrdemPonto, @idRota, @lat, @lng)";
@@ -64,8 +65,6 @@ class Rota {
 
 		return dbService.runQuery(this.GET_PONTOS_ROTA, queryParams)
 			.then(result => result.map(ponto => {
-				var_dump(ponto);
-
 					return ({
 						lat: ponto.LAT,
 						lng: ponto.LNG
@@ -109,10 +108,11 @@ class Rota {
 		try {
 			return this.findConflitantRoute(routePoints).then(conflitantRoutes => {				
 				if( conflitantRoutes.length !== 0 ) {
-					var_dump('OLÁ!');
-					return this.getConflitantRoutes(conflitantRoutes); 
+					return conflitantRoutes.filter(route => route.points.length > 0)
+										   .map(( route) => this.getConflitantRoutes(route.id, route.points, routePoints)); 
+				} else {
+					return false;				
 				}
-				return false;				
 			});
 		} catch (e) {
 			throw e;
@@ -141,59 +141,53 @@ class Rota {
 
 		return Promise	.all(promises)
 						.then(() => {
-			return this.minifyRoutes(returnedRoutes);
+			return this.minifyRoutes( returnedRoutes );
 		});
 	}
 
 	minifyRoutes(arrayOfRoutes) {
 		const mappedRoutes = [];
-		let test = [];
-
-		var_dump(arrayOfRoutes);
+		const promises = [];
 
 		arrayOfRoutes.forEach( routesIds => {
 			routesIds.forEach( route => {
-				if ( test.indexOf(route.ID) === -1 ) {
-					test.push(route.ID);
+				if ( mappedRoutes.indexOf(route.ID) === -1 ) {
+					 mappedRoutes.push(route.ID);
 				}
 			});
 		});
 		
+		mappedRoutes.forEach((id) => {
+			const queryParams = {
+				'idRota': id
+			};
 
-
-		var_dump(test);
-
-		// arrayOfRoutes.forEach( (routes, index) => {
-		// 	routes.forEach ( route => {
-		// 		mappedRoutes.push({
-		// 			routeId: route.ID,
-		// 			routeIndex: index
-		// 		});
-		// 	});				
-		// });
-		
-		// var_dump(mappedRoutes);
-
-		// const minifiedRoutes = mappedRoutes.map(({routeId, routeIndex}) => ({
-		// 	routeId: routeId,
-		// 	points : arrayOfRoutes[routeIndex].map(route => ([
-		// 		route.LAT, route.LNG
-		// 	]))
-		// }));
-
-		return minifiedRoutes;	
-	}
-
-	getConflitantRoutes(conflitantRoutes, toSaveRoute) {
-
-		const routes = conflitantRoutes.filter(conflitantRoute => {
-			var_dump(conflitantRoute);
-			return (getTrechosComOverlap(conflitantRoute.points, toSaveRoute).length > 0 );
+			promises.push(dbService.runQuery(this.GET_PONTOS_MAPS_ROTA, queryParams).then( result => {
+				return {
+					'id': id,
+					'points': result
+				};
+			}));	
 		});
 
-		var_dump(routes);
+		return Promise.all(promises);	
+	}
 
-		return routes;
+	getConflitantRoutes(conflitantRouteId, conflitantRoute, toSaveRoute) {
+		const route = conflitantRoute.map(point => [parseFloat(point.LAT), parseFloat(point.LNG)]);
+		const trechoComOverlap = getTrechosComOverlap(route, toSaveRoute);
+		const result = {
+			id: conflitantRouteId,
+			isValidOverlap: (trechoComOverlap.length > 0)
+		};
+
+		if(result.isValidOverlap) {
+			result.overlapRoute = conflitantRoute;
+		} else {
+			result.overlapRoute = null;
+		}
+
+		return result;
 	} 
 }
 
