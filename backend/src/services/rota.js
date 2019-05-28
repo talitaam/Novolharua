@@ -113,7 +113,6 @@ class Rota {
 									.forEach(( route ) => { 
 									   promises.push(this.getConflitantRoutes(route.id, route.points, routePoints)); 
 									});
-					var_dump(promises);
 
 					return Promise.all(promises).then(result => result);
 				} else {

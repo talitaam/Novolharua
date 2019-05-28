@@ -194,9 +194,13 @@ class CadRotas extends React.Component {
                             location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))
                         }) );
 
-                        setTimeout(() => {}, 1000);
-
-                        promises.push( DirectionsHelper.getRouteAPI(routeFormattedToMaps) );
+                        promises.push( 
+                            new Promise((resolve, reject) => 
+                                DirectionsHelper.getRouteAPI(routeFormattedToMaps)
+                                                .then(result => resolve(result))
+                                                .catch(() => console.log(routeFormattedToMaps) ) 
+                            )
+                        );
                     });
 
                     Promise.all(promises).then(mapsAPIRoutes => this.setState({

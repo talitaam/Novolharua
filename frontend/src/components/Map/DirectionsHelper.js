@@ -2,9 +2,13 @@ import { resolve } from "dns";
 
 class DirectionHelper {
     constructor() {
-        this.MIN_ROUTES_POINTS = 2;
         this.DEFAULT_TRAVEL_MODE = 'WALKING';
+
+        this.MIN_ROUTES_POINTS = 2;
+        this.MAX_ROUTES_POINTS = 10;
+        
         this.INSUFFICIENT_POINTS_MSG = 'Pontos insuficientes para calcular uma rota ! É preciso de no mínimo ' + this.MIN_ROUTES_POINTS + ' !'; 
+        this.MAX_POINTS_EXCEEDED_MSG = 'O máximo de pontos permitidos por rota é ' + this.MAX_ROUTES_POINTS + ' !'; 
     }
 
     getRouteAPI (waypoints) {
@@ -16,6 +20,8 @@ class DirectionHelper {
 
         if (!waypoints.length || waypoints.length < this.MIN_ROUTES_POINTS) {
             alert(this.INSUFFICIENT_POINTS_MSG);
+        } else if(waypoints.length > this.MAX_ROUTES_POINTS) {
+            alert(this.MAX_POINTS_EXCEEDED_MSG);
         } else {
             return new Promise( (resolve, reject) => {
                 DirectionsService.route({
@@ -27,7 +33,7 @@ class DirectionHelper {
                     if (status === google.maps.DirectionsStatus.OK) {
                         resolve(result);
                     } else {
-                        alert(`Erro ao buscar rota : ${result}`);
+                        alert(`Erro ao buscar rota : ${result} | Status : ${status}`);
                         reject();
                     }
                 });
@@ -41,41 +47,6 @@ class DirectionHelper {
                 });
             });
         }
-    }
-
-    getRoutesAPI(arrWaypoints) {
-        const { google } = window;
-        let origin, 
-            destination,
-            points;
-
-        const routesAPI = arrWaypoints.slice(0).map(
-            ( route ) => {
-                points = route.rota.points.map((point) => new google.maps.LatLng(point.lat, point.lng));
-                origin = points.shift();
-                destination = points.pop();
-                
-                return {
-                    origin: origin,
-                    destination: destination,
-                    waypoints: points,
-                    travelMode: google.maps.TravelMode['WALKING']
-                };
-            }
-        );
-        
-        const DirectionsService = new google.maps.DirectionsService ();
-        
-        return new Promise( (resolve, reject) => {
-            DirectionsService.route(routesAPI, (result, status) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-                    resolve(result);
-                } else {
-                    alert(`Erro ao buscar rota : ${result}`);
-                    reject();
-                }
-            });
-        });
     }    
 }
 

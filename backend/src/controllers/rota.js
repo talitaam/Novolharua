@@ -59,7 +59,6 @@ class Rota {
 			const resultedRoute = rotaService.mergePointsArrays(newRoutePoints, newRoutePointsReverse);
 
 			rotaService.overlapsExistingRoute(resultedRoute).then(overlappingRoutes => {
-				var_dump(overlappingRoutes);
 
 				const mappedMapsRoute = resultedRoute.map(point => (
 					{
@@ -78,7 +77,6 @@ class Rota {
 					validConfiltantRoutes = [];
 				}
 
-				var_dump(validConfiltantRoutes);
 
 				if (validConfiltantRoutes.length === 0) {
 					rotaService.addRota(rota).then((response) => {
