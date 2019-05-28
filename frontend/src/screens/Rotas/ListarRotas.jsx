@@ -12,16 +12,14 @@ class ListarRotas extends React.Component {
 	constructor(props) {
 		super();
 		this.state = {
-			directions: {
-				routes:[]
-			},
+			directions: [],
 			selectedRoute: "",
 			routes: []
 		};
 
-		this.changeRoute = this.changeRoute.bind(this);
-		this.setRoutes = this.setRoutes.bind(this);
-		this.setDirection = this.setDirection.bind(this);
+		this.changeRoute 	= this.changeRoute.bind(this);
+		this.setRoutes 		= this.setRoutes.bind(this);
+		this.setDirection 	= this.setDirection.bind(this);
 	}
 
 	componentDidMount() {
@@ -35,8 +33,10 @@ class ListarRotas extends React.Component {
 		const waypoints = rota.points
 							.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}));
 
-		DirectionsHelper.getRouteAPI(waypoints).then(
-			result => this.setState({ directions: result })
+		DirectionsHelper.getRoutesAPI(waypoints).then(
+			(result) => this.setState({
+				directions: result
+			})
 		);
 	}
 
@@ -46,11 +46,39 @@ class ListarRotas extends React.Component {
 		});
 	}
 
-	changeRoute(route) {
-		RotasService.findRouteById(route.id).then(this.setDirection);
-		this.setState({
-			selectedRoute: route
-		});
+	changeRoute(routes) {
+		const promises = [];
+		promises.push(
+			new Promise((resolve, reject) => {
+				routes.forEach((route) => {
+					RotasService.findRouteById(route.id)
+								.then(result => resolve(result))
+								.catch(error => reject(error));
+				});
+			})
+		);
+		
+		Promise.all(promises).then(
+			(directions) => {
+				directions.forEach((direction) => {
+					DirectionsHelper.getRouteAPI(direction.rota.points.map((point) => ({location: new window.google.maps.LatLng(point.lat, point.lng)}) ) ).then(
+							result => {
+								const { directions } = this.state;
+								
+								result.id = direction.rota.id;
+
+								directions.push(result);
+
+								return this.setState({
+									selectedRoute: routes,
+									directions: directions 	
+								});
+							} 
+						);
+				});
+			}
+		);
+		
 	}
 
 	render() {
@@ -68,7 +96,7 @@ class ListarRotas extends React.Component {
 					</GridItem>
 					<GridItem xs={12} sm={12} md={4} />
 					<GridItem xs={12} sm={12} md={12}>
-						<Map directions={directions} />
+						<Map arrDirections={directions} />
 					</GridItem>
 				</GridContainer>
 			</div>

@@ -58,7 +58,7 @@ class Rota {
 			const newRoutePointsReverse = rotaService.getSignificantPoints(rotaMaps.reversePoints);
 			const resultedRoute         = rotaService.mergePointsArrays(newRoutePoints, newRoutePointsReverse);
 
-			rotaService.overlapsExistingRoute( resultedRoute ).then( bool => {
+			rotaService.overlapsExistingRoute( resultedRoute ).then( overlappingRoutes => {
 				// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
 
 				const mappedMapsRoute = resultedRoute.map(point  => (
@@ -68,14 +68,19 @@ class Rota {
 					}
 				));
 
-				const test = bool.filter(item => {
-					return !!item.isValidOverlap;
-				});
-				
-				var_dump(test);
-					
+				let validConfiltantRoutes;
 
-				if ( test.length === 0 ) {
+				if(!!overlappingRoutes && (overlappingRoutes.length > 0)) {
+					validConfiltantRoutes = overlappingRoutes.filter(item => {
+						return !!item.isValidOverlap;
+					});
+				} else {
+					validConfiltantRoutes = [];
+				}
+				
+				var_dump(validConfiltantRoutes);
+					
+				if ( validConfiltantRoutes.length === 0 ) {
 					rotaService.addRota(rota).then((response) => {
 						const idRota = response.insertId;
 
@@ -97,7 +102,7 @@ class Rota {
 					});
 				} else {
 					respObj.message = "Há rotas cadastradas que soberpõe a rota informada ! Favor corrigir a sobreposição !";
-					respObj.overlappingRoutes = test;					
+					respObj.overlappingRoutes = validConfiltantRoutes;					
 					res.json(respObj);
 					next();				
 				}
