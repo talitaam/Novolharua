@@ -44,6 +44,7 @@ class CadRotas extends React.Component {
             directions: {
                 routes: []
             },
+            arrDirections: [],
             mapsRoute: [],
             mapsRouteReverse: [],
             userRoute: [],
@@ -182,7 +183,26 @@ class CadRotas extends React.Component {
             RotasService.saveRoute(saveData).then(json => {
                 if (json)
                     alert(json.message);
-                // this.cleanFields();
+                const overlappingRoutes =  json.overlappingRoutes;
+                if(!!overlappingRoutes) {
+                    const promises = [];
+                    const { google } = window;
+                    let routeFormattedToMaps;
+
+                    overlappingRoutes.forEach(route => {
+                        routeFormattedToMaps = route.overlapRoute.map(point => ({ 
+                            location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))
+                        }) );
+
+                        setTimeout(() => {}, 1000);
+
+                        promises.push( DirectionsHelper.getRouteAPI(routeFormattedToMaps) );
+                    });
+
+                    Promise.all(promises).then(mapsAPIRoutes => this.setState({
+                        arrDirections: mapsAPIRoutes
+                    }));
+                } 
             });
         }
     };
@@ -198,12 +218,13 @@ class CadRotas extends React.Component {
             directions: {
                 routes: []
             },
+            arrDirections: [],
             obs: ''
         });
     }
 
     render() {
-        const { routeName, waypoints, directions, minPessoas, maxPessoas, obs } = this.state;
+        const { routeName, waypoints, directions, minPessoas, maxPessoas, obs, arrDirections } = this.state;
 
         return (
             <>
@@ -271,6 +292,7 @@ class CadRotas extends React.Component {
 
                         <Map waypoints={waypoints}
                             directions={directions}
+                            arrDirections={arrDirections}
                             onClick={this.onClickMap}
                             onRightClick={this.onRightClickMap} />
                     </GridItem>

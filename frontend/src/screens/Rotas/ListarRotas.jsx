@@ -47,38 +47,41 @@ class ListarRotas extends React.Component {
 	}
 
 	changeRoute(routes) {
-		const promises = [];
-		promises.push(
-			new Promise((resolve, reject) => {
-				routes.forEach((route) => {
-					RotasService.findRouteById(route.id)
-								.then(result => resolve(result))
-								.catch(error => reject(error));
-				});
-			})
-		);
+		const promises = [],
+			  promises2 = [];
+			routes.forEach((route) => {
+				promises.push(
+					new Promise((resolve, reject) => {
+						RotasService.findRouteById(route.id)
+							.then(result => resolve(result))
+							.catch(error => reject(error));
+				})
+			)
+		});
 		
 		Promise.all(promises).then(
 			(directions) => {
 				directions.forEach((direction) => {
-					DirectionsHelper.getRouteAPI(direction.rota.points.map((point) => ({location: new window.google.maps.LatLng(point.lat, point.lng)}) ) ).then(
-							result => {
-								const { directions } = this.state;
-								
-								result.id = direction.rota.id;
+					promises2.push(DirectionsHelper.getRouteAPI(direction.rota.points.map((point) => ({location: new window.google.maps.LatLng(point.lat, point.lng)}) ) ).then(
+						result => {
 
-								directions.push(result);
+							result.id = direction.rota.id;
 
-								return this.setState({
-									selectedRoute: routes,
-									directions: directions 	
-								});
-							} 
-						);
+							return result;
+						}
+					));
+				});
+				
+				Promise.all(promises2).then( result => {
+					console.log(result);
+				
+					this.setState({
+						selectedRoute: routes,
+						directions : result
+					});
 				});
 			}
-		);
-		
+		);		
 	}
 
 	render() {

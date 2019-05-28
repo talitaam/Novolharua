@@ -32,7 +32,7 @@ class Rota {
 				message: ''
 			};
 
-			const { 
+			const {
 				nomeRota,
 				origem,
 				destino,
@@ -41,9 +41,9 @@ class Rota {
 				numMaxPessoas,
 				observacao,
 				rotaMaps,
-				rotaUsuario 
-			}  = params;
-			
+				rotaUsuario
+			} = params;
+
 			const rota = {
 				nomeRota: nomeRota,
 				origem: origem,
@@ -54,14 +54,14 @@ class Rota {
 				observacao: observacao
 			};
 
-			const newRoutePoints 		= rotaService.getSignificantPoints(rotaMaps.points);
+			const newRoutePoints = rotaService.getSignificantPoints(rotaMaps.points);
 			const newRoutePointsReverse = rotaService.getSignificantPoints(rotaMaps.reversePoints);
-			const resultedRoute         = rotaService.mergePointsArrays(newRoutePoints, newRoutePointsReverse);
+			const resultedRoute = rotaService.mergePointsArrays(newRoutePoints, newRoutePointsReverse);
 
-			rotaService.overlapsExistingRoute( resultedRoute ).then( overlappingRoutes => {
-				// 	respObj.message = 'A rota informada sobrepõe rotas já cadastradas !';
+			rotaService.overlapsExistingRoute(resultedRoute).then(overlappingRoutes => {
+				var_dump(overlappingRoutes);
 
-				const mappedMapsRoute = resultedRoute.map(point  => (
+				const mappedMapsRoute = resultedRoute.map(point => (
 					{
 						lat: point[0],
 						lng: point[1]
@@ -70,17 +70,17 @@ class Rota {
 
 				let validConfiltantRoutes;
 
-				if(!!overlappingRoutes && (overlappingRoutes.length > 0)) {
+				if (!!overlappingRoutes && (overlappingRoutes.length > 0)) {
 					validConfiltantRoutes = overlappingRoutes.filter(item => {
 						return !!item.isValidOverlap;
 					});
 				} else {
 					validConfiltantRoutes = [];
 				}
-				
+
 				var_dump(validConfiltantRoutes);
-					
-				if ( validConfiltantRoutes.length === 0 ) {
+
+				if (validConfiltantRoutes.length === 0) {
 					rotaService.addRota(rota).then((response) => {
 						const idRota = response.insertId;
 
@@ -102,17 +102,18 @@ class Rota {
 					});
 				} else {
 					respObj.message = "Há rotas cadastradas que soberpõe a rota informada ! Favor corrigir a sobreposição !";
-					respObj.overlappingRoutes = validConfiltantRoutes;					
+					respObj.overlappingRoutes = validConfiltantRoutes;
 					res.json(respObj);
-					next();				
+					next();
 				}
 			});
+
 		} catch (e) {
 			respObj.message = "Um erro inesperado ocorreu : " + e;
 			var_dump(e + "");
 			res.json(respObj);
 			next();
-		} 
+		}
 	}
 
 	getRotaById(req, res, next) {

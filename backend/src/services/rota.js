@@ -108,8 +108,14 @@ class Rota {
 		try {
 			return this.findConflitantRoute(routePoints).then(conflitantRoutes => {				
 				if( conflitantRoutes.length !== 0 ) {
-					return conflitantRoutes.filter(route => route.points.length > 0)
-										   .map(( route) => this.getConflitantRoutes(route.id, route.points, routePoints)); 
+					const promises = [];
+					conflitantRoutes.filter(route => route.points.length > 0)
+									.forEach(( route ) => { 
+									   promises.push(this.getConflitantRoutes(route.id, route.points, routePoints)); 
+									});
+					var_dump(promises);
+
+					return Promise.all(promises).then(result => result);
 				} else {
 					return false;				
 				}
@@ -181,13 +187,19 @@ class Rota {
 			isValidOverlap: (trechoComOverlap.length > 0)
 		};
 
-		if(result.isValidOverlap) {
-			result.overlapRoute = conflitantRoute;
-		} else {
-			result.overlapRoute = null;
-		}
-
-		return result;
+		return new Promise ( (resolve, reject) => {
+			if(result.isValidOverlap) {
+				this.getPontosRota(conflitantRouteId).then(
+					route => {
+						result.overlapRoute = route;
+						resolve(result);
+					}
+				).catch((error) => reject(error));
+			} else {
+				result.overlapRoute = null;
+				resolve(result);
+			}
+		});
 	} 
 }
 
