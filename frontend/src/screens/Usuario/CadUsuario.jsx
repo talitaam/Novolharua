@@ -36,8 +36,8 @@ const styles = {
 
 const CPF_LENGTH = 11;
 const CNPJ_LENGTH = 14;
-const TEL_LENGTH = 12;
-const CEL_LENGTH = 13;
+const TEL_LENGTH = 10;
+const CEL_LENGTH = 11;
 
 class CadUsuario extends React.Component {
     constructor() {
@@ -59,7 +59,8 @@ class CadUsuario extends React.Component {
             ),
             validaDoc: false,
             validaCel: false,
-            validaTel: false
+            validaTel: false,
+            validaEmail: false
         };
 
         this.saveUser = this.saveUser.bind(this);
@@ -80,8 +81,10 @@ class CadUsuario extends React.Component {
 
 
     onChangeEmail(event) {
+        const value = event.target.value;
         this.setState({
-            email: event.target.value
+            email: event.target.value,
+            validaEmail: ! (!!value)
         });
     }
 
@@ -149,12 +152,12 @@ class CadUsuario extends React.Component {
         }
 
         else if (validaDoc) {
-            alert("O campo \"CPF\\CNPJ\" deve ser preenchido!");
+            alert("O campo \"CPF\\CNPJ\" deve ser preenchido corretamente!");
             canSave = false;
         }
 
         else if (validaCel) {
-            alert("O campo \"Telefone Celular\" deve ser preenchido!");
+            alert("O campo \"Telefone Celular\" deve ser preenchido corretamente!");
             canSave = false;
         } 
         
@@ -234,8 +237,7 @@ class CadUsuario extends React.Component {
             doc: "",
             telefoneFixo: "",
             telefoneCelular: "",
-            obs: "",
-            //checkboxes.deselectAll
+            obs: ""
         });
     }
 
@@ -325,6 +327,21 @@ class CadUsuario extends React.Component {
         return true;
     }
 
+    validaEmail = (text) => {
+        console.log(text);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
+        if(reg.test(text) === false)
+        {
+        this.validaEmail = false;
+        this.setState({email:text})
+        return false;
+          }
+        else {
+          this.setState({email:text})
+          this.validaEmail = true;
+        }
+    }
+
     render() {
         const {
             name,
@@ -335,7 +352,8 @@ class CadUsuario extends React.Component {
             obs,
             validaDoc,
             validaTel,
-            validaCel
+            validaCel,
+            validaEmail
         } = this.state;
 
         return (
@@ -361,6 +379,7 @@ class CadUsuario extends React.Component {
                             formControlProps={{
                                 fullWidth: true
                             }}
+                            error={validaEmail}
                             inputProps={{
                                 type: "email",
                                 value: email,
@@ -408,7 +427,7 @@ class CadUsuario extends React.Component {
                     </GridItem>
                     <GridItem xs={6} sm={6} md={6}>
                         <CustomInput
-                            labelText="Telefone Fixo (00 (00) 0000-0000):"
+                            labelText="Telefone Fixo ( (00) 0000-0000 ):"
                             id="telefoneFixo"
                             inputRef={ (ref) => {
                                 Object.assign($.prototype, Mask.prototype);                                
@@ -418,7 +437,7 @@ class CadUsuario extends React.Component {
                                     } catch (e) { }
 
                                     var tamanho = $(ref).val().length;
-                                    $(ref).mask("+99(99)9999-9999");
+                                    $(ref).mask("(99)9999-9999");
                                     var elem = this;
                                     setTimeout(function(){
                                         elem.selectionStart = elem.selectionEnd = 10000;
@@ -441,7 +460,7 @@ class CadUsuario extends React.Component {
                     </GridItem>
                     <GridItem xs={6} sm={6} md={6}>
                         <CustomInput
-                            labelText="Telefone Celular (00 (00) 0 0000-0000):"
+                            labelText="Telefone Celular ( (00) 0 0000-0000 ):"
                             id="telefoneCelular"
                             inputRef={ (ref) => {
                                 Object.assign($.prototype, Mask.prototype);                                
@@ -451,7 +470,7 @@ class CadUsuario extends React.Component {
                                     } catch (e) { }
 
                                     var tamanho = $(ref).val().length;
-                                    $(ref).mask("+99(99) 9 9999-9999");
+                                    $(ref).mask("(99) 9 9999-9999");
                                     var elem = this;
                                     setTimeout(function(){
                                         elem.selectionStart = elem.selectionEnd = 10000;
