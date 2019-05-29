@@ -7,7 +7,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import TextArea from "../../components/TextArea/TextArea.jsx";
-import UserService from "./UserService";
+import UserService from "./UserService.js";
 import Checkbox from "../../components/Checkbox/Checkbox.jsx";
 import "./CadUsuario.css";
 import $ from 'jquery';
@@ -36,6 +36,8 @@ const styles = {
 
 const CPF_LENGTH = 11;
 const CNPJ_LENGTH = 14;
+const TEL_LENGTH = 12;
+const CEL_LENGTH = 13;
 
 class CadUsuario extends React.Component {
     constructor() {
@@ -55,7 +57,9 @@ class CadUsuario extends React.Component {
                 }),
                 {}
             ),
-            validaDoc: false
+            validaDoc: false,
+            validaCel: false,
+            validaTel: false
         };
 
         this.saveUser = this.saveUser.bind(this);
@@ -65,6 +69,7 @@ class CadUsuario extends React.Component {
         this.onChangeTelefoneFixo = this.onChangeTelefoneFixo.bind(this);
         this.onChangeTelefoneCelular = this.onChangeTelefoneCelular.bind(this);
         this.cleanFields = this.cleanFields.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
     }
 
     onChangeUserName(event) {
@@ -82,26 +87,27 @@ class CadUsuario extends React.Component {
 
     onChangeCpfCnpj(event) {
         const value = event.target.value;
-        
+        const removedMask = value.replace(/\.|\-/g, '');
+
         this.setState({
             doc: event.target.value,
-            validaDoc:  (!value.trim()) && 
-                        (!((value.length === CPF_LENGTH) && 
-                           (value.length === CNPJ_LENGTH)))
-        
+            validaDoc:  !( this.validCpf(removedMask) || this.validCnpj(removedMask) )
         });
     }
 
-
     onChangeTelefoneFixo(event) {
+        const value = event.target.value;
         this.setState({
-            telefoneFixo: event.target.value
+            telefoneFixo: event.target.value,
+            validaTel: ! ( !!value && value.replace(/\+|\(|\)|\-/g, '').length === TEL_LENGTH )                  
         });
     }
 
     onChangeTelefoneCelular(event) {
+        const value = event.target.value;
         this.setState({
-            telefoneCelular: event.target.value
+            telefoneCelular: event.target.value,
+            validaCel: ! ( !!value && value.replace(/\+|\(|\)|\-/g, '').split(' ').join('').length === CEL_LENGTH )
         });
     }
 
@@ -112,8 +118,12 @@ class CadUsuario extends React.Component {
             doc,
             telefoneFixo,
             telefoneCelular,
-            obs
+            obs,
+            validaCel,
+            validaDoc
         } = this.state;
+        
+        const acoesUsuario = this.handleFormSubmit();
 
         const saveData = {
             name,
@@ -121,13 +131,35 @@ class CadUsuario extends React.Component {
             doc: "",
             telefoneFixo: "",
             telefoneCelular: "",
-            obs
+            obs,
+            acoesUsuario 
         };
+
 
         let canSave = true;
 
         if (!name.trim()) {
-            alert("O campo nome do usuário deve ser preenchido!");
+            alert("O campo \"Nome do usuário\" deve ser preenchido!");
+            canSave = false;
+        }
+
+        else if (!email.trim()) {
+            alert("O campo \"E-mail do usuário\" deve ser preenchido!");
+            canSave = false;
+        }
+
+        else if (validaDoc) {
+            alert("O campo \"CPF\\CNPJ\" deve ser preenchido!");
+            canSave = false;
+        }
+
+        else if (validaCel) {
+            alert("O campo \"Telefone Celular\" deve ser preenchido!");
+            canSave = false;
+        } 
+        
+        else if( acoesUsuario.length === 0 ) {
+            alert("O campo \"Ações que se Propõe\" deve ser preenchido!");
             canSave = false;
         }
 
@@ -141,7 +173,6 @@ class CadUsuario extends React.Component {
 
     selectAllCheckboxes = isSelected => {
         Object.keys(this.state.checkboxes).forEach(checkbox => {
-            // BONUS: Can you explain why we pass updater function to setState instead of an object?
             this.setState(prevState => ({
                 checkboxes: {
                     ...prevState.checkboxes,
@@ -166,14 +197,22 @@ class CadUsuario extends React.Component {
         }));
     };
 
-    handleFormSubmit = formSubmitEvent => {
-        formSubmitEvent.preventDefault();
-
-        Object.keys(this.state.checkboxes)
-            .filter(checkbox => this.state.checkboxes[checkbox])
-            .forEach(checkbox => {
-                console.log(checkbox, "is selected.");
-            });
+    handleFormSubmit = () => {
+        return Object.keys(this.state.checkboxes)
+                     .filter(checkbox => this.state.checkboxes[checkbox])
+                     .map(acao => {
+                        let value;
+                        if("Agasalho") {
+                            value = 3;
+                        } else if("Cursos") {
+                            value = 4;
+                        } else if ("Higiene") {
+                            value = 2;
+                        } else if ("Refeição") {
+                            value = 1;
+                        }
+                        return value;
+                    });
     };
 
     createCheckbox = option => (
@@ -188,6 +227,7 @@ class CadUsuario extends React.Component {
     createCheckboxes = () => OPTIONS.map(this.createCheckbox);
 
     cleanFields() {
+        this.deselectAll();
         this.setState({
             name: "",
             email: "",
@@ -199,6 +239,92 @@ class CadUsuario extends React.Component {
         });
     }
 
+    
+    // Obrigado !
+    // https://gist.github.com/roneigebert/10d788a07e2ffff88eb0f1931fb7bb49
+    validCpf(cpf) {
+        if (!cpf || cpf.length !== 11
+            || cpf === "00000000000"
+            || cpf === "11111111111"
+            || cpf === "22222222222"
+            || cpf === "33333333333"
+            || cpf === "44444444444"
+            || cpf === "55555555555"
+            || cpf === "66666666666"
+            || cpf === "77777777777"
+            || cpf === "88888888888"
+            || cpf === "99999999999")
+            return false
+        var soma = 0
+        var resto
+        for (var i = 1; i <= 9; i++)
+            soma = soma + parseInt(cpf.substring(i - 1, i)) * (11 - i)
+        resto = (soma * 10) % 11
+        if ((resto === 10) || (resto === 11)) resto = 0
+        if (resto !== parseInt(cpf.substring(9, 10))) return false
+        soma = 0
+        for (var i = 1; i <= 10; i++)
+            soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i)
+        resto = (soma * 10) % 11
+        if ((resto === 10) || (resto === 11)) resto = 0
+        if (resto !== parseInt(cpf.substring(10, 11))) return false
+        return true
+    }
+
+    // Obrigado !
+    // https://gist.github.com/roneigebert/10d788a07e2ffff88eb0f1931fb7bb49
+    validCnpj(cnpj) {
+        var cnpj = cnpj.replace(/[^\d]+/g,'');
+ 
+        if(cnpj == '') return false;
+         
+        if (cnpj.length != 14)
+            return false;
+     
+        // Elimina CNPJs invalidos conhecidos
+        if (cnpj == "00000000000000" || 
+            cnpj == "11111111111111" || 
+            cnpj == "22222222222222" || 
+            cnpj == "33333333333333" || 
+            cnpj == "44444444444444" || 
+            cnpj == "55555555555555" || 
+            cnpj == "66666666666666" || 
+            cnpj == "77777777777777" || 
+            cnpj == "88888888888888" || 
+            cnpj == "99999999999999")
+            return false;
+             
+        // Valida DVs
+        var tamanho = cnpj.length - 2
+        var numeros = cnpj.substring(0,tamanho);
+        var digitos = cnpj.substring(tamanho);
+        var soma = 0;
+        var pos = tamanho - 7;
+        for (var i = tamanho; i >= 1; i--) {
+          soma += numeros.charAt(tamanho - i) * pos--;
+          if (pos < 2)
+                pos = 9;
+        }
+        var resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(0))
+            return false;
+             
+        tamanho = tamanho + 1;
+        numeros = cnpj.substring(0,tamanho);
+        soma = 0;
+        pos = tamanho - 7;
+        for (i = tamanho; i >= 1; i--) {
+          soma += numeros.charAt(tamanho - i) * pos--;
+          if (pos < 2)
+                pos = 9;
+        }
+        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(1))
+              return false;
+               
+        return true;
+    }
+
     render() {
         const {
             name,
@@ -207,7 +333,9 @@ class CadUsuario extends React.Component {
             telefoneFixo,
             telefoneCelular,
             obs,
-            validaDoc
+            validaDoc,
+            validaTel,
+            validaCel
         } = this.state;
 
         return (
@@ -258,13 +386,10 @@ class CadUsuario extends React.Component {
                                     } else {
                                         $(ref).mask("99.999.999/9999-99");
                                     }
-                                    // ajustando foco
                                     var elem = this;
                                     setTimeout(function(){
-                                        // mudo a posição do seletor
                                         elem.selectionStart = elem.selectionEnd = 10000;
                                     }, 0);
-                                    // reaplico o valor para mudar o foco
                                     var currentValue = $(this).val();
                                     $(this).val('');
                                     $(this).val(currentValue);
@@ -283,11 +408,30 @@ class CadUsuario extends React.Component {
                     </GridItem>
                     <GridItem xs={6} sm={6} md={6}>
                         <CustomInput
-                            labelText="Telefone Fixo:"
+                            labelText="Telefone Fixo (00 (00) 0000-0000):"
                             id="telefoneFixo"
+                            inputRef={ (ref) => {
+                                Object.assign($.prototype, Mask.prototype);                                
+                                $(ref).keydown(function () {
+                                    try {
+                                        $(ref).unmask();
+                                    } catch (e) { }
+
+                                    var tamanho = $(ref).val().length;
+                                    $(ref).mask("+99(99)9999-9999");
+                                    var elem = this;
+                                    setTimeout(function(){
+                                        elem.selectionStart = elem.selectionEnd = 10000;
+                                    }, 0);
+                                    var currentValue = $(this).val();
+                                    $(this).val('');
+                                    $(this).val(currentValue);
+                                });
+                            }}
                             formControlProps={{
                                 fullWidth: true
                             }}
+                            error={validaTel}
                             inputProps={{
                                 type: "telefoneFixo",
                                 value: telefoneFixo,
@@ -297,11 +441,30 @@ class CadUsuario extends React.Component {
                     </GridItem>
                     <GridItem xs={6} sm={6} md={6}>
                         <CustomInput
-                            labelText="Telefone Celular:"
+                            labelText="Telefone Celular (00 (00) 0 0000-0000):"
                             id="telefoneCelular"
+                            inputRef={ (ref) => {
+                                Object.assign($.prototype, Mask.prototype);                                
+                                $(ref).keydown(function () {
+                                    try {
+                                        $(ref).unmask();
+                                    } catch (e) { }
+
+                                    var tamanho = $(ref).val().length;
+                                    $(ref).mask("+99(99) 9 9999-9999");
+                                    var elem = this;
+                                    setTimeout(function(){
+                                        elem.selectionStart = elem.selectionEnd = 10000;
+                                    }, 0);
+                                    var currentValue = $(this).val();
+                                    $(this).val('');
+                                    $(this).val(currentValue);
+                                });
+                            }}
                             formControlProps={{
                                 fullWidth: true
                             }}
+                            error={validaCel}
                             inputProps={{
                                 type: "telefoneCelular",
                                 value: telefoneCelular,
