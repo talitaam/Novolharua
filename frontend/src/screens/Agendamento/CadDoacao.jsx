@@ -42,12 +42,12 @@ class CadDoacao extends React.Component {
 		
 		this.state = {
 			directions:{
-				routes: []
+				routes: [] //ver a questão 
 			},
 			donatorName: '',
 			donationDate: new Date(),
-			selectedRoute: "",
-			routes: []
+			selectedRoutes: [],
+			routes: [],
 		};
 
 		this.saveDonation = this.saveDonation.bind(this);
@@ -76,7 +76,7 @@ class CadDoacao extends React.Component {
 		if(rota && rota.points) {
 			const waypoints = rota.points
 							.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}));
-			DirectionsHelper.getRouteAPI(waypoints, result => this.setState({ directions: result }) );
+							DirectionsHelper.getRouteAPI(waypoints, result => this.setState({ directions: result }) );
 		}
 	}
 
@@ -87,14 +87,37 @@ class CadDoacao extends React.Component {
 	}
 
 	changeRoute(route) {
-		RotasService.findRouteById(route.id).then(this.setDirection);
-		this.setState({
-			selectedRoute: route
-		});
+		const arrayRotas = this.state.selectedRoutes.slice(0);
+		var idx = arrayRotas.indexOf(route);
+		if (idx === -1) {
+			arrayRotas.push(route);
+			this.setState({
+				selectedRoutes: arrayRotas
+			});
+			RotasService.findRouteById(route.id).then(this.setDirection);
+			
+		} else if (idx > -1) {
+			arrayRotas.splice(idx,1);
+			if(arrayRotas.length>0){
+				var i = arrayRotas.length - 1;
+				route = arrayRotas[i];
+				this.setState({
+					selectedRoutes: arrayRotas
+				});
+				RotasService.findRouteById(route.id).then(this.setDirection);
+			}
+			else{
+				this.setState({
+					directions:{routes: []},
+					selectedRoutes: []
+				});
+			}
+		}
 	}
+	
 
 	saveDonation() {
-		const { donatorName, donationDate, selectedRoute } =  this.state;		
+		const { donatorName, donationDate, selectedRoutes } =  this.state;		
 		
 		if(!donatorName.trim()) {
 			this.setState({ 
@@ -104,27 +127,39 @@ class CadDoacao extends React.Component {
 		} else if((!donationDate) || (moment(donationDate).isBefore(moment(), 'day')) ) {
 			this.setState({ 
 				donationDate: "", 
-				selectedRoute: '' 
+				selectedRoutes: [] 
 			});
 			alert("A data escolhida para a doação não é válida !");
-		} else if(!selectedRoute  && !selectedRoute.length) {
+		} else if(selectedRoutes.length===0) {
 			alert("É preciso que uma rota seja selecionada !");
 		} else {
-			DoacoesService.saveDonation({
-				donatorName: donatorName,
-				donationDate: donationDate,
-				selectedRoute: selectedRoute
-			}).then((response) => {
-				this.setState({
-					directions:{
+			var tam = selectedRoutes.length;
+			var i = 0;
+			while (i<tam-1){
+				DoacoesService.saveDonation({
+					donatorName: donatorName,
+					donationDate: donationDate,
+					selectedRoute: selectedRoutes[i] 
+				});
+				i++;
+			}
+			if(i==(tam-1)){
+				DoacoesService.saveDonation({
+					donatorName: donatorName,
+					donationDate: donationDate,
+					selectedRoute: selectedRoutes[i] 
+				}).then((response) => {
+					this.setState({
+						directions:{
+							routes: []
+						},
+						donatorName: '',
+						donationDate: new Date(),
+						selectedRoutes: [],
 						routes: []
-					},
-					donatorName: '',
-					donationDate: new Date(),
-					selectedRoute: "",
-					routes: []
-				});		
-			});
+					});		
+				});
+			}
 		}
 	};
 
@@ -138,8 +173,6 @@ class CadDoacao extends React.Component {
 		RotasService.findAvaiableRoutesByDate(actualDate.format('DD/MM/YYYY')).then((json) => {
 			const { rotas } = json;
 			const canAutoSetRoute = rotas.length > 0;
-
-			const selectedRoute = canAutoSetRoute ? rotas[0] : {};
 			
 			if(!canAutoSetRoute) {
 				alert("Não há rotas disponíveis para esta data !");	
@@ -148,7 +181,7 @@ class CadDoacao extends React.Component {
 						routes: []
 					},
 					donationDate: new Date(),
-					selectedRoute: "",
+					selectedRoutes: [],
 					routes: []
 				});
 				
@@ -156,16 +189,14 @@ class CadDoacao extends React.Component {
 				this.setState({
 					donationDate: new Date(actualDate),
 					routes: rotas,
-					selectedRoute: selectedRoute
+					selectedRoutes: []
 				});
-				
-				RotasService.findRouteById(rotas[0].id).then(this.setDirection);
 			}
 		});
 	}
 
 	render() {
-		const { donatorName, donationDate, routes, selectedRoute, directions } = this.state;
+		const { donatorName, donationDate, routes, selectedRoutes, directions } = this.state;
 
 		return (
 			<div>
@@ -190,8 +221,10 @@ class CadDoacao extends React.Component {
 									onChange={this.changeData} />
 							</GridItem>
 							<GridItem xs={12} sm={12} md={3}>
-								<Select options={routes}
-									value={selectedRoute}
+							<Select closeMenuOnSelect={ true }
+									isMulti
+									options={routes}
+									value={selectedRoutes}
 									onChange={this.changeRoute}
 									placeholder={"Selecione :"}
 									noOptionsMessage={ "Não há rotas disponíveis !" } />
