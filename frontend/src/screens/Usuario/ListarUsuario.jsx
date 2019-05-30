@@ -1,45 +1,71 @@
+import GridContainer from "../../components/Grid/GridContainer";
+import GridItem from "../../components/Grid/GridItem";
+import Card from "../../components/Card/Card";
+import CardHeader from "components/Card/CardHeader.jsx";
 import React from "react";
-
-import GridItem from "components/Grid/GridItem.jsx";
-import GridContainer from "components/Grid/GridContainer.jsx";
+import CardBody from "../../components/Card/CardBody";
+import Table from "../../components/Table/Table";
+import Link from "@material-ui/core/Link";
+import Button from "../../components/CustomButtons/Button";
 import UserService from "./UserService";
 
 class ListarUsuario extends React.Component {
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
-      name: "",
-      email: "",
-      doc: "",
-      telefoneFixo: "",
-      telefoneCelular: "",
-      obs: ""
+      rows: []
     };
+    this.tableColumns = [
+      "Nome do doador",
+      "Email",
+      "CPF/CNPJ",
+      "Telefone Fixo",
+      "Telefone Celular",
+      "Obs"
+    ];
   }
 
   componentDidMount() {
     UserService.findUsers().then(json => {
-      this.setState({
-        name: name,
-        email: email,
-        doc: doc,
-        telefoneFixo: telefoneFixo,
-        telefoneCelular: telefoneCelular,
-        obs: obs
-      });
+      this.setDoador(json);
+    });
+  }
+
+  setDoador({ doador }) {
+    this.setState({
+      rows: doador.map(usuario => Object.values(usuario))
     });
   }
 
   render() {
-    const { directions, selectedRoute, routes } = this.state;
-
     return (
       <div>
         <GridContainer>
-          <GridItem xs={12} sm={12} md={4} />
-          <GridItem xs={12} sm={12} md={4} />
-          <GridItem xs={12} sm={12} md={4} />
-          <GridItem xs={12} sm={12} md={12} />
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="warning">
+                <h4>
+                  Lista de Doadores
+                </h4>
+              </CardHeader>
+              <CardBody>
+                <Table
+                  tableHeaderColor="warning"
+                  tableHead={this.tableColumns}
+                  tableData={this.state.rows}
+                />
+              </CardBody>
+            </Card>
+          </GridItem>
+          <GridItem xs={4} sm={4} md={4} />
+          <GridItem xs={4} sm={4} md={4}>
+            <Link to="/doador">
+              <Button color="primary" position="center">
+                Cadastrar Doação
+              </Button>
+            </Link>
+          </GridItem>
+          <GridItem xs={4} sm={4} md={4} />
         </GridContainer>
       </div>
     );
