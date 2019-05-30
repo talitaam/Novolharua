@@ -49,7 +49,8 @@ class ListarUsuario extends React.Component {
   componentDidMount() {
     UserService.fecthUser().then(json => {
       if (json) {
-        const { doador } = json;
+        const doador = json.doadores;
+        console.log(doador);
         this.setState({
           rows: doador.map(usuario => Object.values(usuario))
         });

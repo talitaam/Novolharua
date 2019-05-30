@@ -1,5 +1,4 @@
 import dbService from "../util/db";
-import var_dump from "var_dump";
 
 class Doador {
 	constructor() {
@@ -47,7 +46,7 @@ class Doador {
 			idAcao: doador.idAcao[0],
 			observacao : doador.observacao,
 		};
-		var_dump(queryParams);
+
 		return dbService.runQuery(this.INSERT_DOADOR, queryParams, result => {
 			return result;
 		});
