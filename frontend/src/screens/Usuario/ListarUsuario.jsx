@@ -35,11 +35,11 @@ class ListarUsuario extends React.Component {
       rows: []
     };
     this.tableColumns = [
-      "Nome do doador",
-      "Email",
       "CPF/CNPJ",
+      "Nome do doador",
       "Telefone Fixo",
       "Telefone Celular",
+      "Email",
       "Ações",
       "Obs",
       ""
