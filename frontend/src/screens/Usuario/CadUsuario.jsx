@@ -125,7 +125,7 @@ class CadUsuario extends React.Component {
   onChangeObservation(event) {
     const value = event.target.value;
     this.setState({
-      obs: event.target.value,
+      obs: event.target.value
     });
   }
 
@@ -144,13 +144,14 @@ class CadUsuario extends React.Component {
     const acoesUsuario = this.handleFormSubmit();
 
     const saveData = {
+      doc,
       name,
+      telefoneFixo,
+      telefoneCelular,
       email,
-      doc: "",
-      telefoneFixo: "",
-      telefoneCelular: "",
+      acoesUsuario,
       obs,
-      acoesUsuario
+      status: 0
     };
 
     let canSave = true;

@@ -3,7 +3,7 @@ import serverParams from "variables/server.jsx";
 class UserService {
   fecthUser() {
     const fetchData = {
-      method: "GET"
+      method: "POST"
     };
     return fetch(serverParams.SERVER_URL + "doador/", fetchData).then(res =>
       res.json()
@@ -21,7 +21,8 @@ class UserService {
     telefoneFixo,
     telefoneCelular,
     obs,
-    acoesUsuario
+    acoesUsuario,
+    status
   }) {
     let data = {
       nomDoador: name,
@@ -30,7 +31,8 @@ class UserService {
       celular: telefoneCelular,
       email: email,
       idAcao: acoesUsuario,
-      observacao: obs
+      observacao: obs,
+      status: status
     };
 
     return fetch(serverParams.SERVER_URL + "/doador/add", {

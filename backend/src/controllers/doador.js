@@ -1,7 +1,7 @@
 import doadorService from "../services/doador";
 
 class Doador {
-  getAllDoadores (req, res, next) {
+	getAllDoadores (req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		let respObj = {
