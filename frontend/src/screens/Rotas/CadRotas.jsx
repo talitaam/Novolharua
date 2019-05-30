@@ -261,11 +261,11 @@ class CadRotas extends React.Component {
           <GridItem xs={12} sm={12} md={4}>
             <TextArea
               inputProps={{
-                value: obs,
+                text: obs,
                 onChange: this.onChangeObservation
               }}
             />
-            <GridItem xs={12} sm={12} md={12} spacing={6}>
+            <GridItem xs={12} sm={12} md={12}>
               <Button color="danger" onClick={this.cleanFields}>
                 Limpar Dados
               </Button>

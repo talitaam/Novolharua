@@ -69,6 +69,7 @@ class CadUsuario extends React.Component {
     this.onChangeCpfCnpj = this.onChangeCpfCnpj.bind(this);
     this.onChangeTelefoneFixo = this.onChangeTelefoneFixo.bind(this);
     this.onChangeTelefoneCelular = this.onChangeTelefoneCelular.bind(this);
+    this.onChangeObservation = this.onChangeObservation.bind(this);
     this.cleanFields = this.cleanFields.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
@@ -118,6 +119,13 @@ class CadUsuario extends React.Component {
           .split(" ")
           .join("").length === CEL_LENGTH
       )
+    });
+  }
+
+  onChangeObservation(event) {
+    const value = event.target.value;
+    this.setState({
+      obs: event.target.value,
     });
   }
 
@@ -495,7 +503,7 @@ class CadUsuario extends React.Component {
           <GridItem xs={12} sm={12} md={12}>
             <TextArea
               inputProps={{
-                value: obs,
+                text: obs,
                 onChange: this.onChangeObservation
               }}
             />
