@@ -28,10 +28,6 @@ class Rota {
 			message: ''
 		};
 
-		const respObj = {
-			message: ''
-		};
-
 		try {
 			const params = JSON.parse(req.body);
 
