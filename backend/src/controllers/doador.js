@@ -1,7 +1,7 @@
 import doadorService from "../services/doador";
 
 class Doador {
-	getAllDoadores (req, res, next) {
+  getAllDoadores (req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		let respObj = {
@@ -80,15 +80,14 @@ class Doador {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		const params = JSON.parse(req.body);
-		let respObj = {
-			message: "Salvo com sucesso !",
-			doacao: []
-		};
+		let respObj = {};
 
 		try {
 			doadorService.addDoador(params)
 				.then(response => {
 					respObj.doador = response;
+					respObj.message = "Salvo com sucesso !";
+							
 					res.json(respObj);
 					next();
 				})
@@ -130,6 +129,5 @@ class Doador {
 			next();
 		}
 	}
-
 }
 export default new Doador ();
