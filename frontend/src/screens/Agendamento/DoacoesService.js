@@ -17,7 +17,7 @@ class DoacoesService {
     const doacao = {
       doador: donatorName,
       data: donationDate,
-      rota: selectedRoute.id
+      rota: selectedRoute
     };
 
     return fetch("http://localhost:3001/doacao/add", {
