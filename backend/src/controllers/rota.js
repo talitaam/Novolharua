@@ -30,14 +30,14 @@ class Rota {
 			const params = JSON.parse(req.body);
 			var_dump(params);
 			const nomeRota = params.nomeRota,
-					  origem = params.origem,
-						destino = params.destino,
-						distancia = params.distancia,
-						numMinPessoas = params.numMinPessoas,
-						numMaxPessoas = params.numMaxPessoas,
-						observacao = params.observacao,
-				  	rotaMapsAPI = params.rotaMaps,
-				  	rotaUsuario = params.rotaUsuario;
+				origem = params.origem,
+				destino = params.destino,
+				distancia = params.distancia,
+				numMinPessoas = params.numMinPessoas,
+				numMaxPessoas = params.numMaxPessoas,
+				observacao = params.observacao,
+				rotaMapsAPI = params.rotaMaps,
+				rotaUsuario = params.rotaUsuario;
 
 			const respObj = {
 				message : "Salvo com sucesso !",
@@ -46,19 +46,19 @@ class Rota {
 
 			const rota = {
 				nomeRota : nomeRota,
-			  origem : origem,
+			  	origem : origem,
 				destino : destino,
 				distancia : distancia,
 				numMinPessoas : numMinPessoas,
 				numMaxPessoas : numMaxPessoas,
 				observacao : observacao
-			}
+			};
 
 			if(rotaMapsAPI.points.length > 2){
 				rotaMapsAPI.points = getMostValuablePoints(rotaMapsAPI.points);
 				var_dump( rotaMapsAPI.points );
 			}
-				rotaService.addRota(rota).then((response) => {
+			rotaService.addRota(rota).then((response) => {
 				respObj.idRota = response.insertId;
 				console.log("Gravou rota com sucesso: " + response.insertId);
 
@@ -113,8 +113,8 @@ class Rota {
 				next();
 			});
 		} catch (e) {
-			var_dump(e + '');
-			respObj.error = e + '';
+			var_dump(e + "");
+			respObj.error = e + "";
 			res.json(respObj);
 			next();
 		}
@@ -134,8 +134,8 @@ class Rota {
 				next();
 			});
 		} catch (e) {
-			var_dump(e + '');
-			respObj.error = e + '';
+			var_dump(e + "");
+			respObj.error = e + "";
 			res.json(respObj);
 			next();
 		}
