@@ -20,7 +20,7 @@ class Doador {
 			next();
 		}
 	}
-		
+
 	getDoadoresPorStatus (req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
@@ -80,15 +80,14 @@ class Doador {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		const params = JSON.parse(req.body);
-		let respObj = {
-			message: "Salvo com sucesso !",
-			doacao: []
-		};
+		let respObj = {};
 
 		try {
 			doadorService.addDoador(params)
 				.then(response => {
 					respObj.doador = response;
+					respObj.message = "Salvo com sucesso !";
+							
 					res.json(respObj);
 					next();
 				})
