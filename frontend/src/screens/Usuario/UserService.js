@@ -2,12 +2,11 @@ import serverParams from "variables/server.jsx";
 
 class UserService {
   fecthUser() {
-    const fetchData = {
+    return fetch(serverParams.SERVER_URL + "doador/", {
       method: "POST"
-    };
-    return fetch(serverParams.SERVER_URL + "doador/", fetchData).then(res =>
-      res.json()
-    );
+    })
+      .then(res => res.json())
+      .catch(error => alert(this.NO_DONATIONS_MSG));
   }
 
   findUsers() {
@@ -35,7 +34,7 @@ class UserService {
       status: status
     };
 
-    return fetch(serverParams.SERVER_URL + "/doador/add", {
+    return fetch("http://localhost:3001/doador/add", {
       method: "POST",
       body: JSON.stringify(data)
     })
