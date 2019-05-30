@@ -85,13 +85,15 @@ class Doador {
 		try {
 			doadorService.addDoador(params)
 				.then(response => {
-					respObj.doador = response;
+					respObj.dodor = response;
 					respObj.message = "Salvo com sucesso !";
-					
-					doadorService.addAcoesDoador(Object.assign(params, response)).then(response => {
+
+					/*doadorService.addAcoesDoador(Object.assign(params, response)).then(response => {
 						res.json(respObj);
 						next();
-					});
+					});*/
+					res.json(respObj);
+					next();
 				})
 				.catch(response => {
 					respObj.message = "Um erro inesperado ocorreu ! Ex: " + response.sqlMessage;

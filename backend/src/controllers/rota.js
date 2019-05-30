@@ -24,6 +24,9 @@ class Rota {
 
 	addRota(req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
+		const respObj = {
+			message: ''
+		};
 
 		const respObj = {
 			message: ''
@@ -31,8 +34,6 @@ class Rota {
 
 		try {
 			const params = JSON.parse(req.body);
-			
-			
 
 			const {
 				nomeRota,
