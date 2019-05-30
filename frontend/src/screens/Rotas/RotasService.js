@@ -47,27 +47,15 @@ class RotasService {
     return this.fetchAvaiableRoutesByDate(date);
   }
 
-  saveRoute({
-    routeName,
-    mapsRoute,
-    userRoute,
-    minPessoas,
-    maxPessoas,
-    startAddress,
-    endAddress,
-    distance,
-    obs
-  }) {
+  saveRoute({ routeName, mapsRoute, mapsRouteReverse, userRoute, minPessoas, maxPessoas, startAddress, endAddress, distance, obs }) {
     let data = {
       nomeRota: routeName,
       rotaMaps: {
-        points: mapsRoute
+        points: mapsRoute,
+        reversePoints: mapsRouteReverse
       },
       rotaUsuario: {
-        points: userRoute.map(({ location }) => ({
-          lat: location.lat(),
-          lng: location.lng()
-        }))
+        points: userRoute.map(({ location }) => ({ lat: location.lat(), lng: location.lng() }))
       },
       numMinPessoas: minPessoas,
       numMaxPessoas: maxPessoas,
@@ -77,11 +65,12 @@ class RotasService {
       observacao: obs
     };
 
-    return fetch(serverParams.SERVER_URL + "/rota/add", {
-      method: "POST",
-      body: JSON.stringify(data)
-    })
-      .then(res => res.json())
+    return fetch(serverParams.SERVER_URL + '/rota/add',
+      {
+        method: "POST",
+        body: JSON.stringify(data)
+      }
+    ).then(res => res.json())
       .catch(error => {
         alert("Erro ao enviar cadastro de rota !");
       });

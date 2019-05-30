@@ -1,0 +1,10 @@
+.badge { 
+    margin-left:90%;
+    width: 20%;
+    height: 10%;
+}
+
+.badge-text {
+    font-size: 10px;
+    text-decoration: underline;
+}

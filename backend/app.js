@@ -31,3 +31,6 @@ server.listen(3001, function () {
 server.on("uncaughtException", function (req, res, route, err) {
 	logger.error(err);
 });
+
+// Node JS Configs: 
+process.setMaxListeners(100);

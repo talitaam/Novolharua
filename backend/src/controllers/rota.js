@@ -1,10 +1,8 @@
 import rotaService from "../services/rota";
-import { getMostValuablePoints } from "../services/points";
-import moment from "moment";
 import var_dump from "var_dump";
 
 class Rota {
-	getAllRotas (req, res, next) {
+	getAllRotas(req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 
 		let respObj = {};
@@ -24,79 +22,99 @@ class Rota {
 		}
 	}
 
-	addRota(req, res, next){
+	addRota(req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
+
 		try {
 			const params = JSON.parse(req.body);
-			var_dump(params);
-			const nomeRota = params.nomeRota,
-				origem = params.origem,
-				destino = params.destino,
-				distancia = params.distancia,
-				numMinPessoas = params.numMinPessoas,
-				numMaxPessoas = params.numMaxPessoas,
-				observacao = params.observacao,
-				rotaMapsAPI = params.rotaMaps,
-				rotaUsuario = params.rotaUsuario;
-
+			
 			const respObj = {
-				message : "Salvo com sucesso !",
-				idRota: 0
+				message: ''
 			};
+
+			const {
+				nomeRota,
+				origem,
+				destino,
+				distancia,
+				numMinPessoas,
+				numMaxPessoas,
+				observacao,
+				rotaMaps,
+				rotaUsuario
+			} = params;
 
 			const rota = {
-				nomeRota : nomeRota,
-			  	origem : origem,
-				destino : destino,
-				distancia : distancia,
-				numMinPessoas : numMinPessoas,
-				numMaxPessoas : numMaxPessoas,
-				observacao : observacao
+				nomeRota: nomeRota,
+				origem: origem,
+				destino: destino,
+				distancia: distancia,
+				numMinPessoas: numMinPessoas,
+				numMaxPessoas: numMaxPessoas,
+				observacao: observacao
 			};
 
-			if(rotaMapsAPI.points.length > 2){
-				rotaMapsAPI.points = getMostValuablePoints(rotaMapsAPI.points);
-				var_dump( rotaMapsAPI.points );
-			}
-			rotaService.addRota(rota).then((response) => {
-				respObj.idRota = response.insertId;
-				console.log("Gravou rota com sucesso: " + response.insertId);
+			const newRoutePoints = rotaService.getSignificantPoints(rotaMaps.points);
+			const newRoutePointsReverse = rotaService.getSignificantPoints(rotaMaps.reversePoints);
+			const resultedRoute = rotaService.mergePointsArrays(newRoutePoints, newRoutePointsReverse);
 
-				rotaMapsAPI.points.forEach(function (ponto, index) {
-					console.log("Pontos - Rota Usuario");
-					rotaService.addPontoMaps(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
-						console.log("Gravou pontoMaps com sucesso");
-						respObj.rotaMaps = response;
-						var_dump(response);
+			rotaService.overlapsExistingRoute(resultedRoute).then(overlappingRoutes => {
+
+				const mappedMapsRoute = resultedRoute.map(point => (
+					{
+						lat: point[0],
+						lng: point[1]
+					}
+				));
+
+				let validConfiltantRoutes;
+
+				if (!!overlappingRoutes && (overlappingRoutes.length > 0)) {
+					validConfiltantRoutes = overlappingRoutes.filter(item => {
+						return !!item.isValidOverlap;
 					});
-				});
+				} else {
+					validConfiltantRoutes = [];
+				}
 
-				rotaUsuario.points.forEach(function (ponto, index) {
-					console.log("Pontos - Rota Usuario");
-					console.log ("Lat: " + ponto.lat + " / Lng: " + ponto.lng);
 
-					rotaService.addPontoUsuario(index, respObj.idRota, ponto.lat, ponto.lng).then((response) => {
-						console.log("Gravou pontoUsuario com sucesso");
-						respObj.rotaUsuario = response;
-						var_dump(response);
+				if (validConfiltantRoutes.length === 0) {
+					rotaService.addRota(rota).then((response) => {
+						const idRota = response.insertId;
+
+						mappedMapsRoute.forEach((ponto, index) => {
+							rotaService.addPontoMaps(index, idRota, ponto.lat, ponto.lng).then((response) => {
+								respObj.rotaMaps = response;
+							});
+						});
+
+						rotaUsuario.points.forEach(function (ponto, index) {
+							rotaService.addPontoUsuario(index, idRota, ponto.lat, ponto.lng).then((response) => {
+								respObj.rotaUsuario = response;
+							});
+						});
+
+						respObj.message = "Salvo com sucesso.";
+						res.json(respObj);
+						next();
 					});
-				});
+				} else {
+					respObj.message = "Há rotas cadastradas que soberpõe a rota informada ! Favor corrigir a sobreposição !";
+					respObj.overlappingRoutes = validConfiltantRoutes;
+					res.json(respObj);
+					next();
+				}
 			});
 
-			res.json(respObj);
-			next();
-
 		} catch (e) {
-			let respObj = {
-				message : "Um erro inesperado ocorreu !" + e
-			};
+			respObj.message = "Um erro inesperado ocorreu : " + e;
 			var_dump(e + "");
 			res.json(respObj);
 			next();
 		}
 	}
 
-	getRotaById(req, res, next){
+	getRotaById(req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		let respObj = {};
 
@@ -110,12 +128,12 @@ class Rota {
 					points: response
 				};
 				res.json(respObj);
-				next();
 			});
 		} catch (e) {
 			var_dump(e + "");
 			respObj.error = e + "";
 			res.json(respObj);
+		} finally {
 			next();
 		}
 	}
@@ -142,4 +160,4 @@ class Rota {
 	}
 }
 
-export default new Rota ();
+export default new Rota();
