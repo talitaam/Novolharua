@@ -15,12 +15,15 @@ const enhance = compose(
         containerElement: <div style={{ height: `400px` }} />,
         mapElement: <div style={{ height: `100%` }} />
     }),
-    mapProps(({ waypoints, ...rest }) => {
+    mapProps(({ waypoints, arrDirections, ...rest }) => {
         return (
             {
-                markers: (waypoints || []).map((point, index) => {
-                    return (<Marker position={point.location} key={index} />);
-                }),
+                markers: (waypoints || []).map((point, index) => 
+                    <Marker position={point.location} key={index} />
+                ),
+                arrDirections: (arrDirections || []).map((directions, index) =>
+                    <DirectionsRenderer directions={ directions } key={index} />
+                ),
                 ...rest
             }
         )
@@ -29,16 +32,24 @@ const enhance = compose(
     withGoogleMap
 );
 
-const Map = enhance(({ onClick, onRightClick, markers, directions }) => (
-    <GoogleMap
-        defaultZoom={ 14 }
-        options={{gestureHandling: "cooperative"}}
-        defaultCenter={ new window.google.maps.LatLng(-19.932654, -43.936020)}
-        onClick={ onClick }
-        onRightClick={ onRightClick } >
-        { markers }
-        { directions && <DirectionsRenderer directions={ directions } /> }
-    </GoogleMap>)
-);
+const Map = enhance(({ onClick, onRightClick, markers, directions, arrDirections }) => {
+    if(!window.google) {
+        alert('Não foi possível se conectar ao Maps API. Verifique sua conexão !');
+        return (<></>);
+    } else {
+        return (
+            <GoogleMap
+                options={{ gestureHandling: "cooperative" }}
+                defaultZoom={ 14 }
+                defaultCenter={ new window.google.maps.LatLng(-19.932654, -43.936020)}
+                onClick={ onClick }
+                onRightClick={ onRightClick } >
+                { markers }
+                { arrDirections }
+                { directions && <DirectionsRenderer directions={ directions } /> }
+            </GoogleMap>
+        );
+    }
+});
 
 export default Map;

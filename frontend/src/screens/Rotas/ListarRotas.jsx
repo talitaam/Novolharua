@@ -9,12 +9,11 @@ import DirectionsHelper from "components/Map/DirectionsHelper";
 import RotasService from "./RotasService";
 
 class ListarRotas extends React.Component {
+
 	constructor(props) {
 		super();
 		this.state = {
-			directions: {
-				routes:[]
-			},
+			directions: [],
 			selectedRoute: "",
 			routes: []
 		};
@@ -30,29 +29,68 @@ class ListarRotas extends React.Component {
 		});
 	}
 
-	setDirection({rota}) {
+	setDirection({ rota }) {
 		const { google } = window;
-		const waypoints = rota.points
-							.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}));
+		const waypoints = rota.points.map(point => ({
+			location: new google.maps.LatLng(
+				parseFloat(point.lat),
+				parseFloat(point.lng)
+			)
+		}));
 
-		DirectionsHelper.getRouteAPI(waypoints, result => this.setState({ directions: result }) );
+		DirectionsHelper.getRoutesAPI(waypoints).then(
+			(result) => this.setState({
+				directions: result
+			})
+		);
 	}
 
-	setRoutes({rotas}) {
+	setRoutes({ rotas }) {
 		this.setState({
 			routes: rotas
 		});
 	}
 
-	changeRoute(route) {
-		RotasService.findRouteById(route.id).then(this.setDirection);
-		this.setState({
-			selectedRoute: route
+	changeRoute(routes) {
+		const promises = [],
+			promises2 = [];
+		routes.forEach((route) => {
+			promises.push(
+				new Promise((resolve, reject) => {
+					RotasService.findRouteById(route.id)
+						.then(result => resolve(result))
+						.catch(error => reject(error));
+				})
+			)
 		});
+
+		Promise.all(promises).then(
+			(directions) => {
+				directions.forEach((direction) => {
+					promises2.push(DirectionsHelper.getRouteAPI(direction.rota.points.map((point) => ({ location: new window.google.maps.LatLng(point.lat, point.lng) }))).then(
+						result => {
+
+							result.id = direction.rota.id;
+
+							return result;
+						}
+					));
+				});
+
+				Promise.all(promises2).then(result => {
+					console.log(result);
+
+					this.setState({
+						selectedRoute: routes,
+						directions: result
+					});
+				});
+			}
+		);
 	}
 
 	render() {
-		const { directions, selectedRoute, routes} = this.state;
+		const { directions, selectedRoute, routes } = this.state;
 
 		return (
 			<div>
@@ -60,13 +98,13 @@ class ListarRotas extends React.Component {
 					<GridItem xs={12} sm={12} md={4} />
 					<GridItem xs={12} sm={12} md={4}>
 						<Select options={routes}
-								value={selectedRoute}
-								onChange={this.changeRoute}
-								noOptionsMessage={"Não há rotas disponíveis !"} />
+							value={selectedRoute}
+							onChange={this.changeRoute}
+							noOptionsMessage={"Não há rotas disponíveis !"} />
 					</GridItem>
 					<GridItem xs={12} sm={12} md={4} />
 					<GridItem xs={12} sm={12} md={12}>
-						<Map directions={directions} />
+						<Map arrDirections={directions} />
 					</GridItem>
 				</GridContainer>
 			</div>

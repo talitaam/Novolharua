@@ -1,9 +1,10 @@
 import var_dump from 'var_dump';
+import turf from '@turf/turf';
 
-const getMostValuablePoints = ( points ) => {
-    const MIN_DISTANCE_FOR_TWO_POINTS = 80,
-          MAX_DISTANCE_FOR_TWO_POINTS = 200,
-          POINTS_SIZE = points.length;
+const getMostValuablePoints = (points) => {
+    const MIN_DISTANCE_FOR_TWO_POINTS = 40,
+        MAX_DISTANCE_FOR_TWO_POINTS = 200,
+        POINTS_SIZE = points.length;
     let mostValuablePoints = [],
         i = 0,
         j = i + 1,
@@ -19,10 +20,10 @@ const getMostValuablePoints = ( points ) => {
 
         distance = getDistanceFromLatLonInKm(points[i], points[i + 1]);
 
-        if (distance >= MIN_DISTANCE_FOR_TWO_POINTS ) {
+        if (distance >= MIN_DISTANCE_FOR_TWO_POINTS) {
             mostValuablePoints.push(points[i + 1]);
             i++;
-        } else if(i < POINTS_SIZE - 1) {
+        } else if (i < POINTS_SIZE - 1) {
             j = i + 1;
             auxDistance = distance;
             aux2Distance;
@@ -44,7 +45,7 @@ const getMostValuablePoints = ( points ) => {
             i = j;
         }
     }
-    
+
     return mostValuablePoints;
 };
 
@@ -61,6 +62,88 @@ const getDistanceFromLatLonInKm = (pos1, pos2) => {
     return ((R * c * 1000).toFixed());
 };
 
-export { 
-    getMostValuablePoints 
+const getCommomPoints = (pointsA, pointsB) => {
+    return pointsA.filter(
+        pointA => pointsB.filter(
+            pointB => (pointA.lat === pointB.lat && pointA.lng === pointB.lng)
+        ).length > 0
+    );
+}
+
+const compressArrayPoints = list => {
+    if (list.length <= 1) {
+        return list
+    } else if (list[0][0] === list[1][0] && list[0][1] === list[1][1]) {
+        return compressArrayPoints(list.slice(1, ))
+    } else {
+        return [list.shift()].concat(compressArrayPoints(list))
+    }
+}
+
+// Using turfjs to limit the decimal to .6 format.
+const truncateCoordinates = turfPoints => {
+    const turf = require('@turf/turf');    
+    const turfLineString = turf.lineString(turfPoints);
+
+    for (var i = 0; i < turfLineString.geometry.coordinates.length; i++){
+        var point = turf.point(turfLineString.geometry.coordinates[i]); //transforma um par de coordenadas em um point
+        var truncated = turf.truncate(point, {precision: 5, coordinates: 2}); //limite para 6 casas decimais a lat e a lng
+        turfLineString.geometry.coordinates[i] = truncated.geometry.coordinates; //reescreve as coordenadas já truncadas
+    }
+    
+    return turfLineString;
+}
+
+const distanciaCoord = (overlapping) => {
+    const turf = require('@turf/turf');    
+    var retornaOverlaps = [];
+    let sizeArrayResposta = overlapping.features.length;
+    let tamanhoMaximo = 60;
+
+    for(var i = 0; i < sizeArrayResposta; i++){
+        var ultimoIndice = overlapping.features[i].geometry.coordinates.length;
+        var maior = 0;
+        var overlapCoordinates = {};
+        for(var j = 0; j < ultimoIndice-1; j++){
+            for(var k = j+1; k < ultimoIndice; k++){
+                var from = overlapping.features[i].geometry.coordinates[j];
+                var to = overlapping.features[i].geometry.coordinates[k];
+                var distance = turf.distance(from, to, {units: 'meters'});
+                if (distance > tamanhoMaximo) {
+                    console.log("Rota inválidada");
+                    if (distance > maior){
+                        maior = distance;
+                        overlapCoordinates = {lat1: from[0], lng1: from[1], lat2: to[0], lng2: to[1]};
+                        //trecho correspondente entre coordenada 1 (lat1 e lng1) e coordenada2 (lat2 e lng2)
+                    }
+                }
+            }
+        }
+        if (maior != 0){
+            retornaOverlaps.push(overlapCoordinates);
+        }
+    }
+    return retornaOverlaps;
+};
+
+const getTrechosComOverlap = (conflitantRoute, toSaveRoute) => {
+    const turf = require('@turf/turf');
+    var_dump(conflitantRoute);
+    const turfConflitantRoute = truncateCoordinates(conflitantRoute);
+    var_dump(toSaveRoute);
+    const turfToSaveRoute = truncateCoordinates(toSaveRoute);
+    
+    const overlapping = turf.lineOverlap(turfToSaveRoute, turfConflitantRoute, {tolerance: 0.005}); 
+
+    var_dump(overlapping);
+
+    return distanciaCoord(overlapping);
+}
+
+export {
+    getMostValuablePoints,
+    getCommomPoints,
+    truncateCoordinates,
+    compressArrayPoints,
+    getTrechosComOverlap
 };

@@ -4,7 +4,7 @@ import './Select.css';
 
 class CustomSelect extends React.Component {
     render() {
-        const {value, onChange, options, placeholder, noOptionsMessage} = this.props;
+        const { isMulti, value, onChange, options, placeholder, noOptionsMessage} = this.props;
 
         return (
             <div className="select-container">
@@ -15,6 +15,7 @@ class CustomSelect extends React.Component {
                     options={ options }
                     placeholder={ placeholder || "Selecione :" }
                     noOptionsMessage={ () => noOptionsMessage }
+                    isMulti={ isMulti || true }
                 />
             </div>
         );

@@ -17,6 +17,7 @@ class TextArea extends React.Component {
           onChange={onChange}
           required
           pattern="\S+.*"
+          value = {text}
         >
           {text}
         </textarea>

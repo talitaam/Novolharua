@@ -21,7 +21,9 @@ function CustomInput({ ...props }) {
     labelProps,
     inputProps,
     error,
-    success
+    success,
+    disabled,
+    inputRef
   } = props;
 
   const labelClasses = classNames({
@@ -56,6 +58,8 @@ function CustomInput({ ...props }) {
           disabled: classes.disabled,
           underline: underlineClasses
         }}
+        inputRef={ inputRef }
+        disabled= {disabled || false}
         id={id}
         {...inputProps}
       />

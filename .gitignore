@@ -1,3 +1,13 @@
 node_modules/
+<<<<<<< HEAD
 backend/logs/
 
+=======
+node_modules
+backend/logs
+backend/logs/
+frontend/node_modules
+frontend/node_modules/
+backend/node_modules/
+backend/node_modules
+>>>>>>> 19e0fdb544d285088f7a51bcc1a3816d9cd0eb2d

@@ -1,0 +1,25 @@
+
+
+.checkboxes{
+    margin-top: 10px;
+    margin-left: 17px;
+    
+}
+
+.labelsCnpjCpf > span {
+    margin-top:10px;
+    color: #9c27b0;
+}
+
+.checkboxes span, .checkboxes label, .checkboxes input {
+    font-size: 20px;
+    -ms-transform: scale(1.2); /* IE */
+    -moz-transform: scale(1.2); /* FF */
+    -webkit-transform: scale(1.2); /* Safari and Chrome */
+    -o-transform: scale(1.2); /* Opera */
+}
+
+.checkboxes > div {
+    display: inline;
+    margin-left: 15px;
+}
