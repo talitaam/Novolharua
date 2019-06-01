@@ -1,5 +1,4 @@
 import dbService from "../util/db";
-import moment from "moment";
 
 class Doacao {
 	constructor() {
@@ -17,7 +16,7 @@ class Doacao {
 		let queryParams = {
 			idRota : doacao.rota , 
 			nomeDoador : doacao.doador, 
-			dtDoacao : moment(doacao.data).format('YYYY-MM-DD')
+			dtDoacao : doacao.dtDoacao
 		};
 
 		return dbService.runQuery(this.INSERT_DOACAO, queryParams, result => {

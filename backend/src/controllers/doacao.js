@@ -37,7 +37,7 @@ class Doacao {
 		};
 
 		try {
-			params.rota.forEach(function (idRota, index) {
+			params.rota.forEach(function (idRota) {
 
 				let doacaoBD = {
 					rota : idRota,

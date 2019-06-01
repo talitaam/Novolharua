@@ -148,7 +148,7 @@ class CadDoacao extends React.Component {
     } else {
       DoacoesService.saveDonation({
         donatorName: donatorName,
-        donationDate: donationDate,
+        donationDate: moment(donationDate).format('YYYY-MM-DD'),
         selectedRoute: selectedRoute.map(route => route.id) 
       }).then((response) => {
         this.setState({
