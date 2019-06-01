@@ -43,6 +43,7 @@ class CadRotas extends React.Component {
 				routes: []
 			},
 			arrDirections: [],
+			polylines: [],
 			mapsRoute: [],
 			mapsRouteReverse: [],
 			userRoute: [],
@@ -183,8 +184,6 @@ class CadRotas extends React.Component {
 			RotasService.saveRoute(saveData).then(json => {
 				if (json)
 					alert(json.message);
-				this.cleanFields();
-
 				const { overlappingRoutes }  = json;
 				if (!!overlappingRoutes) {
 					const promises = [];
@@ -206,8 +205,21 @@ class CadRotas extends React.Component {
 					});
 
 					Promise.all(promises).then(mapsAPIRoutes => this.setState({
-						arrDirections: mapsAPIRoutes
+						//arrDirections: mapsAPIRoutes,
+						polylines: mapsAPIRoutes.map(mapsAPIroute => ({
+							coordinates: mapsAPIroute.routes[0].overview_path,
+							options: {
+								strokeColor: '#' + (Math.random() + "").slice(4,10)
+							},
+							geodesic: false
+						})),
+						waypoints: overlappingRoutes.map(routeInfo => routeInfo.overlapRoute)
+													.reduce((actual, next) => actual.concat(next) )
+													.map((point) => ({location: new google.maps.LatLng(parseFloat(point.lat), parseFloat(point.lng))}))
 					}));
+						
+				} else {
+					this.cleanFields();
 				}
 			});
 		}
@@ -225,6 +237,7 @@ class CadRotas extends React.Component {
 				routes: []
 			},
 			arrDirections: [],
+			polylines: [],
 			obs: ''
 		});
 	}
@@ -237,7 +250,8 @@ class CadRotas extends React.Component {
 			minPessoas,
 			maxPessoas,
 			obs,
-			arrDirections
+			arrDirections,
+			polylines
 		} = this.state;
 
 		return (
@@ -246,12 +260,12 @@ class CadRotas extends React.Component {
 					<GridItem xs={12} sm={12} md={4}>
 						<Typography variant="h6" gutterBottom>
 							Instruções
-            </Typography>
+            			</Typography>
 						<Typography variant="body2" gutterBottom>
 							Para traçar uma rota clique com o botão esquerdo do mouse em
 							qualquer ponto. Para gerar uma rota clique com o botão direito em
 							qualquer ponto no mapa. Serão aceitos no máximo 10 pontos.
-            </Typography>
+           	 			</Typography>
 					</GridItem>
 					<GridItem xs={12} sm={12} md={4}>
 						<CustomInput
@@ -300,10 +314,10 @@ class CadRotas extends React.Component {
 						<GridItem xs={12} sm={12} md={12}>
 							<Button color="danger" onClick={this.cleanFields}>
 								Limpar Dados
-              </Button>
+              				</Button>
 							<Button color="success" onClick={this.saveRoute}>
 								Salvar
-              </Button>
+              				</Button>
 						</GridItem>
 					</GridItem>
 					<GridItem xs={12} sm={12} md={12}>
@@ -313,6 +327,7 @@ class CadRotas extends React.Component {
 							waypoints={waypoints}
 							directions={directions}
 							arrDirections={arrDirections}
+							polylines={polylines}
 							onClick={this.onClickMap}
 							onRightClick={this.onRightClickMap}
 						/>

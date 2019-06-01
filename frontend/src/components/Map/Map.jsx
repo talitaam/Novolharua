@@ -5,6 +5,7 @@ import {
     withGoogleMap,
     GoogleMap,
     DirectionsRenderer,
+    Polyline,
     Marker
 } from "react-google-maps";
 
@@ -15,7 +16,7 @@ const enhance = compose(
         containerElement: <div style={{ height: `400px` }} />,
         mapElement: <div style={{ height: `100%` }} />
     }),
-    mapProps(({ waypoints, arrDirections, ...rest }) => {
+    mapProps(({ waypoints, arrDirections, polylines,  ...rest }) => {
         return (
             {
                 markers: (waypoints || []).map((point, index) => 
@@ -23,6 +24,14 @@ const enhance = compose(
                 ),
                 arrDirections: (arrDirections || []).map((directions, index) =>
                     <DirectionsRenderer directions={ directions } key={index} />
+                ),
+                polylines: (polylines || []).map((polyline, index) =>
+                    <Polyline
+                        path={polyline.coordinates}
+                        geodesic={polyline.geodesic}
+                        options={polyline.options}
+                        key={index}
+                    />
                 ),
                 ...rest
             }
@@ -32,7 +41,7 @@ const enhance = compose(
     withGoogleMap
 );
 
-const Map = enhance(({ onClick, onRightClick, markers, directions, arrDirections }) => {
+const Map = enhance(({ onClick, onRightClick, markers, directions, arrDirections, polylines }) => {
     if(!window.google) {
         alert('Não foi possível se conectar ao Maps API. Verifique sua conexão !');
         return (<></>);
@@ -46,6 +55,7 @@ const Map = enhance(({ onClick, onRightClick, markers, directions, arrDirections
                 onRightClick={ onRightClick } >
                 { markers }
                 { arrDirections }
+                { polylines }
                 { directions && <DirectionsRenderer directions={ directions } /> }
             </GoogleMap>
         );
