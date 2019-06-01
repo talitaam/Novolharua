@@ -1,7 +1,5 @@
 import React from "react";
 
-
-
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import GridItem from "components/Grid/GridItem.jsx";
@@ -148,21 +146,10 @@ class CadDoacao extends React.Component {
     } else if (selectedRoute.length === 0) {
       alert("É preciso que uma rota seja selecionada !");
     } else {
-			/*var tam = selectedRoute.length;
-			var i = 0;
-			while (i<tam-1){
-				DoacoesService.saveDonation({
-					donatorName: donatorName,
-					donationDate: donationDate,
-					selectedRoute: selectedRoute[i] //ver
-				});
-				i++;
-			}
-			if(i==(tam-1)){*/
       DoacoesService.saveDonation({
         donatorName: donatorName,
         donationDate: donationDate,
-        selectedRoute: selectedRoute.map(route => route.id) //ver
+        selectedRoute: selectedRoute.map(route => route.id) 
       }).then((response) => {
         this.setState({
           directions: [],
@@ -186,9 +173,6 @@ class CadDoacao extends React.Component {
     RotasService.findAvaiableRoutesByDate(actualDate.format('DD/MM/YYYY')).then((json) => {
       const { rotas } = json;
       const canAutoSetRoute = rotas.length > 0;
-
-      //const selectedRoute = canAutoSetRoute ? rotas : {};
-
       if (!canAutoSetRoute) {
         alert("Não há rotas disponíveis para esta data !");
         this.setState({
@@ -204,8 +188,6 @@ class CadDoacao extends React.Component {
           routes: rotas,
           selectedRoute: []
         });
-
-        //RotasService.findRouteById(rotas[0].id).then(this.setDirection);
       }
     });
   }
@@ -237,9 +219,7 @@ class CadDoacao extends React.Component {
               </GridItem>
               <GridItem xs={12} sm={12} md={3}>
                 <Select
-                  //isMulti={ true }
                   options={routes}
-                  //defaultValue={selectedRoute}
                   value={selectedRoute}
                   onChange={this.changeRoute}
                   placeholder={"Selecione :"}

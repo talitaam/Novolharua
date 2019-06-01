@@ -34,8 +34,6 @@ const styles = {
   }
 };
 
-const CPF_LENGTH = 11;
-const CNPJ_LENGTH = 14;
 const TEL_LENGTH = 10;
 const CEL_LENGTH = 11;
 
@@ -82,15 +80,16 @@ class CadUsuario extends React.Component {
 
   onChangeEmail(event) {
     const value = event.target.value;
-    this.setState({
-      email: event.target.value,
-      validaEmail: !value
+    const validaEmail = !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value));    
+    this.setState({ 
+      email: value,
+      validaEmail: validaEmail
     });
   }
 
   onChangeCpfCnpj(event) {
     const value = event.target.value;
-    const removedMask = value.replace(/\.|\-/g, "");
+    const removedMask = value.replace(/\.|-/g, "");
 
     this.setState({
       doc: event.target.value,
@@ -103,7 +102,7 @@ class CadUsuario extends React.Component {
     this.setState({
       telefoneFixo: event.target.value,
       validaTel: !(
-        !!value && value.replace(/\+|\(|\)|\-/g, "").length === TEL_LENGTH
+        !!value && value.replace(/\+|\(|\)|-/g, "").length === TEL_LENGTH
       )
     });
   }
@@ -115,7 +114,7 @@ class CadUsuario extends React.Component {
       validaCel: !(
         !!value &&
         value
-          .replace(/\+|\(|\)|\-/g, "")
+          .replace(/\+|\(|\)|-/g, "")
           .split(" ")
           .join("").length === CEL_LENGTH
       )
@@ -125,7 +124,7 @@ class CadUsuario extends React.Component {
   onChangeObservation(event) {
     const value = event.target.value;
     this.setState({
-      obs: event.target.value
+      obs: value
     });
   }
 
@@ -138,7 +137,8 @@ class CadUsuario extends React.Component {
       telefoneCelular,
       obs,
       validaCel,
-      validaDoc
+      validaDoc,
+      validaEmail
     } = this.state;
 
     const acoesUsuario = this.handleFormSubmit();
@@ -146,9 +146,10 @@ class CadUsuario extends React.Component {
     const saveData = {
       doc,
       name,
-      telefoneFixo,
-      telefoneCelular,
+      telefoneFixo: telefoneFixo.replace(/\(|\)|\-/g, "").split(" ").join(""),
+      telefoneCelular: telefoneCelular.replace(/\(|\)|\-/g, "").split(" ").join(""),
       email,
+      validaEmail,
       acoesUsuario,
       obs,
       status: 0
@@ -159,7 +160,7 @@ class CadUsuario extends React.Component {
     if (!name.trim()) {
       alert('O campo "Nome do usuário" deve ser preenchido!');
       canSave = false;
-    } else if (!email.trim()) {
+    } else if (validaEmail) {
       alert('O campo "E-mail do usuário" deve ser preenchido!');
       canSave = false;
     } else if (validaDoc) {
@@ -274,7 +275,7 @@ class CadUsuario extends React.Component {
     if (resto === 10 || resto === 11) resto = 0;
     if (resto !== parseInt(cpf.substring(9, 10))) return false;
     soma = 0;
-    for (var i = 1; i <= 10; i++)
+    for (i = 1; i <= 10; i++)
       soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);
     resto = (soma * 10) % 11;
     if (resto === 10 || resto === 11) resto = 0;
@@ -285,24 +286,24 @@ class CadUsuario extends React.Component {
   // Obrigado !
   // https://gist.github.com/roneigebert/10d788a07e2ffff88eb0f1931fb7bb49
   validCnpj(cnpj) {
-    var cnpj = cnpj.replace(/[^\d]+/g, "");
+    cnpj = cnpj.replace(/[^\d]+/g, "");
 
-    if (cnpj == "") return false;
+    if (cnpj === "") return false;
 
-    if (cnpj.length != 14) return false;
+    if (cnpj.length !== 14) return false;
 
     // Elimina CNPJs invalidos conhecidos
     if (
-      cnpj == "00000000000000" ||
-      cnpj == "11111111111111" ||
-      cnpj == "22222222222222" ||
-      cnpj == "33333333333333" ||
-      cnpj == "44444444444444" ||
-      cnpj == "55555555555555" ||
-      cnpj == "66666666666666" ||
-      cnpj == "77777777777777" ||
-      cnpj == "88888888888888" ||
-      cnpj == "99999999999999"
+      cnpj === "00000000000000" ||
+      cnpj === "11111111111111" ||
+      cnpj === "22222222222222" ||
+      cnpj === "33333333333333" ||
+      cnpj === "44444444444444" ||
+      cnpj === "55555555555555" ||
+      cnpj === "66666666666666" ||
+      cnpj === "77777777777777" ||
+      cnpj === "88888888888888" ||
+      cnpj === "99999999999999"
     )
       return false;
 
@@ -317,7 +318,7 @@ class CadUsuario extends React.Component {
       if (pos < 2) pos = 9;
     }
     var resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-    if (resultado != digitos.charAt(0)) return false;
+    if (resultado !== digitos.charAt(0)) return false;
 
     tamanho = tamanho + 1;
     numeros = cnpj.substring(0, tamanho);
@@ -328,23 +329,10 @@ class CadUsuario extends React.Component {
       if (pos < 2) pos = 9;
     }
     resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-    if (resultado != digitos.charAt(1)) return false;
+    if (resultado !== digitos.charAt(1)) return false;
 
     return true;
   }
-
-  validaEmail = text => {
-    console.log(text);
-    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if (reg.test(text) === false) {
-      this.validaEmail = false;
-      this.setState({ email: text });
-      return false;
-    } else {
-      this.setState({ email: text });
-      this.validaEmail = true;
-    }
-  };
 
   render() {
     const {
@@ -440,7 +428,6 @@ class CadUsuario extends React.Component {
                     $(ref).unmask();
                   } catch (e) {}
 
-                  var tamanho = $(ref).val().length;
                   $(ref).mask("(99)9999-9999");
                   var elem = this;
                   setTimeout(function() {
@@ -473,7 +460,6 @@ class CadUsuario extends React.Component {
                     $(ref).unmask();
                   } catch (e) {}
 
-                  var tamanho = $(ref).val().length;
                   $(ref).mask("(99) 9 9999-9999");
                   var elem = this;
                   setTimeout(function() {

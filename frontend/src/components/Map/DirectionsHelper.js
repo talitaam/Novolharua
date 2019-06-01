@@ -1,5 +1,3 @@
-import { resolve } from "dns";
-
 class DirectionHelper {
     constructor() {
         this.DEFAULT_TRAVEL_MODE = 'WALKING';

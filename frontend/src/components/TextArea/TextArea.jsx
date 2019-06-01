@@ -2,10 +2,6 @@ import React from "react";
 import "./TextArea.css";
 
 class TextArea extends React.Component {
-  constructor() {
-    super();
-  }
-
   render() {
     const { text, onChange } = this.props.inputProps;
 
