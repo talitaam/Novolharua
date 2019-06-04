@@ -43,6 +43,19 @@ class UserService {
         alert("Erro ao enviar cadastro de usuário!");
       });
   }
+
+  activateUser(donatorId) {  
+    const data = {
+      donatorId
+    };
+
+  return fetch(serverParams.SERVER_URL + "doador/ativar/", {
+      method: "POST",
+      body: JSON.stringify(data)
+    })
+      .then(res => res.json())
+      .catch(error => alert("Não foi possível ativar este usuário !"));
+  }
 }
 
 export default new UserService();

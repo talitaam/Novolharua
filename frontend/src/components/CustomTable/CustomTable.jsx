@@ -7,11 +7,13 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
+import IconButton from '@material-ui/core/IconButton';
+import CheckCircle from '@material-ui/icons/CheckCircle';
 // core components
 import tableStyle from "assets/jss/material-dashboard-react/components/tableStyle.jsx";
 
 function CustomTable({ ...props }) {
-  const { classes, tableHead, tableData, tableHeaderColor } = props;
+  const { classes, tableHead, tableData, tableHeaderColor, onClickRowButton } = props;  
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -38,10 +40,20 @@ function CustomTable({ ...props }) {
                 {prop.map((prop, key) => {
                   return (
                     <TableCell className={classes.tableCell} key={key}>
-                      { prop }
+                      {prop}
                     </TableCell>
                   );
                 })}
+                
+                { prop[7] === 'Pendente' ?
+                  <TableCell>
+                    <span>Ativar</span>
+                    <IconButton onClick={onClickRowButton.bind(this)} aria-label="Ativar">
+                      <CheckCircle />
+                    </IconButton>
+                  </TableCell>
+                  : <></>
+                }
               </TableRow>
             );
           })}

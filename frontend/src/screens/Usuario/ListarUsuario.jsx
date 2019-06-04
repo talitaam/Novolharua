@@ -4,7 +4,7 @@ import Card from "../../components/Card/Card";
 import CardHeader from "components/Card/CardHeader.jsx";
 import React from "react";
 import CardBody from "../../components/Card/CardBody";
-import Table from "../../components/Table/Table";
+import CustomTable from "../../components/CustomTable/CustomTable";
 import UserService from "./UserService";
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -41,27 +41,51 @@ class ListarUsuario extends React.Component {
       "Telefone Fixo",
       "Telefone Celular",
       "Email",
-      "Ações",
       "Obs",
+      "",
+      "Ações",
       ""
     ];
+    this.ativarDoador = this.ativarDoador.bind(this);
+    this.getUsers = this.getUsers.bind(this);
   }
 
-  componentDidMount() {
-    UserService.fecthUser().then(json => {
+  getUsers () {
+    return UserService.fecthUser().then(json => {
       if (json) {
-        const doador = json.doadores;
+        const doadores = json.doadores;
+        
         this.setState({
-          rows: doador.map(usuario => Object.values(usuario).map((valor, index) => { 
+          rows: doadores.map(doador => Object.values(doador).map((valor, index) => { 
             if(index === 3) {
               return "(" + valor.slice(0,2) + ") " + valor.slice(2, 6) + " - " + + valor.slice(6,10);
             } else if(index === 4) {
               return "(" + valor.slice(0,2) + ") " + valor.slice(2, 7) + " - " + + valor.slice(7,11);
+            } else if(index === 7) {
+              return (valor + '') === '0' ? 'Pendente' : 'Ativo';
             } else {
               return valor + "";
             }}))
         });
       }
+    });
+  }
+
+  componentDidMount() {
+    this.getUsers();
+  }
+
+  ativarDoador(event) {
+    const tableIndex = event.currentTarget.tabIndex;
+    const rows =  this.state.rows.slice(0);
+    const selectedRow = rows[tableIndex]; 
+     
+    // Getting donator's ID :
+    const donatorsId = selectedRow[0];  
+
+    UserService.activateUser(donatorsId).then(response => {
+      alert("O usuário foi ativado com sucesso  !");
+      this.getUsers()
     });
   }
 
@@ -77,10 +101,11 @@ class ListarUsuario extends React.Component {
                 </h4>
               </CardHeader>
               <CardBody>
-                <Table
+                <CustomTable
                   tableHeaderColor="warning"
                   tableHead={this.tableColumns}
                   tableData={this.state.rows}
+                  onClickRowButton={this.ativarDoador}
                 />
               </CardBody>
             </Card>
