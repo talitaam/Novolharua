@@ -205,7 +205,6 @@ class CadRotas extends React.Component {
 					});
 
 					Promise.all(promises).then(mapsAPIRoutes => this.setState({
-						//arrDirections: mapsAPIRoutes,
 						polylines: mapsAPIRoutes.map(mapsAPIroute => ({
 							coordinates: mapsAPIroute.routes[0].overview_path,
 							options: {

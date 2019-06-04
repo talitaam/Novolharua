@@ -33,21 +33,15 @@ COLLATE = utf8_bin;
 -- Table `tis_exemplo_2`.`doador`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`doador` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `CPFCNPJ` VARCHAR(14) NOT NULL,
   `NOMDOADOR` VARCHAR(150) NOT NULL,
   `TELEFONE` VARCHAR(10) NULL,
   `CELULAR` VARCHAR(11) NOT NULL,
   `EMAIL` VARCHAR(150) NOT NULL,
-  `IDACAO` INT(11) NOT NULL,
   `OBSERVACAO` TEXT NULL DEFAULT NULL,
   `STATUS` INT(1) NOT NULL,
-  PRIMARY KEY (`CPFCNPJ`),
-  INDEX `fk_doador_acao_idx` (`IDACAO` ASC) ,
-  CONSTRAINT `fk_doador_acao`
-    FOREIGN KEY (`IDACAO`)
-    REFERENCES `tis_exemplo_2`.`acao` (`ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`ID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
@@ -127,6 +121,29 @@ CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`pontousuario` (
     REFERENCES `tis_exemplo_2`.`rotamaps` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+-- -----------------------------------------------------
+-- Table `tis_exemplo_2`.`acoesdoador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tis_exemplo_2`.`acoesdoador` (
+  `IDACAO` INT(11) NOT NULL,
+  `IDDOADOR` INT(11) NOT NULL,
+  PRIMARY KEY (`IDACAO`, `IDDOADOR`),
+  INDEX `fk_acoesdoador_acao_idx` (`IDACAO` ASC) ,
+  CONSTRAINT `fk_acoesdoador_acao`
+    FOREIGN KEY (`IDACAO`)
+    REFERENCES `tis_exemplo_2`.`acao` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION ,
+  INDEX `fk_acoesdoador_doador_idx` (`IDDOADOR` ASC) ,
+  CONSTRAINT `fk_acoesdoador_doador`
+    FOREIGN KEY (`IDDOADOR`)
+    REFERENCES `tis_exemplo_2`.`doador` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;

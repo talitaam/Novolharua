@@ -1,5 +1,5 @@
 import doadorService from "../services/doador";
-
+import var_dump from "var_dump";
 class Doador {
 	getAllDoadores (req, res, next) {
 		res.setHeader("Access-Control-Allow-Origin", "*");
@@ -83,20 +83,21 @@ class Doador {
 		let respObj = {};
 
 		try {
+			
 			doadorService.addDoador(params)
 				.then(response => {
-					respObj.dodor = response;
+					respObj.doador = response;
 					respObj.message = "Salvo com sucesso !";
+					
+					params.id = response.insertId;
 
-					/*doadorService.addAcoesDoador(Object.assign(params, response)).then(response => {
+					doadorService.addAcoesDoador(params).then(response => {
 						res.json(respObj);
 						next();
-					});*/
-					res.json(respObj);
-					next();
+					});
 				})
 				.catch(response => {
-					respObj.message = "Um erro inesperado ocorreu ! Ex: " + response.sqlMessage;
+					respObj.message = "Um erro inesperado ocorreu ! Ex: " + (response.sqlMessage || response);
 					res.json(respObj);
 					next();
 				});

@@ -35,6 +35,7 @@ class ListarUsuario extends React.Component {
       rows: []
     };
     this.tableColumns = [
+      "ID",
       "CPF/CNPJ",
       "Nome do doador",
       "Telefone Fixo",
@@ -52,9 +53,9 @@ class ListarUsuario extends React.Component {
         const doador = json.doadores;
         this.setState({
           rows: doador.map(usuario => Object.values(usuario).map((valor, index) => { 
-            if(index === 2) {
+            if(index === 3) {
               return "(" + valor.slice(0,2) + ") " + valor.slice(2, 6) + " - " + + valor.slice(6,10);
-            } else if(index === 3) {
+            } else if(index === 4) {
               return "(" + valor.slice(0,2) + ") " + valor.slice(2, 7) + " - " + + valor.slice(7,11);
             } else {
               return valor + "";

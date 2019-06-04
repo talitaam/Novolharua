@@ -38,12 +38,11 @@ class Doacao {
 
 		try {
 			params.rota.forEach(function (idRota) {
-
 				let doacaoBD = {
 					rota : idRota,
 					doador : params.doador,
 					dtDoacao : moment(params.data).format('YYYY-MM-DD')
-				}
+				};
 				doacaoService.addDoacao(doacaoBD).then(result => {
 					respObj.doacao.push(result);
 				});

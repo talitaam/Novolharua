@@ -213,13 +213,13 @@ class CadUsuario extends React.Component {
       .filter(checkbox => this.state.checkboxes[checkbox])
       .map(acao => {
         let value;
-        if ("Agasalho") {
+        if (acao === "Agasalho") {
           value = 3;
-        } else if ("Cursos") {
+        } else if ( acao === "Cursos") {
           value = 4;
-        } else if ("Higiene") {
+        } else if ( acao === "Higiene") {
           value = 2;
-        } else if ("Refeição") {
+        } else if ( acao === "Refeição") {
           value = 1;
         }
         return value;
